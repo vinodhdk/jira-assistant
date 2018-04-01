@@ -1,0 +1,50 @@
+<div [ngClass]="isFullScreen?'full-screen':''">
+  <p-panel styleClass="p-no-padding">
+    <p-header>
+      <div class="ui-helper-clearfix">
+        <i class="fa fa-filter"></i>
+        <span class="ui-panel-title" style="font-size:16px;display:inline-block;margin-top:2px">Saved Query</span>
+        <div class="pull-right">
+          <button pButton [icon]="isFullScreen?'fa-compress':'fa-expand'" (click)="isFullScreen=!isFullScreen"></button>
+          <button pButton icon="fa-refresh" (click)="fillSavedQuery();"></button>
+          <button pButton icon="fa-save"></button>
+          <button pButton icon="fa-plus"></button>
+          <button pButton icon="fa-trash-o" (click)="deleteQuery()"></button>
+          <button pButton icon="fa-times" (click)="onAction.emit({ action: 100 });"></button>
+        </div>
+      </div>
+    </p-header>
+    <p-blockUI [target]="pnlCtl" [blocked]="isLoading">
+      <i class="fa fa-refresh fa-spin fa-5x" style="position:absolute;top:25%;left:50%"></i>
+    </p-blockUI>
+    <p-panel [showHeader]="false" #pnlCtl>
+      <p-scrollPanel [style]="{width: '100%', height: contentHeight + 'px'}" styleClass="cont-div">
+        <table class="table table-responsive-sm table-bordered table-striped table-sm no-margin">
+          <thead>
+            <tr>
+              <th style="width:25px;"><input type="checkbox" [(ngModel)]="selAllSQ" (click)="selectAll(selAllSQ)" /></th>
+              <th style="min-width:200px;">Name</th>
+              <th style="min-width:130px;">Created On</th>
+              <th style="min-width:60px;">Enabled</th>
+              <th style="min-width:60px;">Filter Fields</th>
+              <th style="min-width:60px;">Output fields</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr [hidden]="!savedQueries || savedQueries.length > 0"><td colspan="6">No records exists</td></tr>
+            <tr *ngFor="let w of savedQueries">
+              <td class="data-center">
+                <input type="checkbox" [(ngModel)]="w.selected" />
+              </td>
+              <td>{{w.queryName}}</td>
+              <td>{{w.dateCreated | formatDateTime}}</td>
+              <td class="data-center"><label class="switch switch-small"><input type="checkbox" [(ngModel)]="w.isEnabled" /><span (click)="queryEnabled(w)"></span></label></td>
+              <td>{{w.filtersCount}}</td>
+              <td>{{w.outputCount}}</td>
+            </tr>
+          </tbody>
+        </table>
+      </p-scrollPanel>
+    </p-panel>
+  </p-panel>
+</div>

@@ -1,0 +1,33 @@
+<div [ngClass]="isFullScreen?'full-screen':''">
+  <p-tieredMenu #menu [model]="contextMenuItems" [popup]="true" appendTo="body"></p-tieredMenu>
+  <p-panel styleClass="p-no-padding">
+    <p-header>
+      <div class="ui-helper-clearfix">
+        <i class="fa fa-calendar"></i>
+        <span class="ui-panel-title" style="font-size:16px;display:inline-block;margin-top:2px">Calendar - [{{dateRangeTitle}}]</span>
+        <div class="pull-right">
+          <p-dropdown [options]="viewModes" [(ngModel)]="settings.viewMode" placeholder="Select a view mode" (onChange)="viewModeChanged()"></p-dropdown>
+          <button pButton [icon]="isFullScreen?'fa-compress':'fa-expand'" (click)="isFullScreen=!isFullScreen;onResize(isFullScreen)"></button>
+          <button pButton icon="fa-refresh" (click)="fillCalendar();"></button>
+          <button pButton icon="fa-times" (click)="onAction.emit({ action: 100 });"></button>
+        </div>
+      </div>
+    </p-header>
+    <p-blockUI [target]="pnlCtl" [blocked]="isLoading">
+      <i class="fa fa-refresh fa-spin fa-5x" style="position:absolute;top:25%;left:50%"></i>
+    </p-blockUI>
+    <p-panel [showHeader]="false" #pnlCtl>
+      <p-schedule #calendar [events]="events" fixedWeekCount="false" eventLimit="true" editable="true"
+                  slotDuration="00:15:00" droppable="true" allDayText="total" header="false" nowIndicator="true" navLinks="true"
+                  [minTime]="startOfDay" [maxTime]="endOfDay" [defaultView]="settings.viewMode" [height]="contentHeight + 30" [businessHours]="businessHours"
+                  [options]="fullCalendarOpts"
+                  (onViewRender)="viewRender($event.view,$event.element)"
+                  (onEventDrop)="eventDrop($event.event,$event.delta,$event.revertFunc,$event.jsEvent,$event.ui,$event.view)"
+                  (onEventResize)="eventResize($event.event,$event.delta,$event.revertFunc,$event.jsEvent,$event.ui,$event.view)"
+                  (onEventClick)="eventClick($event.calEvent, $event.jsEvent, $event.view)"
+                  (onDrop)="drop($event.date, $event.jsEvent, $event.ui, $event.resourceId)"></p-schedule>
+    </p-panel>
+  </p-panel>
+</div>
+
+<add-worklog [(showPopup)]="showAddWorklogPopup" (onDone)="showAddWorklogPopup=false; addEvent($event)" [(worklogItem)]="worklogItem"></add-worklog>

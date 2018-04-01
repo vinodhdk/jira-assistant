@@ -1,0 +1,5 @@
+<p-calendar #calendar [(ngModel)]="rangeDates" selectionMode="range" readonlyInput="true" [monthNavigator]="true"
+            [yearNavigator]="true" styleClass="hiddenCalendar" (onSelect)="rangeSelected($event)"></p-calendar>
+<p-dropdown #dropdown [(ngModel)]="selectedRangeItem" [options]="options" placeholder="{{selectedDateText}}"
+            (onChange)="quickPickChanged($event)" [group]="true" scrollHeight="230px" [style]="{'width':(width || 250) +'px'}">
+</p-dropdown>

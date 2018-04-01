@@ -1,0 +1,152 @@
+@mixin base-style($header-logo-bg,$header-bg) {
+  .app-header.navbar .navbar-brand {
+    background-color: $header-logo-bg !important;
+  }
+
+  .app-header.navbar, .sidebar .nav-link:hover {
+    background-color: $header-bg !important;
+  }
+
+  .sidebar .nav-link.active i {
+    color: $header-logo-bg !important;
+  }
+
+  .ui-panel.ui-widget .ui-panel-titlebar {
+    border-top: 3px solid $header-bg;
+    background: white;
+  }
+
+  .sidebar .nav-link.active, .sidebar-minimized .sidebar .nav-link {
+    border-left: 3px solid $header-bg !important;
+  }
+
+  .link, .table i.fa-ellipsis-v {
+    color: $header-bg !important;
+  }
+
+  ul.right-menus li:hover {
+    background-color: $header-logo-bg;
+  }
+}
+
+@mixin base-style-light {
+  $sidebar-link-color: #444;
+  $sidebar-title-color: #848484;
+  $sidebar-bg: #f9fafc;
+  $sidebar-bg-hi: #f4f4f5;
+
+  .sidebar {
+    color: $sidebar-link-color;
+    background: $sidebar-bg;
+  }
+
+  .sidebar .nav-link {
+    color: $sidebar-link-color;
+    font-weight: 600;
+  }
+
+  .sidebar .nav-title {
+    color: $sidebar-title-color;
+  }
+
+  .sidebar .nav-link:hover, .sidebar .nav-link.active, .sidebar .nav-link:hover i {
+    background: $sidebar-bg-hi;
+    color: $sidebar-link-color;
+  }
+}
+
+.skin-blue {
+  $header-logo-bg: #367fa9;
+  $header-bg: #3c8dbc;
+
+  @include base-style($header-logo-bg,$header-bg);
+}
+
+.skin-blue-light {
+  //$header-logo-bg: #367fa9;
+  $header-bg: #3c8dbc;
+
+  @include base-style($header-bg,$header-bg);
+
+  @include base-style-light;
+}
+
+.skin-meadow {
+  $header-logo-bg: #1caf9a;
+  $header-bg: #8cc1a2;
+
+  @include base-style($header-logo-bg,$header-bg);
+}
+
+.skin-meadow-light {
+  //$header-logo-bg: #1caf9a;
+  $header-bg: #8cc1a2;
+
+  @include base-style($header-bg,$header-bg);
+
+  @include base-style-light;
+}
+
+.skin-purple {
+  $header-logo-bg: #555299;
+  $header-bg: #605ca8;
+
+  @include base-style($header-logo-bg,$header-bg);
+}
+
+.skin-purple-light {
+  //$header-logo-bg: #555299;
+  $header-bg: #605ca8;
+
+  @include base-style($header-bg,$header-bg);
+
+  @include base-style-light;
+}
+
+.skin-green {
+  $header-logo-bg: #008d4c;
+  $header-bg: #00a65a;
+
+  @include base-style($header-logo-bg,$header-bg);
+}
+
+.skin-green-light {
+  //$header-logo-bg: #008d4c;
+  $header-bg: #00a65a;
+
+  @include base-style($header-bg,$header-bg);
+
+  @include base-style-light;
+}
+
+.skin-red {
+  $header-logo-bg: #d73925;
+  $header-bg: #dd4b39;
+
+  @include base-style($header-logo-bg,$header-bg);
+}
+
+.skin-red {
+  //$header-logo-bg: #d73925;
+  $header-bg: #dd4b39;
+
+  @include base-style($header-bg,$header-bg);
+
+  @include base-style-light;
+}
+
+.skin-yellow {
+  $header-logo-bg: #e08e0b;
+  $header-bg: #f39c12;
+
+  @include base-style($header-logo-bg,$header-bg);
+}
+
+.skin-yellow-light {
+  //$header-logo-bg: #e08e0b;
+  $header-bg: #f39c12;
+
+  @include base-style($header-bg,$header-bg);
+
+  @include base-style-light;
+}

@@ -1,0 +1,57 @@
+<div [ngClass]="isFullScreen?'full-screen':''">
+  <p-tieredMenu #menu [model]="contextMenu" [popup]="true" appendTo="body"></p-tieredMenu>
+  <p-panel styleClass="p-no-padding">
+    <p-header>
+      <div class="ui-helper-clearfix">
+        <i class="fa fa-list-alt"></i>
+        <span class="ui-panel-title" style="font-size:16px;display:inline-block;margin-top:2px">Ticketwise worklog</span>
+        <div class="pull-right">
+          <app-date-range-picker [(ngModal)]="dateRange" (selected)="dateSelected($event)"></app-date-range-picker>
+          <button pButton [icon]="isFullScreen?'fa-compress':'fa-expand'" (click)="isFullScreen=!isFullScreen"></button>
+          <button pButton icon="fa-refresh" (click)="fillWorklogs();"></button>
+          <button pButton icon="fa-save"></button>
+          <button pButton icon="fa-times" (click)="onAction.emit({ action: 100 });"></button>
+        </div>
+      </div>
+    </p-header>
+    <p-blockUI [target]="pnlCtl" [blocked]="isLoading">
+      <i class="fa fa-refresh fa-spin fa-5x" style="position:absolute;top:25%;left:50%"></i>
+    </p-blockUI>
+    <p-panel [showHeader]="false" #pnlCtl>
+      <p-scrollPanel [style]="{width: '100%', height: contentHeight + 'px'}" styleClass="cont-div">
+        <table class="table table-responsive-sm table-bordered table-striped table-sm no-margin">
+          <thead>
+            <tr>
+              <th style="min-width:100px;">Ticket No</th>
+              <th style="min-width:150px;">Summary</th>
+              <th style="min-width:90px;">Total Hours</th>
+              <th style="min-width:80px;">Uploaded</th>
+              <th style="min-width:110px;">Pending Upload</th>
+              <th style="min-width:180px;">Parent Ticket</th>
+              <th style="min-width:400px;">Dates Logged</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngIf="worklogs && worklogs.length == 0"><td colspan="8">No records exists</td></tr>
+            <tr *ngFor="let w of worklogs">
+              <td><a href="{{getTicketUrl(w.ticketNo)}}" class="link" target="_blank">{{w.ticketNo}}</a></td>
+              <td>{{w.summary}}</td>
+              <td>{{w.totalHours | formatTs}}</td>
+              <td>{{w.uploaded | formatTs}}</td>
+              <td>{{w.pendingUpload | formatTs}}</td>
+              <td>{{w.parentKey ? (w.parentKey + ' - ' + w.parentSumm) : ''}}</td>
+              <td>
+                <ul class="tags">
+                  <li *ngFor="let ld of w.logData">
+                    <a class="link badge badge-pill badge-primary" *ngIf="ld.worklogId" href="{{getWorklogUrl(w.ticketNo, ld.worklogId)}}" target="_blank" title="{{ld.comments}}"><span class="fa fa-clock-o"></span> {{ld.dateLogged | formatDate}}: {{ld.uploaded | formatTs}}</a>
+                    <a class="link badge badge-pill badge-primary" *ngIf="!ld.worklogId" nohref (click)="editWorklog(ld)" title="{{ld.comments}}"><span class="fa fa-clock-o"></span> {{ld.dateLogged | formatDate}}: {{ld.uploaded | formatTs}}</a>
+                  </li>
+                </ul>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </p-scrollPanel>
+    </p-panel>
+  </p-panel>
+</div>

@@ -1,0 +1,1 @@
+start ng build --prod

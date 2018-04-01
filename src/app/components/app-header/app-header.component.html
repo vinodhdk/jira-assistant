@@ -1,0 +1,43 @@
+<header class="app-header navbar">
+  <button class="navbar-toggler d-lg-none" type="button" appMobileSidebarToggler>
+    <i class="fa fa-bars"></i>
+  </button>
+  <a class="navbar-brand" href="#" target="_blank"><span>Jira Assistant</span></a>
+  <button class="navbar-toggler d-md-down-none mr-auto" type="button" appSidebarToggler>
+    <i class="fa fa-bars"></i>
+  </button>
+  <div class="pull-right d-sm-down-none">
+    <ul class="right-menus">
+      <li>
+        <a title="Comments added in tickets mentioning you">
+          <i class="fa fa-comments"></i>
+          <!--<span class="label label-success">{{comments.length}}</span>-->
+        </a>
+      </li>
+      <li>
+        <a title="Show youtube help video specific to this page" (click)="showVideo()">
+          <i class="fa fa-youtube-play"></i>
+        </a>
+      </li>
+      <li>
+        <a title="Rate this tool, write a comment or share it with others.">
+          <i class="fa fa-share-alt"></i>
+        </a>
+      </li>
+      <li>
+        <a href="#!/feedback" title="Report a bug or suggest a new feature">
+          <i class="fa fa-bug"></i>
+        </a>
+      </li>
+      <li>
+        <a title="Show settings specific to this page" appAsideMenuToggler>
+          <i class="fa fa-gears"></i>
+        </a>
+      </li>
+    </ul>
+  </div>
+</header>
+<p-dialog [(visible)]="showVideoHelp" (onHide)="onHelpClosed()" styleClass="video-help"
+          dismissableMask="true" modal="true" [showHeader]="false" baseZIndex="9999">
+  <iframe id="ifVideoHelp" style="width:100%; height:100%;" frameborder="0" allowfullscreen></iframe>
+</p-dialog>

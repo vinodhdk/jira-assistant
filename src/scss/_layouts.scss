@@ -1,0 +1,226 @@
+/* Style of no gadget div displayed in dashboard when no gadgets are added */
+div.no-widget-div {
+  width: 100%;
+  height: 50vh;
+  font-size: 30px;
+  text-align: center;
+  border: 2px dashed grey;
+  padding: 115px 15px;
+  background-color: whitesmoke;
+}
+
+/* style for layout-1 */
+div.layout-1 {
+  .widget-cntr {
+    width: calc(50% - 3px);
+    float: left;
+    height: calc(50vh - 48px);
+    margin-bottom: 8px;
+  }
+
+  .widget-cntr:nth-child(odd) {
+    margin-right: 3px;
+  }
+
+  .widget-cntr:nth-child(even) {
+    margin-left: 3px;
+  }
+}
+
+div.dummy-layout-1 {
+  .widget-cntr {
+    width: 45%;
+    height: 45%;
+  }
+}
+
+/* style for layout-2 */
+div.layout-2 {
+  .widget-cntr {
+    width: 100%;
+    float: left;
+    height: calc(50vh - 48px);
+    margin-bottom: 8px;
+  }
+}
+
+div.dummy-layout-2 {
+  .widget-cntr {
+    height: 45%;
+    width: 96%;
+  }
+}
+
+/* style for layout-3 */
+div.layout-3 {
+  .widget-cntr {
+    width: calc(50% - 3px);
+    float: left;
+    height: calc(100vh - 95px);
+  }
+
+  .widget-cntr:nth-child(odd) {
+    margin-right: 3px;
+  }
+
+  .widget-cntr:nth-child(even) {
+    margin-left: 3px;
+  }
+}
+
+div.dummy-layout-3 {
+  .widget-cntr {
+    height: 96%;
+    width: 45%;
+  }
+}
+
+/* style for layout-4 */
+div.layout-4 {
+  .widget-cntr {
+    width: calc(50% - 3px);
+  }
+
+  .widget-cntr:nth-child(3n-2) {
+    height: calc(100vh - 95px);
+    margin-bottom: 7px;
+    margin-right: 3px;
+  }
+
+  .widget-cntr:nth-child(3n-1), .widget-cntr:nth-child(3n) {
+    float: right;
+    height: calc(50vh - 48px);
+    margin-left: 3px;
+  }
+
+  .widget-cntr:nth-child(3n) {
+    margin-top: 8px;
+  }
+}
+
+div.dummy-layout-4 {
+  .widget-cntr:nth-child(3n-2) {
+    height: 96%;
+    width: 45%;
+  }
+
+  .widget-cntr:nth-child(3n-1), .widget-cntr:nth-child(3n) {
+    height: 45%;
+    width: 45%;
+  }
+}
+
+/* style for layout-5 */
+div.layout-5 {
+  .widget-cntr {
+    height: calc(50vh - 48px);
+  }
+
+  .widget-cntr:nth-child(3n-2) {
+    width: 100%;
+  }
+
+  .widget-cntr:nth-child(3n-1), .widget-cntr:nth-child(3n) {
+    width: 50%;
+    margin-top: 8px;
+    margin-bottom: 10px;
+  }
+}
+
+div.dummy-layout-5 {
+  .widget-cntr:nth-child(3n-2) {
+    height: 45%;
+    width: 96%;
+  }
+
+  .widget-cntr:nth-child(3n-1) {
+    height: 45%;
+    width: 45%;
+  }
+
+  .widget-cntr:nth-child(3n) {
+    height: 45%;
+    width: 45%;
+  }
+}
+
+/* style for layout-6 */
+div.layout-6 {
+  .widget-cntr {
+    height: calc(50vh - 48px);
+  }
+
+  .widget-cntr:nth-child(3n-2) {
+    width: 50%;
+  }
+
+  .widget-cntr:nth-child(3n-1) {
+    width: 50%;
+  }
+
+  .widget-cntr:nth-child(3n) {
+    width: 100%;
+    margin-top: 8px;
+    margin-bottom: 12px;
+  }
+}
+
+div.dummy-layout-6 {
+  .widget-cntr:nth-child(3n-2) {
+    height: 45%;
+    width: 45%;
+  }
+
+  .widget-cntr:nth-child(3n-1) {
+    height: 45%;
+    width: 45%;
+  }
+
+  .widget-cntr:nth-child(3n) {
+    height: 45%;
+    width: 96%;
+  }
+}
+
+div.layout-7 {
+  .widget-cntr {
+    height: calc(100vh - 48px);
+    width: 100%;
+  }
+}
+
+div.dummy-layout-7 {
+  .widget-cntr {
+    height: 96%;
+    width: 96%;
+  }
+}
+
+/* common styles for layout */
+div.dummy-layout .widget-cntr {
+  border: 1px dashed grey;
+  margin: 2px;
+}
+
+div.widget-cntr {
+  float: left;
+  overflow: hidden;
+}
+
+div.dummy-layout {
+  float: left;
+  margin: 3px;
+  height: 80px;
+  width: 100px;
+  cursor: pointer;
+  border: 2px solid lightgrey;
+  overflow: hidden;
+}
+
+div.dummy-layout:hover {
+  border: 2px solid blue;
+}
+
+div.dummy-layout.selected {
+  border: 2px solid red;
+}

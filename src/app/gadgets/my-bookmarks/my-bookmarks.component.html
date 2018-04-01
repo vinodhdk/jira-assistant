@@ -1,0 +1,73 @@
+<p-tieredMenu #menu [model]="contextMenu" [popup]="true" appendTo="body"></p-tieredMenu>
+<div [ngClass]="isFullScreen?'full-screen':''">
+  <p-panel styleClass="p-no-padding">
+    <p-header>
+      <div class="ui-helper-clearfix">
+        <i class="fa fa-bookmark"></i>
+        <span class="ui-panel-title" style="font-size:16px;display:inline-block;margin-top:2px">Bookmark</span>
+        <div class="pull-right">
+          <button pButton [icon]="isFullScreen?'fa-compress':'fa-expand'" (click)="isFullScreen=!isFullScreen"></button>
+          <button pButton icon="fa-refresh" (click)="fillBookmarksList();"></button>
+          <button pButton icon="fa-save"></button>
+          <button pButton icon="fa-plus" (click)="showAddPopup=true"></button>
+          <button pButton icon="fa-trash-o" (click)="deleteBookmark()"></button>
+          <button pButton icon="fa-times" (click)="onAction.emit({ action: 100 });"></button>
+        </div>
+      </div>
+    </p-header>
+    <p-blockUI [target]="pnlCtl" [blocked]="isLoading">
+      <i class="fa fa-refresh fa-spin fa-5x" style="position:absolute;top:25%;left:50%"></i>
+    </p-blockUI>
+    <p-panel [showHeader]="false" #pnlCtl>
+      <p-scrollPanel [style]="{width: '100%', height: contentHeight + 'px'}" styleClass="cont-div">
+        <table class="table table-responsive-sm table-bordered table-striped table-sm no-margin">
+          <thead>
+            <tr>
+              <th style="width:25px;"><input type="checkbox" [(ngModel)]="selAllBks" (click)="selectAll(selAllBks)" /></th>
+              <th style="min-width:100px;">Ticket No</th>
+              <th style="min-width:100px;">Type</th>
+              <th style="min-width:280px;">Summary</th>
+              <th style="min-width:130px;">Assignee</th>
+              <th style="min-width:130px;">Reporter</th>
+              <th style="min-width:80px;">Priority</th>
+              <th style="min-width:80px;">Status</th>
+              <th style="min-width:120px;">Resolution</th>
+              <th style="min-width:170px;">Created</th>
+              <th style="min-width:170px;">Updated</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngIf="bookmarksList && bookmarksList.length == 0"><td colspan="11">You have not yet bookmarked any tickets. Bookmark your frequently used tickets.</td></tr>
+            <tr *ngFor="let b of bookmarksList" [ngClass]="getRowStatus(b)">
+              <td class="data-center">
+                <input type="checkbox" [(ngModel)]="b.selected" [hidden]="!b.selected" />
+                <i [hidden]="b.selected" class="fa fa-ellipsis-v" (click)="showContext($event, b, menu);"></i>
+              </td>
+              <td><a href="{{b.ticketNo | toTicketUrl}}" class="link strike" target="_blank">{{b.ticketNo}}</a></td>
+              <td class="strike"><img class="img-x16" src="{{b.issuetypeIcon}}" />{{b.issuetype}}</td>
+              <td class="strike">{{b.summary}}</td>
+              <td>{{b.assigneeName}}</td>
+              <td>{{b.reporterName}}</td>
+              <td><img class="img-x16" src="{{b.priorityIcon}}" />{{b.priority}}</td>
+              <td><img class="img-x16" src="{{b.statusIcon}}" />{{b.status}}</td>
+              <td><img class="img-x16" src="{{b.resolutionIcon}}" *ngIf="b.resolutionIcon" />{{b.resolution}}</td>
+              <td>{{b.createdDate | formatDateTime}}</td>
+              <td>{{b.updatedDate | formatDateTime}}</td>
+            </tr>
+          </tbody>
+        </table>
+      </p-scrollPanel>
+    </p-panel>
+  </p-panel>
+</div>
+
+<p-dialog header="Add Bookmark" [visible]="showAddPopup" [breakpoint]="1000" appendTo="body" [baseZIndex]="9999"
+          [dismissableMask]="false" [autoAlign]="true" (onHide)="showAddPopup=false">
+  <p-chips [(ngModel)]="ticketsList" max="30" placeholder="Enter one or more ticket numbers"
+           allowDuplicate="false" addOnTab="true" addOnBlur="true"></p-chips>
+  <strong>Note:</strong> Press enter key to add multiple items
+  <p-footer>
+    <button type="button" class="btn btn-primary" (click)="addBookmark(ticketsList)">Save</button>
+    <button type="button" class="btn btn-default" (click)="showAddPopup=false">Cancel</button>
+  </p-footer>
+</p-dialog>

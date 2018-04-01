@@ -1,0 +1,174 @@
+<div [ngClass]="isFullScreen?'full-screen':''">
+  <p-panel styleClass="p-no-padding">
+    <p-header>
+      <div class="ui-helper-clearfix">
+        <i class="fa fa-list-alt"></i>
+        <span class="ui-panel-title" style="font-size:16px;display:inline-block;margin-top:2px">Logged Work - [User - Day wise]</span>
+        <div class="pull-right">
+          <app-date-range-picker [(ngModal)]="dateRange" (selected)="dateSelected($event)"></app-date-range-picker>
+          <button pButton icon="fa-users" (click)="showGroups=true"></button>
+          <button pButton [icon]="isFullScreen?'fa-compress':'fa-expand'" (click)="isFullScreen=!isFullScreen"></button>
+          <button pButton icon="fa-refresh" (click)="generateReport();"></button>
+          <button pButton icon="fa-save"></button>
+          <button pButton icon="fa-cogs" (click)="showSettings=true"></button>
+        </div>
+      </div>
+    </p-header>
+    <p-blockUI [target]="wldiv" [blocked]="isLoading">
+      <i class="fa fa-refresh fa-spin fa-5x" style="position:absolute;top:25%;left:50%"></i>
+    </p-blockUI>
+    <p-panel [showHeader]="false" #wldiv>
+      <div *ngIf="!userDayWise && !isLoading" style="padding:15px;">
+        Choose a date for which you would like to view the report or click the refresh ( <i class="fa fa-refresh"></i> ) icon to
+        load the report for selected date. You can choose the list of users by clicking the ( <i class="fa fa-users"></i> ) icon.
+
+        <p>
+          <strong>Note:</strong> If you want to repeatedly view the report for set of users, you can add those users under a group.
+          Click on Settings <i class="fa fa-arrow-right"></i> User groups from left hand menu to add it.
+        </p>
+      </div>
+      <div *ngIf="isLoading" style="padding:15px;">Loading... please wait while the report is being loaded. It may take few seconds / minute based on the range you had selected.</div>
+      <p-scrollPanel #pnl [style]="{width:'100%',height: availableHeight+'px'}" styleClass="cont-div">
+        <table *ngIf="userDayWise && pageSettings.groupMode != '2'" class="table table-bordered data-center" style="width:100%;">
+          <thead>
+            <tr class="data-center">
+              <th style="min-width:380px;" rowspan="2">User Details</th>
+              <th style="min-width:35px;" *ngFor="let day of months" [attr.colspan]="day.dates.length">{{day.monthName}}</th>
+              <th style="min-width:50px;" rowspan="2">Total Hours</th>
+            </tr>
+            <tr>
+              <th style="min-width:35px;" *ngFor="let day of dates">{{day | formatDate:'DDD, dd'}}</th>
+            </tr>
+          </thead>
+          <tbody *ngIf="userDayWise && userDayWise.length == 0">
+            <tr><td colspan="9">No records exists</td></tr>
+          </tbody>
+          <tbody *ngFor="let u of userDayWise; let rowIdx = index">
+            <tr *ngIf="rowIdx == 0 || u.groupName != userDayWise[rowIdx-1].groupName" class="grouped-row">
+              <td>{{u.groupName}}</td>
+              <td *ngFor="let day of dates" [ngClass]="getLogClass(day)">{{ getGroupTotal(u.groupName, day) | convertSecs:{format:pageSettings.logFormat=='1'} }}</td>
+              <td>{{ getGroupTotal(u.groupName) | convertSecs:{format:pageSettings.logFormat=='1'} }}</td>
+            </tr>
+            <tr class="pointer" (click)="u.expanded=!u.expanded">
+              <td class="data-left">
+                <div class="user-info" style="padding-left:0px;">
+                  <i class="pull-left drill-down fa" [ngClass]="u.expanded ? 'fa-chevron-circle-down' : 'fa-chevron-circle-right'" title="Click to toggle ticket details"></i>
+                  <img [src]="u.profileImgUrl" height="40" width="40" class="pull-left" alt="{{u.displayName}}">
+                  <span class="name">{{u.displayName}}</span>
+                  <p>({{showGrpRow}}{{u.userEmail}})</p>
+                </div>
+              </td>
+              <td *ngFor="let day of dates" [ngClass]="getLogClass(day, filterUserData(u.logData, day))">{{ filterUserData(u.logData, day) | convertSecs:{format:pageSettings.logFormat=='1'} }}</td>
+              <td>{{u.totalHours | convertSecs:{format:pageSettings.logFormat=='1'} }}</td>
+            </tr>
+            <tr [ngClass]="!u.expanded ? 'hide' : ''" [hidden]="!u.expanded" *ngFor="let t of u.ticketWise">
+              <td class="data-left">
+                <a *ngIf="t.parent" [attr.href]="t.parentUrl" class="link" target="_blank">{{t.parent}} - </a>
+                <a [attr.href]="t.url" class="link" target="_blank">{{t.ticketNo}}</a> -
+                <span>{{t.summary}}</span>
+              </td>
+              <td [ngSwitch]="pageSettings.breakupMode" *ngFor="let day of dates">
+                <span *ngSwitchDefault title="{{ getComments(t[day.format('yyyyMMdd')]) }}">{{ getTotalTime(t[day.format('yyyyMMdd')]) | convertSecs:{format:pageSettings.logFormat=='1'} }}</span>
+                <div *ngSwitchCase="2"><span *ngFor="let d of t[day.format('yyyyMMdd')]" title="{{(d.logTime | formatTime)}} - {{d.comment}}">{{ d.totalHours | convertSecs:{format:pageSettings.logFormat=='1'} }}; </span></div>
+              </td>
+              <td>{{t.totalHours | convertSecs:{format:pageSettings.logFormat=='1'} }}</td>
+            </tr>
+          </tbody>
+          <tbody>
+            <tr class="total-row">
+              <td>Grand Total <i class="fa fa-arrow-right"></i></td>
+              <td *ngFor="let day of dates" [ngClass]="getLogClass(day)">{{ getGroupTotal(null, day) | convertSecs:{format:pageSettings.logFormat=='1'} }}</td>
+              <td>{{ getGroupTotal() | convertSecs:{format:pageSettings.logFormat=='1'} }}</td>
+            </tr>
+          </tbody>
+        </table>
+        <table *ngIf="userDayWise && pageSettings.groupMode == '2'" class="table table-bordered" style="width:100%;">
+          <thead>
+            <tr class="data-center">
+              <th style="min-width:80px;">Type</th>
+              <th style="min-width:80px;">Ticket No</th>
+              <th style="min-width:200px;">Summary</th>
+              <th style="min-width:170px;">Log Date & Time</th>
+              <th style="min-width:180px;">User</th>
+              <th style="min-width:70px;">Hr. Spent</th>
+              <th style="min-width:200px;">Comment</th>
+            </tr>
+          </thead>
+          <tbody *ngIf="userDayWise && userDayWise.length == 0">
+            <tr><td colspan="100">No records exists</td></tr>
+          </tbody>
+          <tbody *ngFor="let u of userDayWise">
+            <tr *ngFor="let l of u.logData">
+              <td>{{l.issueType}}</td>
+              <td><a href="{{l.url}}" class="link" target="_blank">{{l.ticketNo}}</a></td>
+              <td>{{l.summary}}</td>
+              <td>{{l.logTime | formatDateTime}}</td>
+              <td>{{u.displayName}}</td>
+              <td class="data-center">{{l.totalHours | convertSecs:{format:pageSettings.logFormat=='1'} }}</td>
+              <td>{{l.comment}}</td>
+            </tr>
+          </tbody>
+        </table>
+      </p-scrollPanel>
+    </p-panel>
+  </p-panel>
+</div>
+<p-dialog header="Add users" [(visible)]="showGroups" [breakpoint]="2500" appendTo="body" [baseZIndex]="9999" [modal]="true" [dismissableMask]="false" [autoAlign]="true">
+  <app-group-editor [(groups)]="groups" (onDone)="showGroups=false"></app-group-editor>
+</p-dialog>
+<p-dialog header="Report configurations" [(visible)]="showSettings" [breakpoint]="2500" appendTo="body" [baseZIndex]="9999" [modal]="true" [dismissableMask]="false" [autoAlign]="true">
+  <div class="form-group row">
+    <label class="col-md-3 col-form-label">Grouping</label>
+    <div class="col-md-9 col-form-label">
+      <div class="form-check">
+        <input class="form-check-input" [(ngModel)]="pageSettings.groupMode" type="radio" value="1" name="grouping">
+        <label class="form-check-label" for="radio1">
+          Display report grouped based on User and date
+        </label>
+      </div>
+      <div class="form-check">
+        <input class="form-check-input" [(ngModel)]="pageSettings.groupMode" type="radio" value="2" name="grouping">
+        <label class="form-check-label" for="radio2">
+          Display report in flat structure without any grouping
+        </label>
+      </div>
+    </div>
+  </div>
+  <div class="form-group row">
+    <label class="col-md-3 col-form-label">Log hour format</label>
+    <div class="col-md-9 col-form-label">
+      <div class="form-check">
+        <input class="form-check-input" [(ngModel)]="pageSettings.logFormat" type="radio" value="1" name="hourformat">
+        <label class="form-check-label" for="radio1">
+          Format hours (2h 30m)
+        </label>
+      </div>
+      <div class="form-check">
+        <input class="form-check-input" [(ngModel)]="pageSettings.logFormat" type="radio" value="2" name="hourformat">
+        <label class="form-check-label" for="radio2">
+          Show in hours (2.5)
+        </label>
+      </div>
+    </div>
+  </div>
+  <div class="form-group row">
+    <label class="col-md-3 col-form-label">Log breakup</label>
+    <div class="col-md-9 col-form-label">
+      <div class="form-check">
+        <input class="form-check-input" [(ngModel)]="pageSettings.breakupMode" type="radio" value="1" name="logbreakup">
+        <label class="form-check-label" for="radio1">
+          Single entry (Sum worklog added for same ticket on same day)
+        </label>
+      </div>
+      <div class="form-check">
+        <input class="form-check-input" [(ngModel)]="pageSettings.breakupMode" type="radio" value="2" name="logbreakup">
+        <label class="form-check-label" for="radio2">
+          Individual entry (Display individual entry for each of the worklog)
+        </label>
+      </div>
+    </div>
+  </div>
+  <p-footer>
+    <button class="btn btn-default pull-right" (click)="showSettings=false">Done</button>
+  </p-footer>
+</p-dialog>

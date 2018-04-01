@@ -1,0 +1,63 @@
+<p-tieredMenu #menu [model]="contextMenu" [popup]="true" appendTo="body"></p-tieredMenu>
+<div [ngClass]="isFullScreen?'full-screen':''">
+  <p-panel styleClass="p-no-padding">
+    <p-header>
+      <div class="ui-helper-clearfix">
+        <i class="fa fa-list-alt"></i>
+        <span class="ui-panel-title" style="font-size:16px;display:inline-block;margin-top:2px">Daywise worklog</span>
+        <div class="pull-right">
+          <app-date-range-picker [(ngModal)]="dateRange" width="200" (selected)="dateSelected($event)"></app-date-range-picker>
+          <button pButton [icon]="isFullScreen?'fa-compress':'fa-expand'" (click)="isFullScreen=!isFullScreen"></button>
+          <button pButton icon="fa-refresh" (click)="fillWorklogs();"></button>
+          <button pButton icon="fa-save"></button>
+          <button pButton icon="fa-times" (click)="onAction.emit({ action: 100 });"></button>
+        </div>
+      </div>
+    </p-header>
+    <p-blockUI [target]="pnlCtl" [blocked]="isLoading">
+      <i class="fa fa-refresh fa-spin fa-5x" style="position:absolute;top:25%;left:50%"></i>
+    </p-blockUI>
+    <p-panel [showHeader]="false" #pnlCtl>
+      <p-scrollPanel [style]="{width: '100%', height: contentHeight + 'px'}" styleClass="cont-div">
+        <table class="table table-responsive-sm table-bordered table-striped table-sm no-margin">
+          <thead>
+            <tr>
+              <th style="min-width:130px;">Logged Date</th>
+              <th style="min-width:100px;">Total Hours</th>
+              <th style="min-width:90px;">Uploaded</th>
+              <th style="min-width:110px;">Pending Upload</th>
+              <th style="min-width:400px;">Ticket List</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngIf="worklogs_DW && worklogs_DW.length == 0"><td colspan="8">No worklog exists for selected date range!</td></tr>
+            <tr *ngFor="let w of worklogs_DW" [ngClass]="getRowStatus(w)">
+              <td>
+                <i class="fa fa-ellipsis-v" style="margin-right:3px;" (click)="showContext($event, w, menu);"></i>
+                {{w.dateLogged | formatDate}}
+              </td>
+              <td>
+                {{w.totalHours | formatTs}}
+                <span *ngIf="w.difference">({{w.difference | formatTs}})</span>
+              </td>
+              <td>{{w.uploaded | formatTs}}</td>
+              <td>{{w.pendingUpload | formatTs}}</td>
+              <td>
+                <ul class="tags">
+                  <li *ngFor="let ld of w.ticketList">
+                    <a class="badge badge-pill badge-primary" *ngIf="ld.worklogId" href="{{getWorklogUrl(ld.ticketNo, ld.worklogId)}}" target="_blank" title="{{ld.comment}}">
+                      <span class="fa fa-clock-o"></span> {{ld.ticketNo}}: {{ld.uploaded | formatTs}}
+                    </a>
+                    <a class="badge badge-pill badge-primary" nohref *ngIf="!ld.worklogId" (click)="editWorklog(ld)" title="{{ld.comment}}">
+                      <span class="fa fa-clock-o"></span> {{ld.ticketNo}}: {{ld.uploaded | formatTs}}
+                    </a>
+                  </li>
+                </ul>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </p-scrollPanel>
+    </p-panel>
+  </p-panel>
+</div>

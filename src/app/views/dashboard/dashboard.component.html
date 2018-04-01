@@ -1,0 +1,145 @@
+<div class="page-header">
+  <div class="title" [hidden]="isEditMode" (click)="newName=currentBoard.name;newIcon=currentBoard.icon;isEditMode=true;">
+    <i class="board-icon" [ngClass]="currentBoard.icon"></i>
+    <span class="lev-1">Dashboards</span>
+    <i class="fa fa-arrow-right"></i>
+    <span class="lev-2">{{currentBoard.name}}</span>
+    <i class="fa fa-edit"></i>
+  </div>
+  <div class="pull-left" *ngIf="isEditMode">
+    <div class="ui-inputgroup">
+      <button pButton type="button" icon="{{newIcon}}" class="ui-button-info"></button>
+      <input [(ngModel)]="newName" maxlength="20" />
+      <button pButton type="button" icon="fa-plus" class="ui-button-success" (click)="currentBoard.name=newName;currentBoard.icon=newIcon;saveDashboardInfo();isEditMode=false"></button>
+      <button pButton type="button" icon="fa-undo" class="ui-button-default" (click)="isEditMode=false"></button>
+    </div>
+  </div>
+  <div class="controls">
+    <p-splitButton label="Add gadgets" icon="fa-check" (onClick)="showGadgetsPopup=true" [model]="contextMenu" styleClass="ui-button-primary"></p-splitButton>
+  </div>
+</div>
+<div [ngClass]="'layout-' + currentBoard.layout">
+  <ng-container *ngFor="let ctrl of currentBoard.widgets; let idx=index" [ngSwitch]="ctrl.name">
+    <div class="widget-cntr" [layout]="currentBoard.layout" *ngSwitchCase="'myOpenTickets'" myOpenTickets (onAction)="widgetAction($event,idx)"></div>
+    <div class="widget-cntr" [layout]="currentBoard.layout" *ngSwitchCase="'myBookmarks'" myBookmarks (onAction)="widgetAction($event,idx)"></div>
+    <div class="widget-cntr" [layout]="currentBoard.layout" *ngSwitchCase="'dateWiseWorklog'" dateWiseWorklog (onAction)="widgetAction($event,idx)"></div>
+    <div class="widget-cntr" [layout]="currentBoard.layout" *ngSwitchCase="'pendingWorklog'" pendingWorklog (onAction)="widgetAction($event,idx)"></div>
+    <div class="widget-cntr" [layout]="currentBoard.layout" *ngSwitchCase="'ticketWiseWorklog'" ticketWiseWorklog (onAction)="widgetAction($event,idx)"></div>
+    <div class="widget-cntr" [layout]="currentBoard.layout" *ngSwitchCase="'myFilters'" myFilters (onAction)="widgetAction($event,idx)"></div>
+  </ng-container>
+  <ng-container *ngIf="!currentBoard.widgets || currentBoard.widgets.length == 0">
+    <div class="no-widget-div">
+      You haven't added any gadgets to this dashboard. Click on "Add gadgets" button above to start adding a cool one and personalise your experience.
+    </div>
+  </ng-container>
+</div>
+
+<add-worklog [(showPopup)]="showWorklogPopup" (onDone)="showWorklogPopup=false" [(worklogItem)]="worklogItem"></add-worklog>
+
+<p-dialog header="Choose layouts" [visible]="showLayoutPopup" [breakpoint]="1000" appendTo="body" [baseZIndex]="9999" [modal]="true"
+          [dismissableMask]="false" [autoAlign]="true" (onHide)="showLayoutPopup=false">
+  <div *ngFor="let i of [1,2,3,4,5,6,7]" class="pull-left dummy-layout" [ngClass]="('dummy-layout-' + i) + (selectedLayout == i ? ' selected' : '')"
+       (click)="selectedLayout=i">
+    <div class="widget-cntr"></div>
+    <div class="widget-cntr"></div>
+    <div class="widget-cntr"></div>
+    <div class="widget-cntr"></div>
+  </div>
+  <p-footer>
+    <button type="button" class="btn btn-primary" (click)="currentBoard.layout=selectedLayout;saveDashboardInfo();showLayoutPopup=false">Save</button>
+    <button type="button" class="btn btn-default" (click)="showLayoutPopup=false">Cancel</button>
+  </p-footer>
+</p-dialog>
+
+<p-dialog header="Manage gadgets" [visible]="showGadgetsPopup" [width]="600" appendTo="body" [baseZIndex]="9999" [modal]="true"
+          [dismissableMask]="false" [autoAlign]="true" (onHide)="showGadgetsPopup=false">
+  <div>
+    <div class="gadget-info">
+      <div class="icon"><i class="fa fa-eye"></i></div>
+      <div class="details">
+        <span class="name">My Open Tickets</span>
+        <span class="desc">Contains the list of open tickets assigned to you</span>
+        <div class="params"></div>
+      </div>
+      <div class="controls">
+        <button pButton type="button" icon="fa-plus" label="Add gadget" class="ui-button-success" *ngIf="!hasGadget('myOpenTickets')" (click)="addGadget('myOpenTickets')"></button>
+        <button pButton type="button" icon="fa-times" label="Remove gadget" class="ui-button-danger" *ngIf="hasGadget('myOpenTickets')" (click)="removeGadget('myOpenTickets')"></button>
+      </div>
+    </div>
+    <div class="gadget-info">
+      <div class="icon"><i class="fa fa-bookmark"></i></div>
+      <div class="details">
+        <span class="name">Bookmarks</span>
+        <span class="desc">List of bookmarked tickets</span>
+        <div class="params"></div>
+      </div>
+      <div class="controls">
+        <button pButton type="button" icon="fa-plus" label="Add gadget" class="ui-button-success" *ngIf="!hasGadget('myBookmarks')" (click)="addGadget('myBookmarks')"></button>
+        <button pButton type="button" icon="fa-times" label="Remove gadget" class="ui-button-danger" *ngIf="hasGadget('myBookmarks')" (click)="removeGadget('myBookmarks')"></button>
+      </div>
+    </div>
+    <div class="gadget-info">
+      <div class="icon"><i class="fa fa-list-alt"></i></div>
+      <div class="details">
+        <span class="name">Logged Work - [Daywise]</span>
+        <span class="desc">List of worklog's grouped by date</span>
+        <div class="params"></div>
+      </div>
+      <div class="controls">
+        <button pButton type="button" icon="fa-plus" label="Add gadget" class="ui-button-success" *ngIf="!hasGadget('dateWiseWorklog')" (click)="addGadget('dateWiseWorklog')"></button>
+        <button pButton type="button" icon="fa-times" label="Remove gadget" class="ui-button-danger" *ngIf="hasGadget('dateWiseWorklog')" (click)="removeGadget('dateWiseWorklog')"></button>
+      </div>
+    </div>
+    <div class="gadget-info">
+      <div class="icon"><i class="fa fa-clock-o"></i></div>
+      <div class="details">
+        <span class="name">Worklog - [Pending Upload]</span>
+        <span class="desc">Worklog's still pending for upload</span>
+        <div class="params"></div>
+      </div>
+      <div class="controls">
+        <button pButton type="button" icon="fa-plus" label="Add gadget" class="ui-button-success" *ngIf="!hasGadget('pendingWorklog')" (click)="addGadget('pendingWorklog')"></button>
+        <button pButton type="button" icon="fa-times" label="Remove gadget" class="ui-button-danger" *ngIf="hasGadget('pendingWorklog')" (click)="removeGadget('pendingWorklog')"></button>
+      </div>
+    </div>
+    <div class="gadget-info">
+      <div class="icon"><i class="fa fa-list-alt"></i></div>
+      <div class="details">
+        <span class="name">Logged Work - [Ticketwise]</span>
+        <span class="desc">List of worklog's grouped by ticket</span>
+        <div class="params"></div>
+      </div>
+      <div class="controls">
+        <button pButton type="button" label="Add gadget" icon="fa-plus" class="ui-button-success" *ngIf="!hasGadget('ticketWiseWorklog')" (click)="addGadget('ticketWiseWorklog')"></button>
+        <button pButton type="button" icon="fa-times" label="Remove gadget" class="ui-button-danger" *ngIf="hasGadget('ticketWiseWorklog')" (click)="removeGadget('ticketWiseWorklog')"></button>
+      </div>
+    </div>
+    <div class="gadget-info">
+      <div class="icon"><i class="fa fa-filter"></i></div>
+      <div class="details">
+        <span class="name">Saved Query</span>
+        <span class="desc">List of saved query</span>
+        <div class="params"></div>
+      </div>
+      <div class="controls">
+        <button pButton type="button" icon="fa-plus" label="Add gadget" class="ui-button-success" *ngIf="!hasGadget('myFilters')" (click)="addGadget('myFilters')"></button>
+        <button pButton type="button" icon="fa-times" label="Remove gadget" class="ui-button-danger" *ngIf="hasGadget('myFilters')" (click)="removeGadget('myFilters')"></button>
+      </div>
+    </div>
+    <!--<div class="gadget-info">
+      <div class="icon"><i class="fa fa-eye"></i></div>
+      <div class="details">
+        <span class="name"></span>
+        <span class="desc"></span>
+        <div class="params"></div>
+      </div>
+        <div class="controls">
+          <button pButton type="button" icon="fa-plus" label="Add gadget" class="ui-button-success" *ngIf="!hasGadget('')" (click)="addGadget('')"></button>
+          <button pButton type="button" icon="fa-times" label="Remove gadget" class="ui-button-danger" *ngIf="hasGadget('')" (click)="removeGadget('')"></button>
+        </div>
+    </div>-->
+  </div>
+  <p-footer>
+    <button type="button" class="btn btn-default" (click)="saveDashboardInfo(true);showGadgetsPopup=false">Done</button>
+  </p-footer>
+</p-dialog>
