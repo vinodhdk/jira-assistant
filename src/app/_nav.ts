@@ -61,7 +61,11 @@ export var navigation: any[] = [
   {
     name: 'User groups',
     url: '/settings/usergroups',
-    icon: 'fa fa-users'
+    icon: 'fa fa-users',
+    badge: {
+      variant: 'info',
+      text: 'NEW'
+    },
   }
 ];
 

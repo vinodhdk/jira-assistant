@@ -1,62 +1,62 @@
-<p-dialog header="Add worklog" [(visible)]="showPopup" [breakpoint]="2500" appendTo="body" [baseZIndex]="9999" [modal]="true"
+<p-dialog header="Add worklog" [(visible)]="showPopup" width="550" [breakpoint]="550" appendTo="body" [baseZIndex]="9999" [modal]="true"
           [dismissableMask]="false" [autoAlign]="true" (onHide)="modelOnDone($event)">
-  <div>
-    <label>Ticket No</label>
-    <div>
-      <div class="ui-inputgroup" [ngClass]="ctlClass.ticketNo">
-        <span class="ui-inputgroup-addon"><i class="fa fa-pencil"></i></span>
-        <p-autoComplete id="txtTicketNo" [(ngModel)]="log.ticketNo" [suggestions]="ticketList" field="value"
-                        minLength="0" placeholder="Enter the ticket number or start typing the summary here"
-                        (completeMethod)="searchTickets($event)" [disabled]="log.isUploaded" maxlength="20">
-          <ng-template let-ticket pTemplate="item">
-            <span style="font-size:12px;margin:10px 10px 0 0">{{ticket.value}} - {{ticket.label}}</span>
-          </ng-template>
-        </p-autoComplete>
-      </div>
-      <span class="help-block">Provide the Ticket No on which you had to log your work</span>
+  <div class="ui-g ui-fluid">
+    <div class="ui-g-12 ui-md-3">
+      <strong>Log time</strong>
     </div>
-  </div>
-
-  <div class="form-group">
-    <label>Log time</label>
-    <div>
-      <div class="ui-inputgroup" [ngClass]="ctlClass.dateStarted">
-        <span class="ui-inputgroup-addon"><i class="fa fa-calendar"></i></span>
-        <p-calendar [(ngModel)]="log.dateStarted" [showTime]="true"></p-calendar>
+    <div class="ui-g-12 ui-md-9">
+      <div class="form-group">
+        <div class="ui-inputgroup" [ngClass]="ctlClass.dateStarted">
+          <p-calendar [(ngModel)]="log.dateStarted" [showTime]="true"></p-calendar>
+          <span class="ui-inputgroup-addon"><i class="fa fa-calendar"></i></span>
+        </div>
       </div>
       <span class="help-block">Provide the time you had started the work</span>
     </div>
-  </div>
 
-  <div class="col-md-12">
-    <div class="form-group col-md-4 pull-left">
-      <label>Actual time spent</label>
-      <div>
-        <div class="ui-inputgroup">
-          <span class="ui-inputgroup-addon"><i class="fa fa-calendar"></i></span>
-          <input type="text" [(ngModel)]="log.timeSpent" readonly maxlength="5" />
+    <div class="ui-g-12 ui-md-3">
+      <strong>Ticket No</strong>
+    </div>
+    <div class="ui-g-12 ui-md-9">
+      <p-autoComplete [(ngModel)]="log.ticketNo" [suggestions]="ticketList" field="value"
+                      minLength="0" placeholder="Enter the ticket number or start typing the summary here"
+                      (completeMethod)="searchTickets($event)" [disabled]="log.isUploaded" maxlength="20">
+        <ng-template let-ticket pTemplate="item">
+          <span style="font-size:12px;margin:10px 10px 0 0">{{ticket.value}} - {{ticket.label}}</span>
+        </ng-template>
+      </p-autoComplete>
+      <span class="help-block">Provide the Ticket No on which you had to log your work</span>
+    </div>
+
+    <div class="ui-g-12 ui-md-3 no-b-padding">
+      <strong>Actual time spent</strong>
+    </div>
+    <div class="ui-g-12 ui-md-2 no-b-padding">
+      <strong>{{ (log.timeSpent | formatTs) || '-' }}</strong>
+    </div>
+    <div class="ui-g-12 ui-md-4 no-b-padding">
+      <strong>Override time spent</strong>
+    </div>
+    <div class="ui-g-12 ui-md-3 no-b-padding">
+      <div class="form-group">
+        <div class="ui-inputgroup" [ngClass]="ctlClass.overrideTimeSpent">
+          <span class="ui-inputgroup-addon"><p-checkbox [(ngModel)]="log.allowOverride" binary="true"></p-checkbox></span>
+          <p-inputMask mask="99:99" [(ngModel)]="log.overrideTimeSpent" placeholder="00:00" maxlength="5" [disabled]="!log.allowOverride"></p-inputMask>
         </div>
       </div>
     </div>
-    <div class="form-group col-md-4 pull-right">
-      <label>Override time spent</label>
-      <div class="ui-inputgroup" [ngClass]="ctlClass.overrideTimeSpent">
-        <span class="ui-inputgroup-addon"><p-checkbox [(ngModel)]="log.allowOverride" binary="true"></p-checkbox></span>
-        <p-inputMask mask="99:99" [(ngModel)]="log.overrideTimeSpent" placeholder="00:00" maxlength="5" [disabled]="!log.allowOverride"></p-inputMask>
-      </div>
+    <div class="ui-g-12 ui-md-9 ui-g-offset-3 no-t-padding">
+      <span class="help-block">Provide the time spent on this task (override to change existing)</span>
     </div>
-  </div>
 
-  <div class="col-md-12"><span class="help-block">Provide the time spent on this task (override to change existing)</span></div>
-
-  <div class="form-group">
-    <label>Comments</label>
-    <div>
-      <div [ngClass]="ctlClass.description">
-        <textarea class="form-control" rows="5" [(ngModel)]="log.description"></textarea>
-      </div>
+    <div class="ui-g-12 ui-md-3">
+      <strong>Comments</strong>
+    </div>
+    <div class="ui-g-12 ui-md-9">
+      <textarea class="form-control" rows="5" [(ngModel)]="log.description"></textarea>
       <span class="help-block">Provide a brief info about the task you had done</span>
     </div>
+
   </div>
 
   <p-footer>

@@ -69,7 +69,7 @@ export class AddWorklogComponent implements OnInit {
     this.cd.detectChanges();
   }
 
-  searchTickets($event) {
+  searchTickets($event: any) {
     var query = ($event.query || "").toLowerCase();
     this.ticketList = this.allTicketList.Where(t => t.value.toLowerCase().indexOf(query) > -1 || t.label.toLowerCase().indexOf(query) > -1);
   }
@@ -98,7 +98,7 @@ export class AddWorklogComponent implements OnInit {
     });
   }
 
-  validateData(log, vald) {
+  validateData(log: any, vald: any) {
     if (log.allowOverride)
       log.overrideTimeSpent = log.overrideTimeSpent || log.timeSpent || "1:00";
 
@@ -123,7 +123,7 @@ export class AddWorklogComponent implements OnInit {
     return validation;
   }
 
-  saveWorklog(worklog, vald) {
+  saveWorklog(worklog: any, vald: any) {
     if (!this.validateData(worklog, vald)) { return false; }
     this.loading = true;
 

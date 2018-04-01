@@ -27,6 +27,14 @@
   ul.right-menus li:hover {
     background-color: $header-logo-bg;
   }
+
+  .dashboard-icons div.d-icon {
+    color: $header-logo-bg;
+
+    &:hover {
+      color: $header-bg;
+    }
+  }
 }
 
 @mixin base-style-light {

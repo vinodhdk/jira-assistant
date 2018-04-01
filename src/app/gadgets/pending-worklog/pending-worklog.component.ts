@@ -47,7 +47,7 @@ export class PendingWorklogComponent extends BaseGadget {
     this.worklogs.ForEach(wl => wl.selected = !selAllWks);
   }
 
-  getRowStatus(d) {
+  getRowStatus(d: any) {
     return this.$jaUtils.getRowStatus(d);
   }
 
@@ -79,7 +79,7 @@ export class PendingWorklogComponent extends BaseGadget {
     var ids = items.Select(function (w) { return w.id; });
     if (ids.length == 0) { this.message.info("Select the worklogs to be deleted!"); return; }
     this.isLoading = true;
-    this.$facade.deleteWorklogs(ids).then((result) => { this.fillWorklogs(); this.isLoading = false; });      //this.pnlLoggedWork_PW.refreshDeps();
+    this.$facade.deleteWorklogs(ids).then((result) => this.fillWorklogs());// ToDo: refresh deps
   }
 
 }

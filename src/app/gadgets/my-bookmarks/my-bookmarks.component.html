@@ -10,7 +10,7 @@
           <button pButton icon="fa-refresh" (click)="fillBookmarksList();"></button>
           <button pButton icon="fa-save"></button>
           <button pButton icon="fa-plus" (click)="showAddPopup=true"></button>
-          <button pButton icon="fa-trash-o" (click)="deleteBookmark()"></button>
+          <button pButton icon="fa-trash-o" class="ui-button-danger" (click)="deleteBookmark()"></button>
           <button pButton icon="fa-times" (click)="onAction.emit({ action: 100 });"></button>
         </div>
       </div>

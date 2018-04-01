@@ -8,14 +8,14 @@
   </div>
   <div class="pull-left" *ngIf="isEditMode">
     <div class="ui-inputgroup">
-      <button pButton type="button" icon="{{newIcon}}" class="ui-button-info"></button>
+      <button pButton type="button" icon="{{newIcon}}" class="ui-button-info" (click)="ctlIcons.show($event)"></button>
       <input [(ngModel)]="newName" maxlength="20" />
-      <button pButton type="button" icon="fa-plus" class="ui-button-success" (click)="currentBoard.name=newName;currentBoard.icon=newIcon;saveDashboardInfo();isEditMode=false"></button>
+      <button pButton type="button" icon="fa-check" class="ui-button-success" (click)="currentBoard.name=newName;currentBoard.icon=newIcon;saveDashboardInfo();isEditMode=false"></button>
       <button pButton type="button" icon="fa-undo" class="ui-button-default" (click)="isEditMode=false"></button>
     </div>
   </div>
   <div class="controls">
-    <p-splitButton label="Add gadgets" icon="fa-check" (onClick)="showGadgetsPopup=true" [model]="contextMenu" styleClass="ui-button-primary"></p-splitButton>
+    <p-splitButton label="Add gadgets" icon="fa-check" (onClick)="showGadgetsPopup=true" [model]="contextMenu" styleClass="ui-button-primary btn-m-gadget"></p-splitButton>
   </div>
 </div>
 <div [ngClass]="'layout-' + currentBoard.layout">
@@ -143,3 +143,7 @@
     <button type="button" class="btn btn-default" (click)="saveDashboardInfo(true);showGadgetsPopup=false">Done</button>
   </p-footer>
 </p-dialog>
+
+<p-overlayPanel #ctlIcons dismissable="true" styleClass="dashboard-icons" appendTo="body">
+  <div *ngFor="let icon of dashboardIcons" (click)="newIcon=icon;ctlIcons.hide();" class="d-icon"><i [ngClass]="icon"></i></div>
+</p-overlayPanel>

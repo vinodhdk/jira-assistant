@@ -17,12 +17,13 @@ import { StepsModule } from 'primeng/steps';
 import { ChipsModule } from 'primeng/chips';
 import { GrowlModule } from 'primeng/growl';
 import { ScheduleModule } from 'primeng/schedule';
+import { OverlayPanelModule } from 'primeng/overlaypanel';
 
-export const PRIME_MODULES = [PanelModule, ButtonModule, BlockUIModule, ScrollPanelModule,
-  TieredMenuModule, SplitButtonModule, DropdownModule, CalendarModule, DataViewModule, AutoCompleteModule,
-  InplaceModule, DialogModule, InputMaskModule, CheckboxModule, StepsModule, ChipsModule, GrowlModule, ScheduleModule]
+export const PRIME_MODULES = [PanelModule, ButtonModule, BlockUIModule, ScrollPanelModule, TieredMenuModule,
+  SplitButtonModule, DropdownModule, CalendarModule, DataViewModule, AutoCompleteModule, InplaceModule, DialogModule,
+  InputMaskModule, CheckboxModule, StepsModule, ChipsModule, GrowlModule, ScheduleModule, OverlayPanelModule]
 
-export const JA_DIRECTIVES = [];
+export const JA_DIRECTIVES: any = [];
 
 
 // Import pipes

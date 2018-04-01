@@ -40,6 +40,22 @@
   padding: 0 !important;
 }
 
+.no-t-padding {
+  padding-top: 0px !important;
+}
+
+.no-r-padding {
+  padding-right: 0px !important;
+}
+
+.no-b-padding {
+  padding-bottom: 0px !important;
+}
+
+.no-l-padding {
+  padding-left: 0px !important;
+}
+
 .no-margin {
   margin: 0 !important;
 }
@@ -232,6 +248,7 @@ div.ja-loader > i.fa-refresh {
 .page-header .title {
   font-weight: bold;
   float: left;
+  cursor:pointer;
 }
 
 .page-header .fa-arrow-right {
@@ -406,4 +423,29 @@ ul.right-menus li a {
   height: 95vh;
   width: 87vw;
   overflow: hidden;
+}
+
+/* Page specific styles */
+
+/* dasboard page styles */
+.btn-m-gadget button:nth-child(2) {
+  background-color: #5cb85c;
+}
+
+.dashboard-icons {
+  width: 230px;
+  padding-bottom: 10px;
+}
+
+.dashboard-icons div.d-icon {
+  float: left;
+  height: 24px;
+  width: 24px;
+  font-size: 20px;
+  margin: 2px;
+  cursor: pointer;
+}
+
+.ui-timepicker {
+  padding: 0;
 }

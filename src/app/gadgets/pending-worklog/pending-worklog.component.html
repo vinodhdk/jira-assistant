@@ -10,6 +10,7 @@
           <button pButton icon="fa-refresh" (click)="fillWorklogs();"></button>
           <button pButton icon="fa-save"></button>
           <button pButton icon="fa fa-upload" (click)="uploadWorklog()"></button>
+          <button pButton class="ui-button-danger" icon="fa-trash-o" (click)="deleteWorklog()"></button>
           <button pButton icon="fa-times" (click)="onAction.emit({ action: 100 });"></button>
         </div>
       </div>

@@ -105,30 +105,28 @@ export class FacadeService {
       if (!favTickets) {
         favTickets = [];
       }
-      var $favTickets = favTickets;
 
-      var pending = ticketNo.Where((t) => { return !$favTickets.Any((k) => { return k.toUpperCase() == t.toUpperCase(); }) });
+      var pending = ticketNo.Where((t) => { return !favTickets.Any((k) => { return k.toUpperCase() == t.toUpperCase(); }) });
       if (pending.length == 0) {
         this.message.warning(ticketNo.length === 1 ? ticketNo[0] + " is already bookmarked" : "The specified ticket is already bookmarked");
-        return;
+        return [];
       }
 
-      return this.getTicketDetails(pending, true).then((issues) => {
-        if (issues == null || issues.Length == 0) {
-          this.message.warning("The specified ticket no is not valid");
-          return;
+      return this.getTicketDetails(pending, true).then((issues: any[]) => {
+        if (issues == null || issues.length == 0) {
+          return ticketNo;
         }
 
-        $favTickets.AddRange(issues.Select((i) => { return i.key; }));
+        favTickets.AddRange(issues.Select((i) => { return i.key; }));
         u.favTicketList = favTickets;
         return this.$db.users.put(u).then(
-          () => { return ticketNo.Where((t) => { return !$favTickets.Any((k) => { return k.toUpperCase() == t.toUpperCase(); }); }); }
+          () => { return ticketNo.Where((t) => { return !favTickets.Any((k) => { return k.toUpperCase() == t.toUpperCase(); }); }); }
         );
       });
     });
   }
 
-  removeBookmark(tickets) {
+  removeBookmark(tickets: any) {
     return this.$db.users.get(this.$session.userId).then((u) => {
       var favTickets = u.favTicketList;
       if (!favTickets) {
@@ -144,7 +142,7 @@ export class FacadeService {
     return this.$db.users.get(this.$session.userId).then((u) => {
       var tickets = u.favTicketList;
       if (tickets && tickets.length > 0) {
-        return this.getTicketDetails(tickets, true).then((tickets) => {
+        return this.getTicketDetails(tickets, true).then((tickets: any[]) => {
           return tickets.Select((i) => {
             return {
               ticketNo: i.key,

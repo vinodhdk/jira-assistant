@@ -32,13 +32,15 @@ export const timeFormats = [" HH:mm:ss", " hh:mm:ss tt", " HH.mm.ss", " hh.mm.ss
 export const CHROME_WS_URL = "https://chrome.google.com/webstore/detail/jira-assistant/momjbjbjpbcbnepbgkkiaofkgimihbii";
 export const FF_STORE_URL = "https://addons.mozilla.org/en-US/firefox/addon/jira-assistant/"
 
-export const DASHBOARD_ICONS = ['fa fa-tachometer'
+export const DASHBOARD_ICONS = [
+  'fa fa-tachometer'
   , 'fa fa-info-circle'
   , 'fa fa-language'
   , 'fa fa-asterisk'
   , 'fa fa-gift'
   , 'fa fa-fire'
   , 'fa fa-eye'
+  , 'fa fa-low-vision'
   , 'fa fa-cube'
   , 'fa fa-cubes'
   , 'fa fa-plane'
@@ -63,4 +65,17 @@ export const DASHBOARD_ICONS = ['fa fa-tachometer'
   , 'fa fa-line-chart'
   , 'fa fa-columns'
   , 'fa fa-sitemap'
-  , 'fa fa-dashboard'];
+  , 'fa fa-dashboard'
+  , 'fa fa-desktop'
+  , 'fa fa-laptop'
+  , 'fa fa-flag'
+  , 'fa fa-home'
+  , 'fa fa-hashtag'
+  , 'fa fa-info'
+  , 'fa fa-tag'
+  , 'fa fa-trophy'
+  , 'fa fa-list-alt'
+  , 'fa fa-th'
+  , 'fa fa-th-list'
+  , 'fa fa-th-large'
+];
