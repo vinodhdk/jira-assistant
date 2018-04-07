@@ -1,16 +1,12 @@
 import { Pipe, PipeTransform } from '@angular/core';
+import { DataTransformService } from '../services/data-transform.service';
 
 @Pipe({
   name: 'avg'
 })
 export class AvgPipe implements PipeTransform {
+  constructor(private $transform: DataTransformService) { }
   transform(arr: Array<any>, prop?: string): any {
-    if (!arr) { return null; }
-    if (prop) {
-      return arr.Avg((v) => v[prop]);
-    }
-    else {
-      return arr.Avg();
-    }
+    return this.$transform.avg(arr, prop);
   }
 }
