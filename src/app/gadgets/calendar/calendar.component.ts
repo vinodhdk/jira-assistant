@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnChanges, Input, SimpleChanges, ViewChild, ElementRef } from '@angular/core';
 import { SessionService, FacadeService, MessageService, AnalyticsService, CalendarService } from '../../services/index';
 import { ISessionUser } from '../../common/interfaces';
 import * as moment from 'moment';
@@ -10,7 +10,7 @@ import { BaseGadget } from '../base-gadget';
   selector: '[jaCalendar]',
   templateUrl: './calendar.component.html'
 })
-export class CalendarComponent extends BaseGadget implements OnInit {
+export class CalendarComponent extends BaseGadget implements OnChanges {
   settings: any
   showSettings: boolean
   fullCalendarOpts: any
@@ -22,11 +22,12 @@ export class CalendarComponent extends BaseGadget implements OnInit {
   CurrentUser: ISessionUser
   maxHours: number
   maxTime: number
-  
+
   isLoading: boolean
 
   viewModes: any[]
-  selViewMode: any
+  @Input()
+  viewMode: any
 
   dateRangeTitle: string
   showAddWorklogPopup: boolean
@@ -85,7 +86,11 @@ export class CalendarComponent extends BaseGadget implements OnInit {
     }
   }
 
-  ngOnInit() {
+  ngOnChanges(change: SimpleChanges) {
+    if (change.viewMode && change.viewMode.currentValue) {
+      this.settings.viewMode = this.viewMode;
+      //this.viewModeChanged();
+    }
   }
 
   fillCalendar() {

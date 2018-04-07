@@ -6,13 +6,15 @@
         <i class="fa fa-calendar"></i>
         <span class="ui-panel-title" style="font-size:16px;display:inline-block;margin-top:2px">Calendar - [{{dateRangeTitle}}]</span>
         <div class="pull-right">
-          <button pButton icon="fa-arrow-left" (click)="calendar.prev()"></button>
-          <button pButton icon="fa-arrow-right" (click)="calendar.next()"></button>
-          <p-dropdown [options]="viewModes" [(ngModel)]="settings.viewMode" placeholder="Select a view mode" (onChange)="viewModeChanged()"></p-dropdown>
+          <div *ngIf="!isGadget" style="display:inline-block">
+            <button pButton icon="fa-arrow-left" (click)="calendar.prev()"></button>
+            <button pButton icon="fa-arrow-right" (click)="calendar.next()"></button>
+            <p-dropdown [options]="viewModes" [(ngModel)]="settings.viewMode" placeholder="Select a view mode" (onChange)="viewModeChanged()"></p-dropdown>
+          </div>
           <button pButton [icon]="isFullScreen?'fa-compress':'fa-expand'" (click)="toggleFullScreen()"></button>
           <button pButton icon="fa-refresh" (click)="fillCalendar();"></button>
-          <button pButton icon="fa-cogs" (click)="showSettings=true"></button>
-          <!--<button pButton icon="fa-times" (click)="onAction.emit({ action: 100 });"></button>-->
+          <button *ngIf="!isGadget" pButton icon="fa-cogs" (click)="showSettings=true"></button>
+          <button *ngIf="isGadget" pButton icon="fa-times" (click)="removeGadget()"></button>
         </div>
       </div>
     </p-header>

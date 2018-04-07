@@ -11,7 +11,7 @@
           <div jaExport [element]="tbl" fileName="Bookmarks"></div>
           <button pButton icon="fa-plus" (click)="showAddPopup=true"></button>
           <button pButton icon="fa-trash-o" class="ui-button-danger" (click)="deleteBookmark()"></button>
-          <button pButton icon="fa-times" (click)="onAction.emit({ action: 100 });"></button>
+          <button pButton icon="fa-times" (click)="removeGadget()"></button>
         </div>
       </div>
     </p-header>

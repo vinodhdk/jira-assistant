@@ -1,5 +1,5 @@
 //export * from './avg.pipe'
-//export * from './bytes.pipe'
+export * from './bytes.pipe'
 export * from './convert-secs.pipe'
 //export * from './count.pipe'
 export * from './cut.pipe'

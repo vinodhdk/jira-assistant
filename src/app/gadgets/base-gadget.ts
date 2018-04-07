@@ -5,6 +5,7 @@ export class BaseGadget implements OnChanges {
   totalHeight: number
   contentHeight: number
   hideHeader: boolean
+  @Input()
   isGadget: boolean
   isFullScreen: boolean
   bodyTag: any
@@ -57,5 +58,9 @@ export class BaseGadget implements OnChanges {
 
   addWorklogOn(ticketNo: string) {
     this.addWorklog({ ticketNo: ticketNo })
+  }
+
+  removeGadget() {
+    this.onAction.emit({ action: 100 })
   }
 }

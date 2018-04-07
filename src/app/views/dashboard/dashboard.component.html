@@ -26,6 +26,8 @@
     <div class="widget-cntr" [layout]="currentBoard.layout" *ngSwitchCase="'pendingWorklog'" pendingWorklog (onAction)="widgetAction($event,idx)"></div>
     <div class="widget-cntr" [layout]="currentBoard.layout" *ngSwitchCase="'ticketWiseWorklog'" ticketWiseWorklog (onAction)="widgetAction($event,idx)"></div>
     <div class="widget-cntr" [layout]="currentBoard.layout" *ngSwitchCase="'myFilters'" myFilters (onAction)="widgetAction($event,idx)"></div>
+    <div class="widget-cntr" [layout]="currentBoard.layout" *ngSwitchCase="'agendaDay'" jaCalendar viewMode="agendaDay" (onAction)="widgetAction($event,idx)"></div>
+    <div class="widget-cntr" [layout]="currentBoard.layout" *ngSwitchCase="'agendaWeek'" jaCalendar viewMode="agendaWeek" (onAction)="widgetAction($event,idx)"></div>
     <div [layout]="currentBoard.layout" *ngSwitchDefault dynamicGadget [gadgetName]="ctrl.name" (onAction)="widgetAction($event,idx)"></div>
   </ng-container>
   <ng-container *ngIf="!currentBoard.widgets || currentBoard.widgets.length == 0">
@@ -125,6 +127,30 @@
       <div class="controls">
         <button pButton type="button" icon="fa-plus" label="Add gadget" class="ui-button-success" *ngIf="!hasGadget('myFilters')" (click)="addGadget('myFilters')"></button>
         <button pButton type="button" icon="fa-times" label="Remove gadget" class="ui-button-danger" *ngIf="hasGadget('myFilters')" (click)="removeGadget('myFilters')"></button>
+      </div>
+    </div>
+    <div class="gadget-info">
+      <div class="icon"><i class="fa fa-calendar"></i></div>
+      <div class="details">
+        <span class="name">Current day calendar</span>
+        <span class="desc">Display calendar for current date for worklog and meetings</span>
+        <div class="params"></div>
+      </div>
+      <div class="controls">
+        <button pButton type="button" icon="fa-plus" label="Add gadget" class="ui-button-success" *ngIf="!hasGadget('agendaDay')" (click)="addGadget('agendaDay')"></button>
+        <button pButton type="button" icon="fa-times" label="Remove gadget" class="ui-button-danger" *ngIf="hasGadget('agendaDay')" (click)="removeGadget('agendaDay')"></button>
+      </div>
+    </div>
+    <div class="gadget-info">
+      <div class="icon"><i class="fa fa-calendar"></i></div>
+      <div class="details">
+        <span class="name">Current week calendar</span>
+        <span class="desc">Display calendar for current week for worklog and meetings</span>
+        <div class="params"></div>
+      </div>
+      <div class="controls">
+        <button pButton type="button" icon="fa-plus" label="Add gadget" class="ui-button-success" *ngIf="!hasGadget('agendaWeek')" (click)="addGadget('agendaWeek')"></button>
+        <button pButton type="button" icon="fa-times" label="Remove gadget" class="ui-button-danger" *ngIf="hasGadget('agendaWeek')" (click)="removeGadget('agendaWeek')"></button>
       </div>
     </div>
     <div class="gadget-info" *ngFor="let sq of savedQueries">

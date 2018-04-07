@@ -1,4 +1,4 @@
-import { Component, OnChanges, Input, ElementRef } from '@angular/core';
+import { Component, OnChanges, Input, ElementRef, SimpleChanges } from '@angular/core';
 import { BaseGadget } from '../base-gadget';
 
 @Component({
@@ -15,7 +15,7 @@ export class DynamicGadgetComponent extends BaseGadget implements OnChanges {
 
   constructor(el: ElementRef) { super(el); }
 
-  ngOnChanges(change) {
+  ngOnChanges(change: SimpleChanges) {
     if (change.gadgetName && change.gadgetName.currentValue) {
       var params = this.gadgetName.split(':');
       this.gadgetType = params[0];

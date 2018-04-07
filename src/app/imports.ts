@@ -32,16 +32,12 @@ export const JA_DIRECTIVES: any = [];
 // Import pipes
 import {
   FormatDateTimePipe, FormatDatePipe, FormatTsPipe, ToTicketUrlPipe,
-  YesnoPipe, ConvertSecsPipe, FormatTimePipe, FormatSecsPipe, CutPipe
-  //AvgPipe, BytesPipe, CountPipe, FormatUserPipe, GetPropertyPipe, MaxPipe, MinPipe,
-  //PropOfNthItemPipe, SumPipe
+  YesnoPipe, ConvertSecsPipe, FormatTimePipe, FormatSecsPipe, CutPipe, BytesPipe
 } from './pipes'
 
 export const JA_PIPES = [
   FormatDateTimePipe, FormatDatePipe, FormatTsPipe, ToTicketUrlPipe,
-  YesnoPipe, ConvertSecsPipe, FormatTimePipe, FormatSecsPipe, CutPipe
-  //AvgPipe, BytesPipe, CountPipe, CutPipe, FormatUserPipe, GetPropertyPipe, MaxPipe, MinPipe,
-  //PropOfNthItemPipe, SumPipe
+  YesnoPipe, ConvertSecsPipe, FormatTimePipe, FormatSecsPipe, CutPipe, BytesPipe
 ]
 
 // Import controls

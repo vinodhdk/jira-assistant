@@ -7,8 +7,8 @@
         <div class="pull-right">
           <button pButton [icon]="isFullScreen?'fa-compress':'fa-expand'" (click)="toggleFullScreen()"></button>
           <button pButton icon="fa-refresh" (click)="fillReport()"></button>
-          <div jaExport [element]="tbl" [fileName]="queryModel.queryName"></div>
-          <button pButton icon="fa-times" (click)="onAction.emit({ action: 100 });"></button>
+          <div jaExport [element]="tbl" *ngIf="hasReportData" [fileName]="queryModel.queryName"></div>
+          <button *ngIf="isGadget" pButton icon="fa-times" (click)="removeGadget()"></button>
         </div>
       </div>
     </p-header>
@@ -17,7 +17,7 @@
     </p-blockUI>
     <p-panel [showHeader]="false" #pnlCtl>
       <p-scrollPanel [style]="{width: '100%', height: contentHeight + 'px'}" styleClass="cont-div">
-        <table *ngIf="hasReportData" #tbl class="table table-responsive-sm table-bordered table-striped table-sm">
+        <table #tbl *ngIf="hasReportData" class="table table-responsive-sm table-bordered table-striped table-sm">
           <thead>
             <tr class="data-center">
               <th *ngFor="let g of displayFields; trackBy:index" [attr.rowspan]="g.rowspan" [attr.colspan]="g.colspan">{{g.text}}</th>
