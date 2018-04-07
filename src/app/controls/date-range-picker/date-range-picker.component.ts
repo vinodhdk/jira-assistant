@@ -1,14 +1,15 @@
-import { Component, OnInit, Input, Output, ViewChild, EventEmitter } from '@angular/core';
+import { Component, OnChanges, Input, Output, ViewChild, EventEmitter } from '@angular/core';
 import { SelectItem } from 'primeng/api';
 import { SelectItemGroup } from 'primeng/api';
 import { FormatDatePipe } from 'app/pipes';
 import * as moment from 'moment'
+import { getDateRange } from '../../_constants';
 
 @Component({
   selector: 'app-date-range-picker',
   templateUrl: './date-range-picker.component.html'
 })
-export class DateRangePickerComponent implements OnInit {
+export class DateRangePickerComponent implements OnChanges {
   @Input()
   ngModal: DateRange
 
@@ -28,16 +29,10 @@ export class DateRangePickerComponent implements OnInit {
   @Input()
   width: number
 
-  rangeValues = [
-    [moment().startOf('month').toDate(), moment().endOf('month').toDate()],
-    [moment().subtract(1, 'months').toDate(), moment().toDate()],
-    [moment().subtract(1, 'months').startOf('month').toDate(), moment().subtract(1, 'months').endOf('month').toDate()],
-    [moment().startOf('week').toDate(), moment().endOf('week').toDate()],
-    [moment().subtract(6, 'days').toDate(), moment().toDate()],
-    [moment().subtract(1, 'weeks').startOf('week').toDate(), moment().subtract(1, 'weeks').endOf('week').toDate()]
-  ];
+  rangeValues: any;
 
   constructor(private formatDate: FormatDatePipe) {
+    this.rangeValues = getDateRange();
     this.selectedDateText = "Select a date range";
     this.selected = new EventEmitter<DateRange>();
     this.ngModal = this.ngModal || {};
@@ -97,7 +92,16 @@ export class DateRangePickerComponent implements OnInit {
     this.selected.emit(this.ngModal);
   }
 
-  ngOnInit() {
+  ngOnChanges(change) {
+    if (change.ngModal && change.ngModal.currentValue) {
+      var quickDate = change.ngModal.currentValue.quickDate;
+      this.selectedRangeItem = quickDate;
+      if (quickDate > 0) {
+        var dtRange = getDateRange(quickDate);
+        this.ngModal.fromDate = dtRange[0];
+        this.ngModal.toDate = dtRange[1];
+      }
+    }
   }
 
 }

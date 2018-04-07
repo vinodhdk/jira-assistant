@@ -41,35 +41,34 @@ export class JiraService {
     });
   }
 
-  public getWorklogs(jiraKey) {
+  public getWorklogs(jiraKey: string) {
     return this.$jaHttp.get(ApiUrls.issueWorklog, jiraKey);
   }
 
   getCustomFields() {
-    return this.$jaCache.lob.get("customFields").then((value) => {
+    return this.$jaCache.session.getPromise("customFields").then((value) => {
       if (value) {
         return value;
       }
 
       return this.$jaHttp.get(ApiUrls.getCustomFields, { customHandle: true })
-        .then((result) => { this.$jaCache.lob.set("customFields", result, 10); return result; });
+        .then((result) => { this.$jaCache.session.set("customFields", result, 10); return result; });
     });
   }
 
   getRapidViews() {
-    return this.$jaCache.lob.get("rapidViews").then((value) => {
-      if (value) {
-        return value;
-      }
-
-      return this.$jaHttp.get(ApiUrls.rapidViews, { customHandle: true })
-        .then((result) => { this.$jaCache.lob.set("rapidViews", result.views, 10); return result.views; });
-    });
+    var value = this.$jaCache.session.get("rapidViews");
+    if (value) {
+      return new Promise((resolve, reject) => resolve(value));
+    }
+    
+    return this.$jaHttp.get(ApiUrls.rapidViews, { customHandle: true })
+      .then((result) => { this.$jaCache.session.set("rapidViews", result.views, 10); return result.views; });
   }
 
   getRapidSprintList(rapidIds) {
     var reqArr = rapidIds.Select((rapidId) => {
-      return this.$jaCache.lob.get("rapidSprintList" + rapidId).then((value) => {
+      return this.$jaCache.session.getPromise("rapidSprintList" + rapidId).then((value) => {
         if (value) {
           return value;
         }
@@ -77,7 +76,7 @@ export class JiraService {
         return this.$jaHttp.get(ApiUrls.rapidSprintList, rapidId)
           .then((result) => {
             var sprints = result.sprints.ForEach((sp) => { sp.rapidId = rapidId; });
-            this.$jaCache.lob.set("rapidSprintList" + rapidId, sprints, 10); return sprints;
+            this.$jaCache.session.set("rapidSprintList" + rapidId, sprints, 10); return sprints;
           });
       });
     });
@@ -87,13 +86,13 @@ export class JiraService {
 
   getSprintList(projects) {
     if (Array.isArray(projects)) { projects = projects.join(); }
-    return this.$jaCache.lob.get("sprintListAll" + projects).then((value) => {
+    return this.$jaCache.session.getPromise("sprintListAll" + projects).then((value) => {
       if (value) {
         return value;
       }
 
       return this.$jaHttp.get(ApiUrls.sprintListAll, projects)
-        .then((result) => { this.$jaCache.lob.set("sprintListAll" + projects, result.sprints, 10); return result.sprints; });
+        .then((result) => { this.$jaCache.session.set("sprintListAll" + projects, result.sprints, 10); return result.sprints; });
     });
   }
 
@@ -142,13 +141,13 @@ export class JiraService {
   }
 
   getCurrentUser(): any {
-    return this.$jaHttp.get(ApiUrls.mySelf).then(null, (err) => {
-      if (err.status === 401) {
-        this.message.warning("You must be authenticated in Jira to perform this operation. Please authenticate in Jira and retry!");
+    return this.$jaHttp.get(ApiUrls.mySelf).then(null, (e) => {
+      if (e.status == 401) {
+        this.message.warning("You must be authenticated in Jira to access this tool. Please authenticate in Jira and then retry.", "Unauthorized");
       }
-      else { this.message.warning(err.error); }
-      //return this.router.navigate(['error/' + err.status]);
-      return Promise.reject(err);
+      else if (e.error && e.error.message) { this.message.warning(e.error.message, "Server error"); }
+      else { this.message.warning(e.status + ":- " + e.statusText, "Unknown error"); }
+      return Promise.reject(e);
     });
   }
 }

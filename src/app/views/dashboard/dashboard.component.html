@@ -15,7 +15,7 @@
     </div>
   </div>
   <div class="controls">
-    <p-splitButton label="Add gadgets" icon="fa-check" (onClick)="showGadgetsPopup=true" [model]="contextMenu" styleClass="ui-button-primary btn-m-gadget"></p-splitButton>
+    <p-splitButton label="Add gadgets" icon="fa-cubes" (onClick)="showGadgets()" [model]="contextMenu" styleClass="ui-button-primary btn-m-gadget"></p-splitButton>
   </div>
 </div>
 <div [ngClass]="'layout-' + currentBoard.layout">
@@ -26,6 +26,7 @@
     <div class="widget-cntr" [layout]="currentBoard.layout" *ngSwitchCase="'pendingWorklog'" pendingWorklog (onAction)="widgetAction($event,idx)"></div>
     <div class="widget-cntr" [layout]="currentBoard.layout" *ngSwitchCase="'ticketWiseWorklog'" ticketWiseWorklog (onAction)="widgetAction($event,idx)"></div>
     <div class="widget-cntr" [layout]="currentBoard.layout" *ngSwitchCase="'myFilters'" myFilters (onAction)="widgetAction($event,idx)"></div>
+    <div [layout]="currentBoard.layout" *ngSwitchDefault dynamicGadget [gadgetName]="ctrl.name" (onAction)="widgetAction($event,idx)"></div>
   </ng-container>
   <ng-container *ngIf="!currentBoard.widgets || currentBoard.widgets.length == 0">
     <div class="no-widget-div">
@@ -126,18 +127,18 @@
         <button pButton type="button" icon="fa-times" label="Remove gadget" class="ui-button-danger" *ngIf="hasGadget('myFilters')" (click)="removeGadget('myFilters')"></button>
       </div>
     </div>
-    <!--<div class="gadget-info">
-      <div class="icon"><i class="fa fa-eye"></i></div>
+    <div class="gadget-info" *ngFor="let sq of savedQueries">
+      <div class="icon"><i class="fa fa-filter"></i></div>
       <div class="details">
-        <span class="name"></span>
-        <span class="desc"></span>
+        <span class="name">{{sq.queryName}}</span>
+        <span class="desc">{{sq.outputCount}} columns displayed <span *ngIf="sq.filtersCount>0">with {{sq.filtersCount}} filters</span> in table format</span>
         <div class="params"></div>
       </div>
-        <div class="controls">
-          <button pButton type="button" icon="fa-plus" label="Add gadget" class="ui-button-success" *ngIf="!hasGadget('')" (click)="addGadget('')"></button>
-          <button pButton type="button" icon="fa-times" label="Remove gadget" class="ui-button-danger" *ngIf="hasGadget('')" (click)="removeGadget('')"></button>
-        </div>
-    </div>-->
+      <div class="controls">
+        <button pButton type="button" icon="fa-plus" label="Add gadget" class="ui-button-success" *ngIf="!hasGadget('SQ:' + sq.id)" (click)="addGadget('SQ:' + sq.id)"></button>
+        <button pButton type="button" icon="fa-times" label="Remove gadget" class="ui-button-danger" *ngIf="hasGadget('SQ:' + sq.id)" (click)="removeGadget('SQ:' + sq.id)"></button>
+      </div>
+    </div>
   </div>
   <p-footer>
     <button type="button" class="btn btn-default" (click)="saveDashboardInfo(true);showGadgetsPopup=false">Done</button>

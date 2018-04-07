@@ -25,9 +25,10 @@ export class CacheService {
       }
       return value;
     },
-    get: (key) => {
+    get: (key: string) => {
       return this.varStorage[key];
     },
+    getPromise: (key: string) => new Promise((resolve, reject) => resolve(this.session.get(key))),
     clear: () => { this.varStorage = {}; }
   }
 

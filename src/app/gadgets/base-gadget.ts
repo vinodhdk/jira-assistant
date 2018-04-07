@@ -4,6 +4,10 @@ import * as $ from 'jquery'
 export class BaseGadget implements OnChanges {
   totalHeight: number
   contentHeight: number
+  hideHeader: boolean
+  isGadget: boolean
+  isFullScreen: boolean
+  bodyTag: any
 
   @Input()
   layout: number
@@ -15,8 +19,11 @@ export class BaseGadget implements OnChanges {
   widgetHdrCtl: any
 
   constructor(private el: ElementRef) {
+    this.isGadget = true;
     this.onAction = new EventEmitter<any>();
+    this.bodyTag = $('body');
     this.widgetCtl = $(this.el.nativeElement).closest('.widget-cntr');
+    this.ngAfterViewInit();
   }
 
   ngAfterViewInit() {
@@ -24,10 +31,10 @@ export class BaseGadget implements OnChanges {
   }
 
   @HostListener('window:resize', ['$event'])
-  onResize(event) {
+  onResize(event?: any) {
     setTimeout(() => {
-      this.totalHeight = this.widgetCtl.height();
-      this.contentHeight = this.totalHeight - ((this.widgetHdrCtl.outerHeight() || 44) + 1);
+      this.totalHeight = this.isFullScreen ? window.innerHeight : this.widgetCtl.height();
+      this.contentHeight = this.totalHeight - ((this.widgetHdrCtl.outerHeight() || 44) + 3);
     }, 20);
   }
 
@@ -35,6 +42,13 @@ export class BaseGadget implements OnChanges {
     if (changes.layout && changes.layout.currentValue) {
       this.onResize({});
     }
+  }
+
+  toggleFullScreen() {
+    this.isFullScreen = !this.isFullScreen;
+    if (this.isFullScreen) { this.bodyTag.addClass('fs-layout'); }
+    else { this.bodyTag.removeClass('fs-layout'); }
+    this.onResize();
   }
 
   addWorklog(data: any) {

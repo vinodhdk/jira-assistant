@@ -6,11 +6,10 @@ import { BaseGadget } from '../base-gadget';
   selector: '[myFilters]',
   templateUrl: './my-filters.component.html'
 })
-export class MyFiltersComponent extends BaseGadget implements OnInit {
+export class MyFiltersComponent extends BaseGadget {
 
   savedQueries: any[]
   isLoading: boolean
-  isFullScreen: boolean
   selAllSQ: boolean
 
   constructor(private $jaFacade: FacadeService, el: ElementRef, private message: MessageService) {
@@ -37,10 +36,7 @@ export class MyFiltersComponent extends BaseGadget implements OnInit {
   }
 
   selectAll(selAll: boolean) {
-    this.savedQueries.ForEach(wl => wl.selected = selAll);
-  }
-
-  ngOnInit() {
+    this.savedQueries.ForEach(wl => wl.selected = !selAll);
   }
 
 }

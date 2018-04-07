@@ -13,7 +13,6 @@ export class DateWiseWorklogComponent extends BaseGadget {
   contextMenu: any[]//MenuItem
   selectedDay: any
   dateRange: any
-  isFullScreen: boolean
 
   constructor(private $jaFacade: FacadeService, private $jaUtils: UtilsService, el: ElementRef) {
     super(el);
@@ -33,12 +32,16 @@ export class DateWiseWorklogComponent extends BaseGadget {
     this.$jaFacade.getWorklogs(selDate).then((result) => { this.worklogs_DW = result; this.isLoading = false; });
   }
 
+  getWorklogUrl(ticketNo: string, worklogId: number): string {
+    return this.$jaUtils.getWorklogUrl(ticketNo, worklogId);
+  }
+
   showContext($event: any, b: any, menu: any): any {
     this.selectedDay = b;
     menu.toggle($event);
   }
 
-  dateSelected($event): void {
+  dateSelected($event: any): void {
     this.fillWorklogs();
   }
 

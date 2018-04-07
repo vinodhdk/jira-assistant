@@ -9,7 +9,7 @@ interface Date {
 }
 
 interface String {
-  format(...args: any[]): string
+  format(args: any[]): string
   startsWith(str: string): boolean
   endsWith(str: string): boolean
   trimStart(str: string): string

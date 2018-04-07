@@ -1,0 +1,113 @@
+<div [ngClass]="isFullScreen?'full-screen':''">
+  <p-panel styleClass="p-no-padding">
+    <p-header>
+      <div class="ui-helper-clearfix">
+        <i class="fa fa-filter"></i>
+        <span class="ui-panel-title" style="font-size:16px;display:inline-block;margin-top:2px">Query Editor</span>
+        <div class="pull-right">
+          <p-dropdown [options]="queryList" [hidden]="!queryList || queryList.length == 0" [(ngModel)]="selQueryId" placeholder="Select a query to edit" (onChange)="queryChanged()"></p-dropdown>
+          <!--<button pButton [icon]="isFullScreen?'fa-compress':'fa-expand'" (click)="isFullScreen=!isFullScreen;onResize(isFullScreen)"></button>-->
+        </div>
+      </div>
+    </p-header>
+    <p-tabView (onChange)="tabChanged($event)" styleClass="query-tab">
+      <p-tabPanel header="Filters" leftIcon="fa-filter" selected="true">
+        <table class="table table-bordered table-striped">
+          <thead>
+            <tr>
+              <th class="data-center" style="width:30px;">#</th>
+              <th>Filter Column</th>
+              <th style="width:150px;">Type</th>
+              <th style="width:15px;">Condition</th>
+              <th class="data-center" style="min-width:100px;">Value</th>
+              <th class="data-center" style="width:30px;">Remove</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let row of ngModel.filterFields; let $index = index">
+              <td class="data-center">{{$index + 1}}</td>
+              <td>{{row.name}} <small class="text-muted" *ngIf="row.name.toLowerCase() != row.id.toLowerCase()"> ({{row.id}})</small></td>
+              <td>{{row.type}} {{row.isArray?'(multiple)':''}}</td>
+              <td jaBindOperators [row]="row"></td>
+              <td jaBindValues [row]="row" [operator]="row.operator"></td>
+              <td class="data-center"><i class="fa fa-times pointer" (click)="removeField(ngModel.filterFields, row)"></i></td>
+            </tr>
+            <tr>
+              <td class="data-center">{{ngModel.filterFields.length + 1}}</td>
+              <td>
+                <p-dropdown [options]="filterFields" [(ngModel)]="selectedFilterField" [style]="{'width':'100%'}" filter="true"
+                            placeholder="Choose a column to add to the list" group="true" autoDisplayFirst="false"
+                            emptyFilterMessage="No fields found" resetFilterOnHide="true" filterPlaceholder="Type the field name to filter"
+                            (onChange)="filterAdded($event)" dataKey="id"></p-dropdown>
+                <!--<select id="lstCustomFields_Filter" style="width:100%;" title="" data-container="body"></select>-->
+              </td>
+              <td colspan="5">Note: Select a column from the list to filter by it</td>
+            </tr>
+          </tbody>
+        </table>
+      </p-tabPanel>
+      <p-tabPanel header="Advanced Filter (JQL)">
+        <textarea [(ngModel)]="ngModel.jql" style="min-width:100%; min-height:100px;height:100%;"></textarea>
+      </p-tabPanel>
+      <p-tabPanel header="Display Settings" leftIcon="fa-columns">
+        <table class="table table-bordered table-striped">
+          <thead>
+            <tr>
+              <th class="data-center">#</th>
+              <th>Display Column</th>
+              <th>Type</th>
+              <th class="data-center" style="width:35px;">Group By</th>
+              <th>Format function</th>
+              <th class="data-center" style="width:30px;">Remove</th>
+            </tr>
+          </thead>
+          <tbody ui-sortable="sortOpt" ng-model="ngModel.outputFields">
+            <tr *ngFor="let row of ngModel.outputFields; let $index = index">
+              <td class="data-center">{{$index + 1}}</td>
+              <td>{{row.name}}</td>
+              <td>{{row.type}} {{row.isArray?'(multiple)':''}}</td>
+              <td class="data-center"><input type="checkbox" [(ngModel)]="row.groupBy" (click)="groupField(row, $index)" /></td>
+              <td jaBindFunction [row]="row"></td>
+              <td class="data-center"><i class="fa fa-times pointer" (click)="removeField(ngModel.outputFields, row)"></i></td>
+            </tr>
+            <tr>
+              <td class="data-center">{{ngModel.outputFields.length + 1}}</td>
+              <td>
+                <p-dropdown [options]="displayFields" [(ngModel)]="selectedDisplayField" [style]="{'width':'100%'}" filter="true"
+                            placeholder="Choose a column to add to the list" group="true" autoDisplayFirst="false"
+                            emptyFilterMessage="No fields found" resetFilterOnHide="true" filterPlaceholder="Type the field name to filter"
+                            (onChange)="displayFieldAdded($event)" dataKey="id"></p-dropdown>
+                <!--<select id="lstCustomFields" style="width:100%;" title="Choose a column to add to the list" data-container="body"></select>-->
+              </td>
+              <td colspan="5">Note: Select the column from the list to add it as output</td>
+            </tr>
+          </tbody>
+        </table>
+      </p-tabPanel>
+    </p-tabView>
+    <p-footer>
+      <div style="height: 32px;">
+        <div class="pull-left" [hidden]="!ngModel.id">
+          <button pButton type="button" icon="fa-trash" label="Delete Query" class="ui-button-danger" (click)="deleteQuery()"></button>
+          <button pButton type="button" icon="fa-floppy-o" label="Save Query As" class="ui-button-success" (click)="saveQuery()" [disabled]="!isSaveEnabled()"></button>
+        </div>
+
+        <div class="pull-right">
+          <button pButton type="button" icon="fa-floppy-o" label="Save Query" class="ui-button-success" (click)="saveQuery(ngModel.queryName)" [disabled]="!isSaveEnabled() || ngModel.isSystemQuery"></button>
+          <button pButton type="button" icon="fa-list" label="View Report" class="ui-button-info" (click)="viewReport.emit({queryModel:ngModel})" [disabled]="!isSaveEnabled()"></button>
+        </div>
+      </div>
+    </p-footer>
+  </p-panel>
+</div>
+
+<p-dialog header="Save Query As" [(visible)]="showSaveDialog" breakpoint="300" width="300" appendTo="body" [baseZIndex]="9999"
+          modal="true" dismissableMask="false" autoAlign="true">
+  <label for="txtQueryName">Query Name</label>
+  <p><input id="txtQueryName" type="text" [(ngModel)]="newQueryName" /></p>
+  <p [hidden]="!ngModel.id"><input id="chkCopy" type="checkbox" [(ngModel)]="copyQuery" /> <label for="chkCopy">Create as a new query</label></p>
+  <p-footer>
+    <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+    <button type="button" class="btn btn-primary" [disabled]="!newQueryName || newQueryName.length < 3" (click)="saveQuery(newQueryName,copyQuery)">Save</button>
+  </p-footer>
+</p-dialog>

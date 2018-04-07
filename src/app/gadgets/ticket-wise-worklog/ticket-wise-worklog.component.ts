@@ -14,7 +14,6 @@ export class TicketWiseWorklogComponent extends BaseGadget {
   contextMenu: any[]//MenuItem
   selectedTicket: any
   dateRange: any
-  isFullScreen: boolean
 
   constructor(private $facade: FacadeService, el: ElementRef, private $jaUtils: UtilsService) {
     super(el);
@@ -39,8 +38,12 @@ export class TicketWiseWorklogComponent extends BaseGadget {
     menu.toggle($event);
   }
 
-  dateSelected($event): void {
+  dateSelected($event: any): void {
     this.fillWorklogs();
+  }
+
+  getWorklogUrl(ticketNo: string, worklogId: number): string {
+    return this.$jaUtils.getWorklogUrl(ticketNo, worklogId);
   }
 
   getTicketUrl(ticketNo: string) { return this.$jaUtils.getTicketUrl(ticketNo); }

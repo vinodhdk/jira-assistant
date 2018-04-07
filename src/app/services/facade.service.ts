@@ -28,7 +28,12 @@ export class FacadeService {
 
     var feedbackUrl = "https://docs.google.com/forms/d/e/1FAIpQLScJvQtHZI_yZr1xd4Z8TwWgvtFss33hW5nJp4gePCgI2ScNvg/viewform?entry.326955045&entry.1696159737&entry.485428648={0}&entry.879531967={1}&entry.1426640786={2}&entry.972533768={3}";
     var prom = [
-      this.$jaDataSvc.getCurrentUser(),
+      this.$jaDataSvc.getCurrentUser().then(null, (e: any) => {
+        if (e.status == 401) {
+          return Promise.resolve({}); // ToDo: Send the jira user object form cache
+        }
+        return Promise.reject(e);
+      }),
       this.$db.users.get(curUsrId)
     ];
 
@@ -260,23 +265,25 @@ export class FacadeService {
       delete entry.overrideTimeSpent;
       return this.$db.worklogs.put(entry);
     }, (err) => {
-      if (err.status === 400 && err.responseText.indexOf("non-editable") > -1) {
-        return Promise.reject({ message: entry.ticketNo + " is already closed and cannot upload worklog" });
+      if (err.status === 400) {
+        var errors = (err.error || {}).errorMessages || [];
+        if (errors.Any((e: string) => e.indexOf("non-editable") > -1)) {
+          return Promise.reject({ message: entry.ticketNo + " is already closed and cannot upload worklog" });
+        }
+        else return err;
       }
-      else return err;
     });
   }
 
-  deleteWorklogs(ids) {
-    var reqArr = [];
-    var $reqArr = reqArr;
+  deleteWorklogs(ids: any[]) {
+    var reqArr: any[] = [];
     return this.$db.worklogs.where("id").anyOf(ids).toArray().then((wls) => {
       wls.ForEach((entry) => {
         if (entry.worklogId > 0) {
-          $reqArr.Add(this.$jaHttp.delete(ApiUrls.individualWorklog, entry.ticketNo, entry.worklogId).then(() => { return this.$db.worklogs.where("id").equals(entry.id).delete(); }));
+          reqArr.Add(this.$jaHttp.delete(ApiUrls.individualWorklog, entry.ticketNo, entry.worklogId).then(() => { return this.$db.worklogs.where("id").equals(entry.id).delete(); }));
         }
         else {
-          $reqArr.Add(this.$db.worklogs.where("id").equals(entry.id).delete());
+          reqArr.Add(this.$db.worklogs.where("id").equals(entry.id).delete());
         }
       });
 
@@ -327,7 +334,7 @@ export class FacadeService {
 
   //getEvents() { return this.$db.events.where("createdBy").equals(this.$session.userId).toArray(); }
 
-  saveSettings(pageName) {
+  saveSettings(pageName: string) {
     return this.getCurrentUser().then((usr) => {
       if (!usr.settings) { usr.settings = {}; }
       usr.settings["page_" + pageName] = this.$session.pageSettings[pageName];
@@ -641,13 +648,14 @@ export class FacadeService {
       //ToDo:
 
       var settings = userDetails.settings;
-      userDetails.settings = {
+      this.$session.pageSettings = {
         dashboard: this.parseIfJson(settings.page_Dashboard,
           {
             viewMode: 0,
             gridList: ["myTickets", "bookmarksList", "dtWiseWL", "pendingWL"]
           }),
         calendar: this.parseIfJson(settings.page_Calendar, {
+          viewMode: 'agendaWeek',
           showWorklogs: true,
           showMeetings: true,
           showInfo: true,

@@ -18,10 +18,13 @@ import { ChipsModule } from 'primeng/chips';
 import { GrowlModule } from 'primeng/growl';
 import { ScheduleModule } from 'primeng/schedule';
 import { OverlayPanelModule } from 'primeng/overlaypanel';
+import { ColorPickerModule } from 'primeng/colorpicker';
+import { TabViewModule } from 'primeng/tabview';
 
 export const PRIME_MODULES = [PanelModule, ButtonModule, BlockUIModule, ScrollPanelModule, TieredMenuModule,
   SplitButtonModule, DropdownModule, CalendarModule, DataViewModule, AutoCompleteModule, InplaceModule, DialogModule,
-  InputMaskModule, CheckboxModule, StepsModule, ChipsModule, GrowlModule, ScheduleModule, OverlayPanelModule]
+  InputMaskModule, CheckboxModule, StepsModule, ChipsModule, GrowlModule, ScheduleModule, OverlayPanelModule,
+  ColorPickerModule, TabViewModule]
 
 export const JA_DIRECTIVES: any = [];
 
@@ -42,14 +45,20 @@ export const JA_PIPES = [AvgPipe, BytesPipe, ConvertSecsPipe, CountPipe, CutPipe
 import { GroupEditorComponent } from './controls/group-editor/group-editor.component';
 import { DateRangePickerComponent } from './controls/date-range-picker/date-range-picker.component'
 import { AddWorklogComponent } from './controls/add-worklog/add-worklog.component'
+import { ColorPickerComponent } from './controls/color-picker/color-picker.component';
+import { ExportComponent } from './controls/export/export.component';
+import { QueryEditorComponent } from './controls/query-editor/query-editor.component';
+import { BindOperatorComponent } from './controls/bind-operator/bind-operator.component';
+import { BindValueComponent } from './controls/bind-value/bind-value.component';
+import { BindFunctionComponent } from './controls/bind-function/bind-function.component';
 
-export const JA_CONTROLS = [DateRangePickerComponent, GroupEditorComponent, AddWorklogComponent]
+export const JA_CONTROLS = [DateRangePickerComponent, GroupEditorComponent, AddWorklogComponent, ColorPickerComponent,
+  ExportComponent, QueryEditorComponent, BindOperatorComponent, BindValueComponent, BindFunctionComponent]
 
 import {
-  CalendarComponent, MyOpenTicketsComponent, DateWiseWorklogComponent, TicketWiseWorklogComponent,
-  PendingWorklogComponent, MyBookmarksComponent, MyFiltersComponent, DayWiseWorklogComponent
+  CalendarComponent, MyOpenTicketsComponent, DateWiseWorklogComponent, TicketWiseWorklogComponent, DynamicGadgetComponent,
+  PendingWorklogComponent, MyBookmarksComponent, MyFiltersComponent, DayWiseWorklogComponent, ReportViewerComponent
 } from './gadgets'
-
 
 export const JA_GADGETS = [
   CalendarComponent,
@@ -59,7 +68,9 @@ export const JA_GADGETS = [
   PendingWorklogComponent,
   MyBookmarksComponent,
   MyFiltersComponent,
-  DayWiseWorklogComponent
+  DayWiseWorklogComponent,
+  ReportViewerComponent,
+  DynamicGadgetComponent
 ]
 
 // Import Views

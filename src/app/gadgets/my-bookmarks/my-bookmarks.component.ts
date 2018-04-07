@@ -12,7 +12,6 @@ export class MyBookmarksComponent extends BaseGadget implements OnInit {
   contextMenu: any[]//MenuItem
   ticketsList: string[]//MenuItem
   selectedTicket: any
-  isFullScreen: boolean
   selAllBks: boolean
   showAddPopup: boolean
 

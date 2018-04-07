@@ -36,7 +36,7 @@ export var navigation: any[] = [
     }
   },
   {
-    name: 'Custom Grouped',
+    name: 'Custom Report',
     url: '/reports/customgrouped',
     icon: 'fa fa-table'
   },

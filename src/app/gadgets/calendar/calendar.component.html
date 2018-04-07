@@ -6,10 +6,13 @@
         <i class="fa fa-calendar"></i>
         <span class="ui-panel-title" style="font-size:16px;display:inline-block;margin-top:2px">Calendar - [{{dateRangeTitle}}]</span>
         <div class="pull-right">
+          <button pButton icon="fa-arrow-left" (click)="calendar.prev()"></button>
+          <button pButton icon="fa-arrow-right" (click)="calendar.next()"></button>
           <p-dropdown [options]="viewModes" [(ngModel)]="settings.viewMode" placeholder="Select a view mode" (onChange)="viewModeChanged()"></p-dropdown>
-          <button pButton [icon]="isFullScreen?'fa-compress':'fa-expand'" (click)="isFullScreen=!isFullScreen;onResize(isFullScreen)"></button>
+          <button pButton [icon]="isFullScreen?'fa-compress':'fa-expand'" (click)="toggleFullScreen()"></button>
           <button pButton icon="fa-refresh" (click)="fillCalendar();"></button>
-          <button pButton icon="fa-times" (click)="onAction.emit({ action: 100 });"></button>
+          <button pButton icon="fa-cogs" (click)="showSettings=true"></button>
+          <!--<button pButton icon="fa-times" (click)="onAction.emit({ action: 100 });"></button>-->
         </div>
       </div>
     </p-header>
@@ -31,3 +34,77 @@
 </div>
 
 <add-worklog [(showPopup)]="showAddWorklogPopup" (onDone)="showAddWorklogPopup=false; addEvent($event)" [(worklogItem)]="worklogItem"></add-worklog>
+
+<p-dialog header="Calendar configurations" [(visible)]="showSettings"
+          breakpoint="800" width="800" appendTo="body" [baseZIndex]="9999"
+          modal="true" dismissableMask="false" autoAlign="true">
+  <h3 class="control-sidebar-heading">Item Colors</h3>
+  <div class="form-group row">
+    <label class="col-md-3 col-form-label">Meeting entry color</label>
+    <div class="col-md-9 col-form-label">
+      <ja-color-picker [(colorCode)]="settings.eventColor"></ja-color-picker>
+      <label class="form-check-label">
+        Specify the color of the entry for meeting
+      </label>
+    </div>
+  </div>
+  <div class="form-group row">
+    <label class="col-md-3 col-form-label">Worklog entry color</label>
+    <div class="col-md-9 col-form-label">
+      <ja-color-picker [(colorCode)]="settings.worklogColor"></ja-color-picker>
+      <label class="form-check-label">
+        Specify the color of the worklog entry
+      </label>
+    </div>
+  </div>
+  <div class="form-group row">
+    <label class="col-md-3 col-form-label">Info color (Valid)</label>
+    <div class="col-md-9 col-form-label">
+      <ja-color-picker [(colorCode)]="settings.infoColor_valid"></ja-color-picker>
+      <label class="form-check-label">
+        Specify the color of the info entry when the total hours logged is equal to the max hours to log setting
+      </label>
+    </div>
+  </div>
+  <div class="form-group row">
+    <label class="col-md-3 col-form-label">Info color (Less)</label>
+    <div class="col-md-9 col-form-label">
+      <ja-color-picker [(colorCode)]="settings.infoColor_less"></ja-color-picker>
+      <label class="form-check-label">
+        Specify the color of the info entry when the total hours logged is lesser than the max hours to log
+      </label>
+    </div>
+  </div>
+  <div class="form-group row">
+    <label class="col-md-3 col-form-label">Info color (High)</label>
+    <div class="col-md-9 col-form-label">
+      <ja-color-picker [(colorCode)]="settings.infoColor_high"></ja-color-picker>
+      <label class="form-check-label">
+        Specify the color of the info entry when the total hours logged is higher than the max hours to log
+      </label>
+    </div>
+  </div>
+
+  <h3 class="control-sidebar-heading">Show / Hide Entries</h3>
+  <div class="form-group">
+    <label class="control-sidebar-subheading">
+      <input type="checkbox" ng-model="settings.showMeetings" />
+      Display entry for meetings integrated from calendar
+    </label>
+  </div>
+  <div class="form-group">
+    <label class="control-sidebar-subheading">
+      <input type="checkbox" ng-model="settings.showWorklogs" />
+      Display worklog added by you
+    </label>
+  </div>
+  <div class="form-group">
+    <label class="control-sidebar-subheading">
+      <input type="checkbox" ng-model="settings.showInfo" />
+      Display information about total hours logged on daily basis
+    </label>
+  </div>
+  <p-footer>
+    <button class="btn btn-default pull-right" (click)="showSettings=false">Done</button>
+  </p-footer>
+</p-dialog>

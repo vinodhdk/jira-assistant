@@ -4,6 +4,7 @@ import { DatabaseService, SessionService } from '../../services/index';
 import { IDashboard, IUser } from '../../common/interfaces';
 import { updateDashboard } from '../../_nav';
 import { DASHBOARD_ICONS } from '../../_constants';
+import { FacadeService } from '../../services/facade.service';
 
 
 @Component({
@@ -22,8 +23,10 @@ export class DashboardComponent {
   isEditMode: boolean
   newName: string
   newIcon: any
+  savedQueries: any[]
 
-  constructor(private route: ActivatedRoute, private $db: DatabaseService, private $session: SessionService, private router: Router) {
+  constructor(private route: ActivatedRoute, private $db: DatabaseService, private $session: SessionService,
+    private $jaFacade: FacadeService, private router: Router) {
     this.dashboardIcons = DASHBOARD_ICONS;
   }
 
@@ -47,7 +50,10 @@ export class DashboardComponent {
       { label: "Create dashboard", icon: "fa-plus", command: () => this.createDashboard() },
       { label: "Delete dashboard", icon: "fa-trash-o", command: () => this.deleteDashboard(), disabled: this.dashboardIndex == 0 },
       {
-        label: "Edit layout", icon: "fa-edit", command: () => { this.showLayoutPopup = true; this.selectedLayout = this.currentBoard.layout; }
+        label: "Edit layout", icon: "fa-columns", command: () => {
+          this.showLayoutPopup = true;
+          this.selectedLayout = this.currentBoard.layout;
+        }
       },
       quickViewLink
     ];
@@ -105,6 +111,12 @@ export class DashboardComponent {
       }
       return uid;
     });
+  }
+
+  showGadgets() {
+    this.$jaFacade.getSavedFilters()
+      .then((result) => { this.savedQueries = result; })
+    this.showGadgetsPopup = true;
   }
 
   hasGadget(gadgetName: string) {

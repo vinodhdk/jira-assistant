@@ -8,6 +8,7 @@ export class SessionService {
   rootUrl: string;
   CurrentUser: ISessionUser;
   pageSettings: any;
+  siteVersionNumber:string
 
   constructor() { }
 

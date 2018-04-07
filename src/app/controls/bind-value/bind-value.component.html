@@ -1,0 +1,22 @@
+<ng-container [ngSwitch]="oper.type">
+  <ng-container *ngSwitchCase="'multiple'">
+    <p-chips [(ngModel)]="row.valueArr" max="50" [placeholder]="'one or more values for ' + row.name"
+             allowDuplicate="false" addOnTab="true" addOnBlur="true" (onAdd)="valueArrChanged(row.valueArr)" (onRemove)="valueArrChanged(row.valueArr)"></p-chips>
+  </ng-container>
+
+  <ng-container *ngSwitchCase="'range'">
+
+    <ng-container *ngIf="(row.type=='date' || row.type=='datetime'); else notDate">
+      <app-date-range-picker [(ngModal)]="dateRange" width="200" (selected)="dateSelected($event)"></app-date-range-picker>
+    </ng-container>
+
+    <ng-template #notDate>
+      <input type="text" [(ngModel)]="row.value" class="from" style="width:49%;"> and <input [(ngModel)]="row.value2" type="text" class="to" style="width:49%;">
+    </ng-template>
+
+  </ng-container>
+
+  <ng-container *ngSwitchDefault>
+    <input type="text" [(ngModel)]="row.value" placeholder="value for {{row.name}}" style="width:100%;">
+  </ng-container>
+</ng-container>

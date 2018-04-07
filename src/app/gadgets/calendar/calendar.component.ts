@@ -12,6 +12,7 @@ import { BaseGadget } from '../base-gadget';
 })
 export class CalendarComponent extends BaseGadget implements OnInit {
   settings: any
+  showSettings: boolean
   fullCalendarOpts: any
   events: CalendarEvents[]
   //defaultView: string //
@@ -21,8 +22,7 @@ export class CalendarComponent extends BaseGadget implements OnInit {
   CurrentUser: ISessionUser
   maxHours: number
   maxTime: number
-
-  isFullScreen: boolean
+  
   isLoading: boolean
 
   viewModes: any[]
@@ -53,7 +53,7 @@ export class CalendarComponent extends BaseGadget implements OnInit {
     el: ElementRef) {
     super(el);
     this.viewModes = [{ value: 'month', label: 'Month' }, { value: 'agendaWeek', label: 'Week' }, { value: 'agendaDay', label: 'Day' }];
-    this.settings = { viewMode: 'agendaWeek', showMeetings: true, showWorklogs: true, showInfo: true };
+    this.settings = this.$session.pageSettings.calendar || { viewMode: 'agendaWeek', showMeetings: true, showWorklogs: true, showInfo: true };
 
     this.contextMenuItems = [
       { label: "Edit worklog", icon: "fa-edit", command: () => this.showWorklogPopup({ id: this.currentWLItem.id }) },
@@ -124,7 +124,7 @@ export class CalendarComponent extends BaseGadget implements OnInit {
 
   fillEvents(start, end) {
     var filter = (data) => {
-      var types = [];
+      var types: number[] = [];
       var ps = this.settings;
 
       if (ps.showMeetings) types.Add(2);
@@ -134,7 +134,7 @@ export class CalendarComponent extends BaseGadget implements OnInit {
       switch (types.length) {
         case 0: data = []; break;
         case 3: break;
-        default: data = data.Where((e) => { return types.indexOf(e.entryType) > -1; }); break;
+        default: data = data.Where((e: any) => { return types.indexOf(e.entryType) > -1; }); break;
       }
       this.setColors(data);
       this.events = data;

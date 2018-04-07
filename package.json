@@ -1,10 +1,10 @@
 {
-  "name": "@coreui/angular",
-  "version": "1.0.10",
-  "description": "Open Source Bootstrap Admin Template",
-  "author": "Łukasz Holeczek",
-  "homepage": "http://coreui.io",
-  "copyright": "Copyright 2018 creativeLabs Łukasz Holeczek",
+  "name": "JiraAssist",
+  "version": "1.0.0",
+  "description": "Help to track & upload work done on a Jira Ticket on timely basis and generate report",
+  "author": "Shridhar",
+  "homepage": "https://chrome.google.com/webstore/detail/jira-assistant/momjbjbjpbcbnepbgkkiaofkgimihbii",
+  "copyright": "Copyright 2018 Jira Assistant",
   "license": "MIT",
   "scripts": {
     "ng": "ng",

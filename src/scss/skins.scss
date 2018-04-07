@@ -35,6 +35,18 @@
       color: $header-bg;
     }
   }
+
+  .page-header .board-icon {
+    color: $header-logo-bg;
+  }
+
+  .badge-info {
+    background-color: $header-bg;
+  }
+  /*.ui-widget-header .ui-button, .ui-widget-content .ui-button, .ui-widget.ui-button, .ui-button {
+    background-color: $header-bg;
+    border: 1px solid $header-logo-bg;
+  }*/
 }
 
 @mixin base-style-light {
@@ -153,6 +165,66 @@
 .skin-yellow-light {
   //$header-logo-bg: #e08e0b;
   $header-bg: #f39c12;
+
+  @include base-style($header-bg,$header-bg);
+
+  @include base-style-light;
+}
+
+.skin-violet {
+  $header-logo-bg: #7a4889; //#724381
+  $header-bg: #9055A2; //#9055A2
+  @include base-style($header-logo-bg,$header-bg);
+}
+
+.skin-violet-light {
+  //$header-logo-bg: #7a4889;
+  $header-bg: #9055A2;
+
+  @include base-style($header-bg,$header-bg);
+
+  @include base-style-light;
+}
+
+.skin-pink {
+  $header-logo-bg: #ec2f6c; //#eb2364
+  $header-bg: #ef5285; //#ef5285
+  @include base-style($header-logo-bg,$header-bg);
+}
+
+.skin-pink-light {
+  //$header-logo-bg: #ec2f6c;
+  $header-bg: #ef5285;
+
+  @include base-style($header-bg,$header-bg);
+
+  @include base-style-light;
+}
+
+.skin-sea {
+  $header-logo-bg: #2d7776; //#296e6d
+  $header-bg: #379392;
+  @include base-style($header-logo-bg,$header-bg);
+}
+
+.skin-sea-light {
+  //$header-logo-bg: #2d7776;
+  $header-bg: #379392;
+
+  @include base-style($header-bg,$header-bg);
+
+  @include base-style-light;
+}
+
+.skin-green {
+  $header-logo-bg: #2b954b; //#288b46
+  $header-bg: #33b35a;
+  @include base-style($header-logo-bg,$header-bg);
+}
+
+.skin-green-light {
+  //$header-logo-bg: #2d7776;
+  $header-bg: #33b35a;
 
   @include base-style($header-bg,$header-bg);
 

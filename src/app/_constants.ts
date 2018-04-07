@@ -1,3 +1,5 @@
+import * as moment from 'moment'
+
 export enum ApiUrls {
   authentication = "~/rest/auth/1/session",
   getAllProjects = "~/rest/api/2/project",
@@ -79,3 +81,37 @@ export const DASHBOARD_ICONS = [
   , 'fa fa-th-list'
   , 'fa fa-th-large'
 ];
+
+export const OPERATORS: IOperators[] = [
+  { value: '{0} = {1}', label: 'Equals value' },
+  { value: '{0} != {1}', label: 'Not equals value' },
+  { value: '{0} > {1}', label: 'greater than', types: ['number', 'date', 'datetime', 'seconds'] },
+  { value: '{0} >= {1}', label: 'greater than or equals', types: ['number', 'date', 'datetime', 'seconds'] },
+  { value: '{0} < {1}', label: 'lesser than', types: ['number', 'date', 'datetime', 'seconds'] },
+  { value: '{0} <= {1}', label: 'lesser than or equals', types: ['number', 'date', 'datetime', 'seconds'] },
+  { value: '({0} >= {1} AND {0} <= {2})', label: 'between', types: ['number', 'date', 'datetime', 'seconds'], type: 'range' },
+  { value: '({0} < {1} AND {0} > {2})', label: 'not between', types: ['number', 'date', 'datetime', 'seconds'], type: 'range' },
+  { value: '{0} in ({1})', label: 'Contains any of', type: 'multiple' },
+  { value: '{0} not in ({1})', label: 'Does not contain', type: 'multiple' }
+];
+
+interface IOperators {
+  value: string
+  label: string
+  type?: string
+  types?: string[]
+}
+
+export function getDateRange(rangeOf?: number): any[] {
+  var ranges = [
+    [moment().startOf('month').toDate(), moment().endOf('month').toDate()],
+    [moment().subtract(1, 'months').toDate(), moment().toDate()],
+    [moment().subtract(1, 'months').startOf('month').toDate(), moment().subtract(1, 'months').endOf('month').toDate()],
+    [moment().startOf('week').toDate(), moment().endOf('week').toDate()],
+    [moment().subtract(6, 'days').toDate(), moment().toDate()],
+    [moment().subtract(1, 'weeks').startOf('week').toDate(), moment().subtract(1, 'weeks').endOf('week').toDate()]
+  ];
+
+  if (rangeOf) { return ranges[rangeOf - 1]; }
+  else { return ranges }
+}

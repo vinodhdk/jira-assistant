@@ -4,11 +4,11 @@ import { Component, OnInit } from '@angular/core';
   selector: 'app-custom-report',
   templateUrl: './custom-report.component.html'
 })
-export class CustomReportComponent implements OnInit {
-
+export class CustomReportComponent {
+  queryModel: any
   constructor() { }
 
-  ngOnInit() {
+  generateReport($event) {
+    this.queryModel = $event.queryModel;
   }
-
 }

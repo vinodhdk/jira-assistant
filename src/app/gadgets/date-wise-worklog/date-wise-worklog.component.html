@@ -7,9 +7,9 @@
         <span class="ui-panel-title" style="font-size:16px;display:inline-block;margin-top:2px">Daywise worklog</span>
         <div class="pull-right">
           <app-date-range-picker [(ngModal)]="dateRange" width="200" (selected)="dateSelected($event)"></app-date-range-picker>
-          <button pButton [icon]="isFullScreen?'fa-compress':'fa-expand'" (click)="isFullScreen=!isFullScreen"></button>
+          <button pButton [icon]="isFullScreen?'fa-compress':'fa-expand'" (click)="toggleFullScreen()"></button>
           <button pButton icon="fa-refresh" (click)="fillWorklogs();"></button>
-          <button pButton icon="fa-save"></button>
+          <div jaExport [element]="tbl" fileName="Datewise worklog"></div>
           <button pButton icon="fa-times" (click)="onAction.emit({ action: 100 });"></button>
         </div>
       </div>
@@ -19,7 +19,7 @@
     </p-blockUI>
     <p-panel [showHeader]="false" #pnlCtl>
       <p-scrollPanel [style]="{width: '100%', height: contentHeight + 'px'}" styleClass="cont-div">
-        <table class="table table-responsive-sm table-bordered table-striped table-sm no-margin">
+        <table #tbl class="table table-responsive-sm table-bordered table-striped table-sm no-margin">
           <thead>
             <tr>
               <th style="min-width:130px;">Logged Date</th>

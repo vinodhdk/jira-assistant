@@ -20,34 +20,41 @@ Date.prototype.format = function (seperat) {
   var ss = this.getSeconds() < 10 ? "0" + this.getSeconds() : this.getSeconds();
 
 
-  if (seperat)
+  if (seperat) {
     return seperat
       .replace("yyyy", yyyy)
       .replace("yy", yyyy)
       .replace("MMMM", FULL_MONTH_NAMES[mm - 1])
       .replace("MMM", SHORT_MONTH_NAMES[mm - 1])
       .replace("MM", mm)
+      .replace("M", mm - 0)
       .replace("DDDD", FULL_DAY_NAMES[this.getDay()])
       .replace("DDD", SHORT_DAY_NAMES[this.getDay()])
       .replace("dddd", FULL_DAY_NAMES[this.getDay()])
       .replace("ddd", SHORT_DAY_NAMES[this.getDay()])
       .replace("DD", TINY_DAY_NAMES[this.getDay()])
       .replace("dd", dd)
+      .replace("d", dd - 0)
       .replace("HH", hh)
-      .replace("hh", hh > 12 ? hh - 12 : hh)
+      .replace("H", hh - 0)
+      .replace("hh", hh > 12 ? (hh - 12).pad(2) : hh)
+      .replace("h", hh > 12 ? hh - 12 : hh)
       .replace("mm", min)
       .replace("ss", ss)
       .replace("tt", hh >= 12 ? "PM" : "AM")
+      .replace("t", hh >= 12 ? "P" : "A")
       ;
-  else
+  }
+  else {
     return "".concat(yyyy).concat(mm).concat(dd).concat(hh).concat(min).concat(ss);
+  }
 };
 
 String.prototype.format = function (args) {
   if (args && !Array.isArray(args)) { args = [args]; }
   var str = this;
   for (var i = 0; i < args.length; i++) {
-    str = str.replace(new RegExp('\\{' + i + '\\}'), args[i]);
+    str = str.replace(new RegExp('\\{' + i + '\\}', 'g'), args[i]);
   }
   return str;
 };

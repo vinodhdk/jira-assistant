@@ -14,7 +14,6 @@ export class MyOpenTicketsComponent extends BaseGadget implements OnInit {
   contextMenu: any[]//MenuItem
   selectedTicket: any
   dateRange: any
-  isFullScreen: boolean
 
   constructor(private $jaDataSvc: JiraService, private $facade: FacadeService, el: ElementRef) {
     super(el);

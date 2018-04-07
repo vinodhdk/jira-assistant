@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 @Injectable()
 export class AnalyticsService {
   constructor(private router: Router) {
+    window['_gaq'] = window['_gaq'] || [];
   }
 
   trackEvent(event, page?:string) {

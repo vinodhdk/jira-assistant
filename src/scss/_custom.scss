@@ -248,7 +248,9 @@ div.ja-loader > i.fa-refresh {
 .page-header .title {
   font-weight: bold;
   float: left;
-  cursor:pointer;
+  cursor: pointer;
+  color: #29363d;
+  padding-top: 4px;
 }
 
 .page-header .fa-arrow-right {
@@ -257,7 +259,6 @@ div.ja-loader > i.fa-refresh {
 .page-header .board-icon {
   font-weight: bold;
   font-size: 19px;
-  color: #20a8d8;
 }
 
 .page-header div.controls {
@@ -322,6 +323,10 @@ div.full-screen {
 
 div.full-screen .fs-hide {
   display: none !important;
+}
+
+body.fs-layout {
+  overflow: hidden !important;
 }
 
 .gadget-info {
@@ -447,5 +452,13 @@ ul.right-menus li a {
 }
 
 .ui-timepicker {
+  padding: 0;
+}
+
+div[jaexport] {
+  display: inline;
+}
+
+.query-tab .ui-tabview-panel {
   padding: 0;
 }

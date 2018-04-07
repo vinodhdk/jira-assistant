@@ -9,7 +9,7 @@
           <button pButton icon="fa-users" (click)="showGroups=true"></button>
           <button pButton [icon]="isFullScreen?'fa-compress':'fa-expand'" (click)="isFullScreen=!isFullScreen"></button>
           <button pButton icon="fa-refresh" (click)="generateReport();"></button>
-          <button pButton icon="fa-save"></button>
+          <div jaExport></div>
           <button pButton icon="fa-cogs" (click)="showSettings=true"></button>
         </div>
       </div>

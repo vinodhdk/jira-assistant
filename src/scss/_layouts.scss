@@ -83,18 +83,15 @@ div.layout-4 {
 
   .widget-cntr:nth-child(3n-2) {
     height: calc(100vh - 95px);
-    margin-bottom: 7px;
+    margin-bottom: 6px;
     margin-right: 3px;
   }
 
   .widget-cntr:nth-child(3n-1), .widget-cntr:nth-child(3n) {
     float: right;
-    height: calc(50vh - 48px);
+    height: calc(50vh - 50px);
     margin-left: 3px;
-  }
-
-  .widget-cntr:nth-child(3n) {
-    margin-top: 8px;
+    margin-bottom: 6px;
   }
 }
 
@@ -114,6 +111,7 @@ div.dummy-layout-4 {
 div.layout-5 {
   .widget-cntr {
     height: calc(50vh - 48px);
+    margin-bottom: 6px;
   }
 
   .widget-cntr:nth-child(3n-2) {
@@ -121,9 +119,11 @@ div.layout-5 {
   }
 
   .widget-cntr:nth-child(3n-1), .widget-cntr:nth-child(3n) {
-    width: 50%;
-    margin-top: 8px;
-    margin-bottom: 10px;
+    width: calc(50% - 3px);
+  }
+
+  .widget-cntr:nth-child(3n-1) {
+    margin-right: 6px;
   }
 }
 
@@ -148,20 +148,20 @@ div.dummy-layout-5 {
 div.layout-6 {
   .widget-cntr {
     height: calc(50vh - 48px);
+    margin-bottom: 6px;
   }
 
   .widget-cntr:nth-child(3n-2) {
-    width: 50%;
+    width: calc(50% - 3px);
+    margin-right: 6px;
   }
 
   .widget-cntr:nth-child(3n-1) {
-    width: 50%;
+    width: calc(50% - 3px);
   }
 
   .widget-cntr:nth-child(3n) {
     width: 100%;
-    margin-top: 8px;
-    margin-bottom: 12px;
   }
 }
 

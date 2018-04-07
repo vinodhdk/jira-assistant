@@ -12,7 +12,6 @@ export class PendingWorklogComponent extends BaseGadget {
   contextMenu: any[]//MenuItem
   selectedItem: any
   selAllWks: boolean
-  isFullScreen: boolean
 
   //dateStarted
   constructor(private $facade: FacadeService, private $jaUtils: UtilsService, el: ElementRef, private message: MessageService) {
@@ -30,7 +29,7 @@ export class PendingWorklogComponent extends BaseGadget {
 
   fillWorklogs() {
     this.isLoading = true;
-    this.$facade.getPendingWorklogs()
+    return this.$facade.getPendingWorklogs()
       .then((result) => {
         this.worklogs = result.ForEach((w) => w.selected = this.selAllWks);
         this.isLoading = false;
@@ -60,12 +59,16 @@ export class PendingWorklogComponent extends BaseGadget {
 
   uploadWorklog(items?: any[]) {
     if (!items) {
-      items = this.worklogs.Where((w) => { return w.selected; });
+      items = this.worklogs.Where((w) => w.selected);
     }
+
     var ids = items.Select((w) => w.id);
     if (ids.length == 0) { this.message.info("Select the worklogs to be uploaded!"); return; }
     this.isLoading = true;
-    this.$facade.uploadWorklogs(ids).then((result) => this.worklogs = result, (obj) => {
+    this.$facade.uploadWorklogs(ids).then((result) => {
+      this.worklogs = result;
+      this.isLoading = false;
+    }, (obj) => {
       if (obj && obj.message) { this.message.warning(obj.message); }
       //this.pnlLoggedWork_PW.onrefresh($scope.pnlLoggedWork_PW); // ToDo: handle it differently
       this.isLoading = false;
@@ -76,7 +79,7 @@ export class PendingWorklogComponent extends BaseGadget {
     if (!items) {
       items = this.worklogs.Where((w) => w.selected);
     }
-    var ids = items.Select(function (w) { return w.id; });
+    var ids = items.Select((w) => w.id);
     if (ids.length == 0) { this.message.info("Select the worklogs to be deleted!"); return; }
     this.isLoading = true;
     this.$facade.deleteWorklogs(ids).then((result) => this.fillWorklogs());// ToDo: refresh deps

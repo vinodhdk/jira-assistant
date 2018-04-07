@@ -14,18 +14,18 @@ import { PRIME_MODULES, JA_CONTROLS, JA_PIPES, JA_VIEWS, JA_GADGETS, JA_DIRECTIV
 // Import services
 import {
   AjaxService, AnalyticsService, AppBrowserService, CacheService, CalendarService, DatabaseService, FacadeService,
-  JiraService, MessageService, SessionService, UtilsService
+  JiraService, MessageService, SessionService, UtilsService, DataTransformService
 } from './services';
 
 const JA_SERVICES = [
   AjaxService, AnalyticsService, AppBrowserService, CacheService, CalendarService, DatabaseService, FacadeService,
-  JiraService, MessageService, SessionService, UtilsService,
+  JiraService, MessageService, SessionService, UtilsService, DataTransformService,
 
   {
     // Provider for APP_INITIALIZER
     provide: APP_INITIALIZER,
     useFactory: authFactory,
-    deps: [FacadeService],//, JiraService, MessageService, SessionService, AjaxService, CacheService, FormatTsPipe
+    deps: [FacadeService],
     multi: true
   }
 ]

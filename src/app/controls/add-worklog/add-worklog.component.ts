@@ -45,6 +45,10 @@ export class AddWorklogComponent implements OnInit {
       if (changes.worklogItem && changes.worklogItem.currentValue) {
         var obj = changes.worklogItem.currentValue;
         if (obj.id) {
+          this.vald = {};
+          this.ctlClass = {};
+          this.loading = false;
+
           var pro = this.fillWorklog(obj.id);
           if (obj.copy) {
             pro.then(d => {
@@ -54,6 +58,10 @@ export class AddWorklogComponent implements OnInit {
           }
         }
         else {
+          this.vald = {};
+          this.ctlClass = {};
+          this.loading = false;
+
           this.log.ticketNo = { value: obj.ticketNo };
           this.log.dateStarted = obj.startTime || new Date();
           this.log.allowOverride = obj.allowOverride;
@@ -137,11 +145,11 @@ export class AddWorklogComponent implements OnInit {
       timeSpent: worklog.timeSpent,
       parentId: worklog.parentId,
       id: worklog.id
-    }).then((result) => {
+    }).then((result: any) => {
       this.loading = false;
       this.showPopup = false;
       this.onDone.emit(worklog.id > 0 ? { edited: result } : { added: result });
-    });
+    }, (e: any) => this.loading = false);
   }
 
   private getTicketNo(worklog): string {
@@ -155,6 +163,7 @@ export class AddWorklogComponent implements OnInit {
       this.onDone.emit({ removed: log.id });
       this.loading = false;
       this.showPopup = false;
+      this.onDone.emit({ deleted: log.id });
     });
   }
 
