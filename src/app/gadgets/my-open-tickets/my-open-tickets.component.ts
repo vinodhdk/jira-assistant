@@ -1,7 +1,7 @@
 import { Component, OnInit, ElementRef } from '@angular/core';
 import { JiraService } from '../../services/jira.service';
 import { FacadeService } from '../../services/facade.service';
-import { BaseGadget } from '../base-gadget';
+import { BaseGadget, GadgetActionType } from '../base-gadget';
 //import { MenuItem } from 'primeng/api';
 
 @Component({
@@ -66,7 +66,7 @@ export class MyOpenTicketsComponent extends BaseGadget implements OnInit {
       .then((result) => {
         //if (result.length > 0) {
         //}
-        this.onAction.emit({ action: 10 });
+        this.onAction.emit({ type: GadgetActionType.TicketBookmarked });
       });
   }
 }

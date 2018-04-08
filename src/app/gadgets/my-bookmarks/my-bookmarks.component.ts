@@ -1,6 +1,6 @@
 import { Component, OnInit, Output, ElementRef } from '@angular/core';
 import { FacadeService, JiraService, MessageService, UtilsService } from '../../services/';
-import { BaseGadget } from '../base-gadget';
+import { BaseGadget, GadgetAction, GadgetActionType } from '../base-gadget';
 
 @Component({
   selector: '[myBookmarks]',
@@ -28,7 +28,7 @@ export class MyBookmarksComponent extends BaseGadget implements OnInit {
   ngOnInit() {
   }
 
-  fillBookmarksList(refresh?: boolean): void {
+  fillBookmarksList(): void {
     this.isLoading = true;
     this.$facade.getBookmarks()
       .then((result) => {
@@ -84,6 +84,15 @@ export class MyBookmarksComponent extends BaseGadget implements OnInit {
     }
     else {
       this.showAddPopup = false;
+    }
+  }
+
+  executeEvent(action: GadgetAction) {
+    if (action.type == GadgetActionType.TicketBookmarked) {
+      this.fillBookmarksList();
+    }
+    else {
+      super.executeEvent(action);
     }
   }
 }

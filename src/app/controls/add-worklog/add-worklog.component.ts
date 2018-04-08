@@ -2,6 +2,7 @@ import { Component, OnInit, Output, EventEmitter, Input, ChangeDetectorRef } fro
 import { FacadeService } from '../../services/facade.service';
 import { FormatDateTimePipe } from '../../pipes/index';
 import { IValueLabel } from '../../common/interfaces';
+import { GadgetActionType } from '../../gadgets/base-gadget';
 
 @Component({
   selector: 'add-worklog',
@@ -61,7 +62,7 @@ export class AddWorklogComponent implements OnInit {
           this.vald = {};
           this.ctlClass = {};
           this.loading = false;
-
+          this.log = {};
           this.log.ticketNo = { value: obj.ticketNo };
           this.log.dateStarted = obj.startTime || new Date();
           this.log.allowOverride = obj.allowOverride;
@@ -148,7 +149,7 @@ export class AddWorklogComponent implements OnInit {
     }).then((result: any) => {
       this.loading = false;
       this.showPopup = false;
-      this.onDone.emit(worklog.id > 0 ? { edited: result } : { added: result });
+      this.onDone.emit(worklog.id > 0 ? { type: GadgetActionType.WorklogModified, edited: result } : { type: GadgetActionType.WorklogModified, added: result });
     }, (e: any) => this.loading = false);
   }
 
@@ -160,7 +161,7 @@ export class AddWorklogComponent implements OnInit {
   deleteWorklog(log) {
     this.loading = true;
     this.$jaFacade.deleteWorklogs([log.id]).then((result) => {
-      this.onDone.emit({ removed: log.id });
+      this.onDone.emit({ type: GadgetActionType.DeletedWorklog, removed: log.id });
       this.loading = false;
       this.showPopup = false;
       this.onDone.emit({ deleted: log.id });
@@ -168,6 +169,7 @@ export class AddWorklogComponent implements OnInit {
   }
 
   modelOnDone($event) {
-    this.onDone.emit({ closed: true });
+    this.showPopup = false;
+    this.onDone.emit({ type: GadgetActionType.None });
   }
 }

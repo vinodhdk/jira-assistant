@@ -14,7 +14,7 @@ export class BaseGadget implements OnChanges {
   layout: number
 
   @Output()
-  onAction: EventEmitter<any>
+  onAction: EventEmitter<GadgetAction>
 
   widgetCtl: any
   widgetHdrCtl: any
@@ -41,7 +41,7 @@ export class BaseGadget implements OnChanges {
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes.layout && changes.layout.currentValue) {
-      this.onResize({});
+      this.onResize();
     }
   }
 
@@ -52,15 +52,43 @@ export class BaseGadget implements OnChanges {
     this.onResize();
   }
 
+  performAction(type: GadgetActionType, data?: any) {
+    this.onAction.emit({ type: type, data: data });
+  }
+
   addWorklog(data: any) {
-    this.onAction.emit({ action: 1, data: data });
+    this.performAction(GadgetActionType.AddWorklog, data);
   }
 
   addWorklogOn(ticketNo: string) {
     this.addWorklog({ ticketNo: ticketNo })
   }
 
-  removeGadget() {
-    this.onAction.emit({ action: 100 })
+  editWorklog(worklogId: number) {
+    this.performAction(GadgetActionType.AddWorklog, { id: worklogId });
   }
+
+  removeGadget() {
+    this.performAction(GadgetActionType.RemoveGadget);
+  }
+
+  executeEvent(action: GadgetAction) {
+    if (action.type == GadgetActionType.RemoveGadget) {
+      this.onResize();
+    }
+  }
+}
+
+export interface GadgetAction {
+  type: GadgetActionType
+  data?: any
+}
+
+export enum GadgetActionType {
+  None = 0,
+  AddWorklog = 1,
+  WorklogModified = 2,
+  DeletedWorklog = 3,
+  TicketBookmarked = 10,
+  RemoveGadget = 100
 }

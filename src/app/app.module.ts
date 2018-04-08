@@ -94,9 +94,9 @@ const APP_DIRECTIVES = [
 import { AppRoutingModule } from './app.routing';
 
 // Import 3rd party components
-import { BsDropdownModule } from 'ngx-bootstrap/dropdown';
-import { TabsModule } from 'ngx-bootstrap/tabs';
-import { ChartsModule } from 'ng2-charts/ng2-charts';
+//import { BsDropdownModule } from 'ngx-bootstrap/dropdown';
+//import { TabsModule } from 'ngx-bootstrap/tabs';
+//import { ChartsModule } from 'ng2-charts/ng2-charts';
 import { MessageService as PrimeMessageService } from 'primeng/components/common/messageservice';
 
 @NgModule({
@@ -104,9 +104,9 @@ import { MessageService as PrimeMessageService } from 'primeng/components/common
     BrowserModule,
     AppRoutingModule,
     FormsModule,
-    BsDropdownModule.forRoot(),
-    TabsModule.forRoot(),
-    ChartsModule,
+    //BsDropdownModule.forRoot(),
+    //TabsModule.forRoot(),
+    //ChartsModule,
     HttpClientModule,
     BrowserAnimationsModule,
     ...PRIME_MODULES

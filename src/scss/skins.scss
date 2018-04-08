@@ -43,6 +43,11 @@
   .badge-info {
     background-color: $header-bg;
   }
+
+  .skin-bg-font {
+    background-color: $header-bg;
+    color: #fff !important;
+  }
   /*.ui-widget-header .ui-button, .ui-widget-content .ui-button, .ui-widget.ui-button, .ui-button {
     background-color: $header-bg;
     border: 1px solid $header-logo-bg;

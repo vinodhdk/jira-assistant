@@ -20,14 +20,14 @@
 </div>
 <div [ngClass]="'layout-' + currentBoard.layout">
   <ng-container *ngFor="let ctrl of currentBoard.widgets; let idx=index" [ngSwitch]="ctrl.name">
-    <div class="widget-cntr" [layout]="currentBoard.layout" *ngSwitchCase="'myOpenTickets'" myOpenTickets (onAction)="widgetAction($event,idx)"></div>
-    <div class="widget-cntr" [layout]="currentBoard.layout" *ngSwitchCase="'myBookmarks'" myBookmarks (onAction)="widgetAction($event,idx)"></div>
-    <div class="widget-cntr" [layout]="currentBoard.layout" *ngSwitchCase="'dateWiseWorklog'" dateWiseWorklog (onAction)="widgetAction($event,idx)"></div>
-    <div class="widget-cntr" [layout]="currentBoard.layout" *ngSwitchCase="'pendingWorklog'" pendingWorklog (onAction)="widgetAction($event,idx)"></div>
-    <div class="widget-cntr" [layout]="currentBoard.layout" *ngSwitchCase="'ticketWiseWorklog'" ticketWiseWorklog (onAction)="widgetAction($event,idx)"></div>
-    <div class="widget-cntr" [layout]="currentBoard.layout" *ngSwitchCase="'myFilters'" myFilters (onAction)="widgetAction($event,idx)"></div>
-    <div class="widget-cntr" [layout]="currentBoard.layout" *ngSwitchCase="'agendaDay'" jaCalendar viewMode="agendaDay" (onAction)="widgetAction($event,idx)"></div>
-    <div class="widget-cntr" [layout]="currentBoard.layout" *ngSwitchCase="'agendaWeek'" jaCalendar viewMode="agendaWeek" (onAction)="widgetAction($event,idx)"></div>
+    <div #myGadget class="widget-cntr widget" [layout]="currentBoard.layout" *ngSwitchCase="'myOpenTickets'" myOpenTickets (onAction)="widgetAction($event,idx)"></div>
+    <div #myGadget class="widget-cntr widget" [layout]="currentBoard.layout" *ngSwitchCase="'myBookmarks'" myBookmarks (onAction)="widgetAction($event,idx)"></div>
+    <div #myGadget class="widget-cntr widget" [layout]="currentBoard.layout" *ngSwitchCase="'dateWiseWorklog'" dateWiseWorklog (onAction)="widgetAction($event,idx)"></div>
+    <div #myGadget class="widget-cntr widget" [layout]="currentBoard.layout" *ngSwitchCase="'pendingWorklog'" pendingWorklog (onAction)="widgetAction($event,idx)"></div>
+    <div #myGadget class="widget-cntr widget" [layout]="currentBoard.layout" *ngSwitchCase="'ticketWiseWorklog'" ticketWiseWorklog (onAction)="widgetAction($event,idx)"></div>
+    <div #myGadget class="widget-cntr widget" [layout]="currentBoard.layout" *ngSwitchCase="'myFilters'" myFilters (onAction)="widgetAction($event,idx)"></div>
+    <div #myGadget class="widget-cntr widget" [layout]="currentBoard.layout" *ngSwitchCase="'agendaDay'" jaCalendar viewMode="agendaDay" (onAction)="widgetAction($event,idx)"></div>
+    <div #myGadget class="widget-cntr widget" [layout]="currentBoard.layout" *ngSwitchCase="'agendaWeek'" jaCalendar viewMode="agendaWeek" (onAction)="widgetAction($event,idx)"></div>
     <div [layout]="currentBoard.layout" *ngSwitchDefault dynamicGadget [gadgetName]="ctrl.name" (onAction)="widgetAction($event,idx)"></div>
   </ng-container>
   <ng-container *ngIf="!currentBoard.widgets || currentBoard.widgets.length == 0">
@@ -37,7 +37,7 @@
   </ng-container>
 </div>
 
-<add-worklog [(showPopup)]="showWorklogPopup" (onDone)="showWorklogPopup=false" [(worklogItem)]="worklogItem"></add-worklog>
+<add-worklog [(showPopup)]="showWorklogPopup" (onDone)="showWorklogPopup=false;widgetAction($event)" [(worklogItem)]="worklogItem"></add-worklog>
 
 <p-dialog header="Choose layouts" [visible]="showLayoutPopup" [breakpoint]="1000" appendTo="body" [baseZIndex]="9999" [modal]="true"
           [dismissableMask]="false" [autoAlign]="true" (onHide)="showLayoutPopup=false">

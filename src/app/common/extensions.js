@@ -27,18 +27,18 @@ Date.prototype.format = function (seperat) {
       .replace("MMMM", FULL_MONTH_NAMES[mm - 1])
       .replace("MMM", SHORT_MONTH_NAMES[mm - 1])
       .replace("MM", mm)
-      .replace("M", mm - 0)
+      //.replace("M", mm - 0) // This cause issue in the month of march as M in march is replaced
       .replace("DDDD", FULL_DAY_NAMES[this.getDay()])
       .replace("DDD", SHORT_DAY_NAMES[this.getDay()])
       .replace("dddd", FULL_DAY_NAMES[this.getDay()])
       .replace("ddd", SHORT_DAY_NAMES[this.getDay()])
       .replace("DD", TINY_DAY_NAMES[this.getDay()])
       .replace("dd", dd)
-      .replace("d", dd - 0)
+      //.replace("d", dd - 0) // For safety this was also removed
       .replace("HH", hh)
       .replace("H", hh - 0)
       .replace("hh", hh > 12 ? (hh - 12).pad(2) : hh)
-      .replace("h", hh > 12 ? hh - 12 : hh)
+      .replace("h", hh > 12 ? hh - 12 : hh) // This can also cause issue
       .replace("mm", min)
       .replace("ss", ss)
       .replace("tt", hh >= 12 ? "PM" : "AM")

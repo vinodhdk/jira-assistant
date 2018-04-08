@@ -1,6 +1,8 @@
 import { Component, OnInit, ElementRef } from '@angular/core';
 import { FacadeService, UtilsService } from '../../services/index';
-import { BaseGadget } from '../base-gadget';
+import { BaseGadget, GadgetAction, GadgetActionType } from '../base-gadget';
+import { DataTransformService } from '../../services/data-transform.service';
+import * as moment from 'moment'
 
 @Component({
   selector: '[dateWiseWorklog]',
@@ -14,7 +16,7 @@ export class DateWiseWorklogComponent extends BaseGadget {
   selectedDay: any
   dateRange: any
 
-  constructor(private $jaFacade: FacadeService, private $jaUtils: UtilsService, el: ElementRef) {
+  constructor(private $jaFacade: FacadeService, private $jaUtils: UtilsService, private $transform: DataTransformService, el: ElementRef) {
     super(el);
     this.dateRange = {};
     this.fillWorklogs();
@@ -49,7 +51,28 @@ export class DateWiseWorklogComponent extends BaseGadget {
     return this.$jaUtils.getRowStatus(d);
   }
 
-  uploadWorklog() { alert("This functionality is not yet implemented!"); }
+  uploadWorklog() {
+    var toUpload = this.selectedDay.ticketList.Where(t => !t.worklogId).Select(t => t.id)
+    if (toUpload.length == 0) { return; }
+    this.isLoading = true;
+    this.$jaFacade.uploadWorklogs(toUpload).then(() => this.fillWorklogs(), (err) => { this.isLoading = false; });
+  }
 
-  addWorklog() { alert("This functionality is not yet implemented!"); }
+  addWorklog() {
+    var date = moment(this.selectedDay.dateLogged).toDate();
+    var hrsRemaining = null;
+    if (this.selectedDay.pendingUpload > 0) {
+      hrsRemaining = this.$transform.formatTs(this.selectedDay.pendingUpload, true);
+    }
+    super.addWorklog({ startTime: date, timeSpent: hrsRemaining, allowOverride: hrsRemaining ? true : false });
+  }
+
+  executeEvent(action: GadgetAction) {
+    if (action.type == GadgetActionType.AddWorklog || action.type == GadgetActionType.DeletedWorklog || action.type == GadgetActionType.WorklogModified) {
+      this.fillWorklogs();
+    }
+    else {
+      super.executeEvent(action);
+    }
+  }
 }

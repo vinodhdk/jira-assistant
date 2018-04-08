@@ -6,7 +6,7 @@ import { DataTransformService } from '../services/data-transform.service';
 })
 export class FormatTsPipe implements PipeTransform {
   constructor(private $transform: DataTransformService) { }
-  transform(d: any): any {
-    return this.$transform.formatTs(d);
+  transform(d: any, simple?: boolean): any {
+    return this.$transform.formatTs(d, simple);
   }
 }

@@ -1,6 +1,6 @@
 import { Component, OnInit, ElementRef } from '@angular/core';
 import { FacadeService, MessageService, UtilsService } from '../../services/index';
-import { BaseGadget } from '../base-gadget';
+import { BaseGadget, GadgetAction, GadgetActionType } from '../base-gadget';
 
 @Component({
   selector: '[pendingWorklog]',
@@ -20,8 +20,8 @@ export class PendingWorklogComponent extends BaseGadget {
     this.fillWorklogs();
     this.contextMenu = [
       { label: "Select worklog", icon: "fa-check-square-o", command: () => this.selectedItem.selected = true },
-      { label: "Edit worklog", icon: "fa-edit", command: () => this.editWorklog() },
-      { label: "Copy worklog", icon: "fa-copy", command: () => this.editWorklog(true) },
+      { label: "Edit worklog", icon: "fa-edit", command: () => this.editWorklogObj() },
+      { label: "Copy worklog", icon: "fa-copy", command: () => this.editWorklogObj(true) },
       { label: "Upload worklog", icon: "fa-upload", command: () => this.uploadWorklog([this.selectedItem]) },
       { label: "Delete worklog", icon: "fa-trash-o", command: () => this.deleteWorklog([this.selectedItem]) }
     ];
@@ -36,7 +36,7 @@ export class PendingWorklogComponent extends BaseGadget {
       });
   }
 
-  editWorklog(copy?: boolean) {
+  editWorklogObj(copy?: boolean) {
     var newObj = Object.create(this.selectedItem);
     newObj.copy = copy;
     this.addWorklog(newObj);
@@ -82,7 +82,18 @@ export class PendingWorklogComponent extends BaseGadget {
     var ids = items.Select((w) => w.id);
     if (ids.length == 0) { this.message.info("Select the worklogs to be deleted!"); return; }
     this.isLoading = true;
-    this.$facade.deleteWorklogs(ids).then((result) => this.fillWorklogs());// ToDo: refresh deps
+    this.$facade.deleteWorklogs(ids).then((result) => {
+      this.fillWorklogs();
+      this.performAction(GadgetActionType.DeletedWorklog);
+    });
   }
 
+  executeEvent(action: GadgetAction) {
+    if (action.type == GadgetActionType.AddWorklog || action.type == GadgetActionType.DeletedWorklog || action.type == GadgetActionType.WorklogModified) {
+      this.fillWorklogs();
+    }
+    else {
+      super.executeEvent(action);
+    }
+  }
 }

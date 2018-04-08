@@ -4,7 +4,7 @@ import { ISessionUser } from '../../common/interfaces';
 import * as moment from 'moment';
 import * as $ from 'jquery';
 import { FormatSecsPipe } from '../../pipes/format-secs.pipe';
-import { BaseGadget } from '../base-gadget';
+import { BaseGadget, GadgetAction, GadgetActionType } from '../base-gadget';
 
 @Component({
   selector: '[jaCalendar]',
@@ -229,6 +229,7 @@ export class CalendarComponent extends BaseGadget implements OnChanges {
       //this.calendar.fullCalendar('renderEvent', );
       this.setLoggedTime(logs, allDayEvent);
     }
+    this.performAction(GadgetActionType.WorklogModified);
   }
 
   private showWorklogPopup(obj) {
@@ -394,6 +395,16 @@ export class CalendarComponent extends BaseGadget implements OnChanges {
     var newObj = Object.create(this.currentWLItem);
     newObj.copy = true;
     this.showWorklogPopup({ copy: newObj });
+  }
+
+
+  executeEvent(action: GadgetAction) {
+    if (action.type == GadgetActionType.AddWorklog || action.type == GadgetActionType.DeletedWorklog || action.type == GadgetActionType.WorklogModified) {
+      this.fillCalendar();
+    }
+    else {
+      super.executeEvent(action);
+    }
   }
 }
 

@@ -45,10 +45,10 @@
               <td>
                 <ul class="tags">
                   <li *ngFor="let ld of w.ticketList">
-                    <a class="badge badge-pill badge-primary" *ngIf="ld.worklogId" href="{{getWorklogUrl(ld.ticketNo, ld.worklogId)}}" target="_blank" title="{{ld.comment}}">
+                    <a class="badge badge-pill skin-bg-font" *ngIf="ld.worklogId" href="{{getWorklogUrl(ld.ticketNo, ld.worklogId)}}" target="_blank" title="{{ld.comment}}">
                       <span class="fa fa-clock-o"></span> {{ld.ticketNo}}: {{ld.uploaded | formatTs}}
                     </a>
-                    <a class="badge badge-pill badge-primary" nohref *ngIf="!ld.worklogId" (click)="editWorklog(ld)" title="{{ld.comment}}">
+                    <a class="badge badge-pill skin-bg-font" nohref *ngIf="!ld.worklogId" (click)="editWorklog(ld.id)" title="{{ld.comment}}">
                       <span class="fa fa-clock-o"></span> {{ld.ticketNo}}: {{ld.uploaded | formatTs}}
                     </a>
                   </li>

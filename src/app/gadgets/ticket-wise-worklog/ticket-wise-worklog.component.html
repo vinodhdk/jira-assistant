@@ -43,8 +43,8 @@
               <td>
                 <ul class="tags">
                   <li *ngFor="let ld of w.logData">
-                    <a class="link badge badge-pill badge-primary" *ngIf="ld.worklogId" href="{{getWorklogUrl(w.ticketNo, ld.worklogId)}}" target="_blank" title="{{ld.comments}}"><span class="fa fa-clock-o"></span> {{ld.dateLogged | formatDate}}: {{ld.uploaded | formatTs}}</a>
-                    <a class="link badge badge-pill badge-primary" *ngIf="!ld.worklogId" nohref (click)="editWorklog(ld)" title="{{ld.comments}}"><span class="fa fa-clock-o"></span> {{ld.dateLogged | formatDate}}: {{ld.uploaded | formatTs}}</a>
+                    <a class="link badge badge-pill skin-bg-font" *ngIf="ld.worklogId" href="{{getWorklogUrl(w.ticketNo, ld.worklogId)}}" target="_blank" title="{{ld.comments}}"><span class="fa fa-clock-o"></span> {{ld.dateLogged | formatDate}}: {{ld.uploaded | formatTs}}</a>
+                    <a class="link badge badge-pill skin-bg-font" *ngIf="!ld.worklogId" nohref (click)="editWorklog(ld.id)" title="{{ld.comments}}"><span class="fa fa-clock-o"></span> {{ld.dateLogged | formatDate}}: {{ld.uploaded | formatTs}}</a>
                   </li>
                 </ul>
               </td>

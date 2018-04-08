@@ -1,10 +1,11 @@
-import { Component } from '@angular/core';
+import { Component, ViewChildren, QueryList, ContentChildren, ElementRef } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { DatabaseService, SessionService } from '../../services/index';
 import { IDashboard, IUser } from '../../common/interfaces';
 import { updateDashboard } from '../../_nav';
 import { DASHBOARD_ICONS } from '../../_constants';
 import { FacadeService } from '../../services/facade.service';
+import { BaseGadget, GadgetAction, GadgetActionType } from '../../gadgets/base-gadget';
 
 
 @Component({
@@ -24,6 +25,8 @@ export class DashboardComponent {
   newName: string
   newIcon: any
   savedQueries: any[]
+
+  @ViewChildren('myGadget') gadgetsList: QueryList<BaseGadget>;
 
   constructor(private route: ActivatedRoute, private $db: DatabaseService, private $session: SessionService,
     private $jaFacade: FacadeService, private router: Router) {
@@ -131,11 +134,24 @@ export class DashboardComponent {
     this.currentBoard.widgets.RemoveAll(g => g.name === gadgetName);
   }
 
-  widgetAction($event, widgetIndex) {
-    switch ($event.action) {
-      case 1: this.worklogItem = $event.data; this.showWorklogPopup = true; break;
+  widgetAction($event: GadgetAction, widgetIndex?: number) {
+    switch ($event.type) {
+      case GadgetActionType.AddWorklog: this.worklogItem = $event.data; this.showWorklogPopup = true; break;
       //case 2: this.worklogIdToEdit = $event.worklogId; this.showWorklogPopup = true; break;
-      case 100: this.currentBoard.widgets.RemoveAt(widgetIndex); this.saveDashboardInfo(true); break;
+      case GadgetActionType.RemoveGadget:
+        this.currentBoard.widgets.RemoveAt(widgetIndex);
+        this.saveDashboardInfo(true);
+        this.emitToChildren($event, widgetIndex);
+        break;
+      default:
+        this.emitToChildren($event, widgetIndex);
+        break;
     }
+  }
+
+  private emitToChildren($event: GadgetAction, widgetIndex?: number) {
+    this.gadgetsList.forEach((item, index, arr) => {
+      item.executeEvent($event);
+    });
   }
 }

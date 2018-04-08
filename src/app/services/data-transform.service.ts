@@ -88,7 +88,7 @@ export class DataTransformService {
     return this.formatDateTime(value, format, utc);
   }
 
-  formatSecs(d, showZeroSecs?: boolean): any {
+  formatSecs(d, showZeroSecs?: boolean, simple?: boolean): any {
     if (d === 0) {
       return showZeroSecs ? "0s" : "";
     }
@@ -102,15 +102,20 @@ export class DataTransformService {
     var h = Math.floor(d / 3600);
     var m = Math.floor(d % 3600 / 60);
     var s = Math.floor(d % 3600 % 60);
-    return prefix + ((h > 0 ? h + "h " : "") + (m > 0 ? m + "m " : "") + (s > 0 ? s + "s" : "")).trim();
+    if (simple) {
+      return prefix + (h > 0 ? h.pad(2) : "00") + ':' + (m > 0 ? m.pad(2) : "00");
+    }
+    else {
+      return prefix + ((h > 0 ? h + "h " : "") + (m > 0 ? m + "m " : "") + (s > 0 ? s + "s" : "")).trim();
+    }
   }
 
   formatTime(value: any, format?: string, utc?: boolean): any {
     return this.formatDateTime(value, format || this.$session.CurrentUser.timeFormat, utc);
   }
 
-  formatTs(d: any): any {
-    return this.formatSecs(this.$utils.getTotalSecs(d), false);
+  formatTs(d: any, simple?: boolean): any {
+    return this.formatSecs(this.$utils.getTotalSecs(d), false, simple);
   }
 
   formatUser(obj: any, fields: string): any {
