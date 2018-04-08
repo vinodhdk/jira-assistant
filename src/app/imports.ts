@@ -13,17 +13,17 @@ import { InplaceModule } from 'primeng/inplace';
 import { DialogModule } from 'primeng/dialog';
 import { InputMaskModule } from 'primeng/inputmask';
 import { CheckboxModule } from 'primeng/checkbox';
-import { StepsModule } from 'primeng/steps';
 import { ChipsModule } from 'primeng/chips';
 import { GrowlModule } from 'primeng/growl';
 import { ScheduleModule } from 'primeng/schedule';
 import { OverlayPanelModule } from 'primeng/overlaypanel';
 import { ColorPickerModule } from 'primeng/colorpicker';
 import { TabViewModule } from 'primeng/tabview';
+import { ProgressBarModule } from 'primeng/progressbar';
 
 export const PRIME_MODULES = [PanelModule, ButtonModule, BlockUIModule, ScrollPanelModule, TieredMenuModule,
   SplitButtonModule, DropdownModule, CalendarModule, DataViewModule, AutoCompleteModule, InplaceModule, DialogModule,
-  InputMaskModule, CheckboxModule, StepsModule, ChipsModule, GrowlModule, ScheduleModule, OverlayPanelModule,
+  InputMaskModule, CheckboxModule, ChipsModule, GrowlModule, ScheduleModule, OverlayPanelModule, ProgressBarModule,
   ColorPickerModule, TabViewModule]
 
 export const JA_DIRECTIVES: any = [];
@@ -51,9 +51,10 @@ import { QueryEditorComponent } from './controls/query-editor/query-editor.compo
 import { BindOperatorComponent } from './controls/bind-operator/bind-operator.component';
 import { BindValueComponent } from './controls/bind-value/bind-value.component';
 import { BindFunctionComponent } from './controls/bind-function/bind-function.component';
+import { DaysInWeekComponent } from './controls/days-in-week/days-in-week.component';
 
 export const JA_CONTROLS = [DateRangePickerComponent, GroupEditorComponent, AddWorklogComponent, ColorPickerComponent,
-  ExportComponent, QueryEditorComponent, BindOperatorComponent, BindValueComponent, BindFunctionComponent]
+  ExportComponent, QueryEditorComponent, BindOperatorComponent, BindValueComponent, BindFunctionComponent, DaysInWeekComponent]
 
 import {
   CalendarComponent, MyOpenTicketsComponent, DateWiseWorklogComponent, TicketWiseWorklogComponent, DynamicGadgetComponent,
@@ -77,11 +78,11 @@ export const JA_GADGETS = [
 import {
   CalendarViewComponent, DashboardComponent, FeedbackViewComponent, // common
   CustomReportComponent, SprintReportComponent, UserDaywiseReportComponent, // reports
-  UserGroupsComponent // settings
+  UserGroupsComponent, GeneralComponent
 } from './views'
 
 export const JA_VIEWS = [
   CalendarViewComponent, DashboardComponent, FeedbackViewComponent, // common
   CustomReportComponent, SprintReportComponent, UserDaywiseReportComponent, // reports
-  UserGroupsComponent // settings
+  UserGroupsComponent, GeneralComponent
 ]

@@ -193,9 +193,11 @@ td .user-info .name {
 }
 
 .fa.drill-down {
-  margin-top: 14px;
+  margin-top: 8px;
+  margin-bottom: 8px;
   margin-right: 1px !important;
   color: #d3d3d3;
+  cursor: pointer;
 }
 
 tr.grouped-row, tr.total-row {
@@ -378,6 +380,10 @@ body.fs-layout {
   border: 0;
 }
 
+.ui-progressbar {
+  border: 1px solid #D5D5D5 !important;
+  height: 23px;
+}
 
 /* Calendar view related styles */
 .fc-time .fa-ellipsis-v {
@@ -462,4 +468,35 @@ div[jaexport] {
 
 .query-tab .ui-tabview-panel {
   padding: 0;
+}
+
+.autocomplete-350 {
+  width: 350px;
+}
+
+.autocomplete-350 .ui-autocomplete-multiple-container {
+  width: 320px;
+}
+
+.autocomplete-350 .ui-autocomplete-input-token input {
+  width: 300px;
+}
+
+.help-block {
+  display: block;
+  margin-top: 5px;
+  margin-bottom: 10px;
+  color: #737373;
+}
+
+.form-label {
+  text-align: right;
+  padding-top: 16px;
+}
+
+.pnl-footer {
+  height: 50px;
+  border-top: 1px solid #d6d6d6;
+  background-color: #f6f7f9;
+  padding: 10px;
 }

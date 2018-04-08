@@ -4,7 +4,7 @@ interface Array<T> {
   // Returns array
   Where(func: (x: T) => boolean, maxItems?: number): Array<T>
   Select<X>(func?: (x: T) => X, includeNulls?: boolean): Array<X>
-  OrderBy(func: (x: T) => any): Array<T>
+  OrderBy(func?: (x: T) => any): Array<T>
   OrderByDescending(func: any): Array<T>
   SelectMany<X>(func: (x: T) => X): Array<X>
   Distinct<X>(func: (x: T) => X): Array<X>

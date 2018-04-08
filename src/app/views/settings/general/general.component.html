@@ -1,0 +1,224 @@
+<p-tabView styleClass="query-tab">
+  <p-tabPanel header="General" leftIcon="fa-filter" selected="true">
+    <div class="ui-g ui-fluid">
+      <div class="form-label ui-g-12 ui-md-3 ui-lg-3 ui-xl-2">
+        <strong>Display Date and Time format</strong>
+      </div>
+      <div class="ui-g-12 ui-md-9 ui-lg-9 ui-xl-10">
+        <div class="form-group">
+          <select class="form-control select" [(ngModel)]="settings.dateFormat" style="width:180px; display:inline-block;">
+            <option *ngFor="let format of dateFormats" [selected]="format.selected" value="{{format.value}}">{{format.text}}</option>
+          </select>
+          <select class="form-control select" [(ngModel)]="settings.timeFormat" style="width:150px; display:inline-block;">
+            <option *ngFor="let format of timeFormats" [selected]="format.selected" value="{{format.value}}">{{format.text}}</option>
+          </select>
+          <span class="help-block">Select your preferred date and time format to be displayed throughout the application</span>
+        </div>
+      </div>
+
+      <div class="form-label ui-g-12 ui-md-3 ui-lg-3 ui-xl-2">
+        <strong>Working hours</strong>
+      </div>
+      <div class="ui-g-12 ui-md-9 ui-lg-9 ui-xl-10">
+        <div class="form-group">
+          <input type="text" class="form-control timepicker24" [(ngModel)]="settings.startOfDay" maxlength="5" style="width:150px; display:inline-block;" />
+          <input type="text" class="form-control timepicker24" [(ngModel)]="settings.endOfDay" maxlength="5" style="width:150px; display:inline-block;" />
+          <span class="help-block">Select your preferred date and time format to be displayed throughout the application</span>
+        </div>
+      </div>
+
+      <div class="form-label ui-g-12 ui-md-3 ui-lg-3 ui-xl-2">
+        <strong>Working days</strong>
+      </div>
+      <div class="ui-g-12 ui-md-9 ui-lg-9 ui-xl-10">
+        <div class="form-group">
+          <div jaDaysInWeek [(days)]="settings.workingDays"></div>
+          <span class="help-block">Select the days in week you would be working.</span>
+        </div>
+      </div>
+
+      <div class="form-label ui-g-12 ui-md-3 ui-lg-3 ui-xl-2">
+        <strong>Prune worklogs</strong>
+      </div>
+      <div class="ui-g-12 ui-md-9 ui-lg-9 ui-xl-10">
+        <div class="form-group">
+          <select class="form-control select" [(ngModel)]="settings.pruneInterval" style="width:200px; display:inline-block;">
+            <option *ngFor="let mts of [1,2,3,4,5,6,7,8,9,10,11,12]" value="{{mts}}">Older than {{mts}} month</option>
+          </select>
+          <span class="help-block">Clear worklogs older than {{settings.pruneInterval}} months from local. This will not delete worklogs from Jira.</span>
+        </div>
+      </div>
+
+      <div class="form-label ui-g-12 ui-md-3 ui-lg-3 ui-xl-2">
+        <strong>Space consumed</strong>
+      </div>
+      <div class="ui-g-12 ui-md-5 ui-lg-5 ui-xl-4">
+        <div class="form-group">
+          <p-progressBar [value]="spaceInfo.usedSpacePerc"></p-progressBar>
+          <!--<div class="progress">
+            <div class="progress-bar" [ngClass]="spaceInfo.progressClass" role="progressbar" aria-valuenow="40" aria-valuemin="0" aria-valuemax="100" [style]="{width: (spaceInfo.usedSpacePerc || .5) + '%'}">
+              <span class="progress-text" *ngIf="spaceInfo.usedSpacePerc >= 40">{{spaceInfo.usedSpacePerc}}% in use</span>
+            </div>
+            <span class="progress-text" *ngIf="spaceInfo.usedSpacePerc < 40">{{spaceInfo.usedSpacePerc}}% in use</span>
+          </div>-->
+          <span class="help-block">
+            You have used <strong>{{spaceInfo.usedSpace | bytes}}</strong> of <strong>{{spaceInfo.totalSpace | bytes}}</strong>.
+            <span [hidden]="spaceInfo.usedSpacePerc < 80">
+              Once the remaining <strong>{{spaceInfo.freeSpace |bytes}}</strong> is used you will not be able to use the tool
+              to generate worklog. Hence it is necessary to prune your old worklogs using the above option.
+            </span>
+          </span>
+        </div>
+      </div>
+    </div>
+  </p-tabPanel>
+  <p-tabPanel header="Worklog" leftIcon="fa-clock-o">
+    <div class="ui-g ui-fluid">
+      <div class="form-label ui-g-12 ui-md-3 ui-lg-3 ui-xl-2">
+        <strong>Max hours to log</strong>
+      </div>
+      <div class="ui-g-12 ui-md-9 ui-lg-9 ui-xl-10">
+        <div class="form-group">
+          <select class="form-control select" [(ngModel)]="settings.maxHours" style="width:150px; display:inline-block;">
+            <option *ngFor="let h of [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24]" [selected]="settings.maxHours == h" value="{{h}}">{{h}} hour(s)</option>
+          </select>
+          <span class="help-block">Specify the maximum number of hovers to be logged per day</span>
+        </div>
+      </div>
+
+      <div class="form-label ui-g-12 ui-md-3 ui-lg-3 ui-xl-2">
+        <strong>Auto upload worklog</strong>
+      </div>
+      <div class="ui-g-12 ui-md-9 ui-lg-9 ui-xl-10">
+        <div class="form-group">
+          <label class="check"><input type="checkbox" class="icheckbox" [(ngModel)]="settings.autoUpload" /> Enable</label>
+          <span class="help-block">All the worklogs created till previous day will be uploaded automatically on daily basis</span>
+        </div>
+      </div>
+
+      <div class="form-label ui-g-12 ui-md-3 ui-lg-3 ui-xl-2">
+        <strong>Default meeting ticket for worklog</strong>
+      </div>
+      <div class="ui-g-12 ui-md-9 ui-lg-9 ui-xl-10">
+        <div class="form-group">
+          <input id="txtTicketNo" type="text" class="form-control" [(ngModel)]="settings.meetingTicket" maxlength="15" style="width:150px; display:inline-block;" />
+          <span class="help-block">All the worklog created automatically for meeting will be added to this ticket.</span>
+        </div>
+      </div>
+
+      <div class="form-label ui-g-12 ui-md-3 ui-lg-3 ui-xl-2">
+        <strong>Notify for missing worklog</strong>
+      </div>
+      <div class="ui-g-12 ui-md-9 ui-lg-9 ui-xl-10">
+        <div class="form-group">
+          <label class="check"><input type="checkbox" class="icheckbox" [(ngModel)]="settings.notifyWL" /> Enable worklog notification</label>
+          <span class="help-block">Notify you to add worklog for previous day if not added</span>
+        </div>
+      </div>
+    </div>
+    <!--<div class="form-group">
+      <label class="col-md-3 control-label">Highlight incorrect worklogs</label>
+      <div class="col-md-9">
+        <label class="check"><input type="checkbox" class="icheckbox" [(ngModel)]="settings.highlightWorklog" /> Enable highlight</label>
+        <span class="help-block">Highlights worklogs if it does not fall under your regular working hours</span>
+      </div>
+    </div>-->
+  </p-tabPanel>
+  <p-tabPanel header="Meetings" leftIcon="fa-calendar">
+    <p>This page allows you to integrate your calendar from external sources like Google. Worklog will be automatically created for the events in your calendar based on your preferences</p>
+    <div class="block">
+      <h4>Google Calendar</h4>
+      <div class="ui-g ui-fluid">
+        <div class="form-label ui-g-12 ui-md-3 ui-lg-3 ui-xl-2">
+          <strong>Enable Google calendar</strong>
+        </div>
+        <div class="ui-g-12 ui-md-9 ui-lg-9 ui-xl-10">
+          <div class="form-group">
+            <label class="check"><input type="checkbox" class="icheckbox" [(ngModel)]="settings.googleIntegration" /> Allow integration</label>
+            <span class="help-block">Select this checkbox if you would wish to view meetings in your calendar</span>
+          </div>
+        </div>
+
+        <div class="form-label ui-g-12 ui-md-3 ui-lg-3 ui-xl-2">
+          <strong>Integration Status</strong>
+        </div>
+        <div class="ui-g-12 ui-md-9 ui-lg-9 ui-xl-10">
+          <div class="form-group" [hidden]="settings.hasGoogleCredentials || removedIntg">
+            <label class="link" (click)="googleSignIn()">Click here to sign in with your google account</label>
+            <span class="help-block">You will have to sign-in to chrome with your google account to use the calendar.</span>
+          </div>
+
+          <div class="form-group" [hidden]="!(settings.hasGoogleCredentials && !removedIntg)">
+            <label>(Already integrated with an account)</label>
+            <label class="link" (click)="settings.hasGoogleCredentials=false;removedIntg=true">Remove integration</label>
+          </div>
+
+          <div class="form-group" [hidden]="!removedIntg">
+            <label>(You will be signed out from Google once you save your changes)</label>
+            <label class="link" (click)="settings.hasGoogleCredentials=true;removedIntg=false">Undo signout</label>
+            <span class="help-block">Note: You will have to authenticate with google again to use the calendar</span>
+          </div>
+        </div>
+
+        <div class="form-label ui-g-12 ui-md-3 ui-lg-3 ui-xl-2">
+          <strong>Check for updates</strong>
+        </div>
+        <div class="ui-g-12 ui-md-9 ui-lg-9 ui-xl-10">
+          <div class="form-group">
+            <select class="form-control select" [(ngModel)]="settings.checkUpdates" style="width:180px; display:inline-block;">
+              <option value="5">Every 5 minutes</option>
+              <option value="10">Every 10 minutes</option>
+              <option value="15">Every 15 minutes</option>
+              <option value="20">Every 20 minutes</option>
+              <option value="30">Every 30 minutes</option>
+              <option value="45">Every 45 minutes</option>
+              <option value="60">Every 60 minutes</option>
+            </select>
+            <span class="help-block">Refresh the meeting invites for notification regularly in given interval</span>
+          </div>
+        </div>
+
+        <div class="form-label ui-g-12 ui-md-3 ui-lg-3 ui-xl-2">
+          <strong>Show meeting notification</strong>
+        </div>
+        <div class="ui-g-12 ui-md-9 ui-lg-9 ui-xl-10">
+          <div class="form-group">
+            <select class="form-control select" [(ngModel)]="settings.notifyBefore" style="width:180px; display:inline-block;">
+              <option value="0">Disable notification</option>
+              <option value="1">Before 1 minute</option>
+              <option value="2">Before 2 minutes</option>
+              <option value="3">Before 3 minutes</option>
+              <option value="4">Before 4 minutes</option>
+              <option value="5">Before 5 minutes</option>
+              <option value="10">Before 10 minutes</option>
+              <option value="10">Before 15 minutes</option>
+            </select>
+            <span class="help-block">Show notification before the selected time of meeting</span>
+          </div>
+        </div>
+
+        <div class="form-label ui-g-12 ui-md-3 ui-lg-3 ui-xl-2">
+          <strong>Auto launch hangout</strong>
+        </div>
+        <div class="ui-g-12 ui-md-9 ui-lg-9 ui-xl-10">
+          <div class="form-group">
+            <select class="form-control select" [(ngModel)]="settings.autoLaunch" style="width:180px; display:inline-block;">
+              <option value="0">Never launch</option>
+              <option value="1">Before 1 minute</option>
+              <option value="2">Before 2 minutes</option>
+              <option value="3">Before 3 minutes</option>
+              <option value="4">Before 4 minutes</option>
+              <option value="5">Before 5 minutes</option>
+              <option value="10">Before 10 minutes</option>
+            </select>
+            <span class="help-block">Automatically launch hangout Url before the selected time of meeting</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </p-tabPanel>
+</p-tabView>
+<div class="pnl-footer">
+  <button pButton type="button" class="ui-button-primary pull-right" icon="fa-floppy-o" label="Save Changes" (click)="saveSettings()"></button>
+</div>

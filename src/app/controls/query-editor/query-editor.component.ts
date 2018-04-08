@@ -8,8 +8,7 @@ import { getDateRange } from '../../_constants';
 
 @Component({
   selector: '[jaQueryEditor]',
-  templateUrl: './query-editor.component.html',
-  styleUrls: ['./query-editor.component.scss']
+  templateUrl: './query-editor.component.html'
 })
 export class QueryEditorComponent implements OnInit {
 

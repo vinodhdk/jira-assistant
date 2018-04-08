@@ -6,8 +6,6 @@ import { JiraService, UtilsService } from '../../../services/index';
   templateUrl: './sprint-report.component.html'
 })
 export class SprintReportComponent implements OnInit {
-  steps: any[]
-
   rapidViews: any[]
   filteredRapidViews: any[]
   selectedRapidViews: any[]
@@ -18,12 +16,8 @@ export class SprintReportComponent implements OnInit {
   selectedSprints: any[]
   selectedSprintIds: number[]
 
-  activeIndex: number
-
   sprintDetails: any[]
   rapidViewLoading: boolean
-  reportLoading: boolean
-  isStepReadonly: boolean
   isFullScreen: boolean
   isLoading: boolean
 
@@ -34,35 +28,6 @@ export class SprintReportComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.activeIndex = 0;
-    this.isStepReadonly = true;
-    this.steps = [{
-      label: 'Choose Rapid board & Sprint',
-      command: (event: any) => {
-        this.activeIndex = 0;
-      }
-    },
-    {
-      label: 'Choose Configuration',
-      command: (event: any) => {
-        this.activeIndex = 1;
-      }
-    },
-    {
-      label: 'View Report',
-      command: (event: any) => {
-        this.activeIndex = 2;
-        this.generateReport();
-      }
-    },
-    {
-      label: 'View Graph',
-      command: (event: any) => {
-        this.activeIndex = 3;
-        //this.generateGraphReport();
-      }
-    }
-    ];
     this.rapidViewLoading = true;
     return this.$jaDataSvc.getRapidViews().then((views) => {
       this.rapidViewLoading = false;
@@ -84,6 +49,7 @@ export class SprintReportComponent implements OnInit {
       this.sprints = sprints.OrderByDescending(s => s.id);
     });
     this.selectedSprints.RemoveAll(s => this.selectedRapidIds.indexOf(s.rapidId) == -1);
+    this.sprintChanged();
   }
 
   searchSprints($event) {
@@ -94,21 +60,20 @@ export class SprintReportComponent implements OnInit {
 
   sprintChanged() {
     this.selectedSprintIds = this.selectedSprints.Select(r => r.id);
-    this.isStepReadonly = this.selectedSprints.length == 0;
   }
 
   generateReport() {
     var selectedItems = this.selectedSprints;
     if (selectedItems.length == 0) { return; }
 
-    this.reportLoading = true;
+    this.isLoading = true;
     var arr = selectedItems.Select((sprint) => {
       if (sprint.report) { return Promise.resolve(sprint.report); }
       return this.$jaDataSvc.getRapidSprintDetails(sprint.rapidId, sprint.id).then(det => sprint.report = det);
     });
 
     Promise.all(arr).then((result: any[]) => {
-      this.reportLoading = false;
+      this.isLoading = false;
       this.sprintDetails = result;
 
       var getCountWithSP = (issues) => { return issues.Count((issue) => { return issue.currentEstimateStatistic.statFieldValue.value; }) }

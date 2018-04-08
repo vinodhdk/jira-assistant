@@ -51,6 +51,7 @@ export interface ISessionUser {
   settings?: any
   gIntegration?: any
   hasGoogleCreds?: boolean
+  pruneInterval?: number
   feedbackUrl: string
   groups?: IUserGroup[]
   dashboards: IDashboard[]

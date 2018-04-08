@@ -10,7 +10,7 @@ import {
 import {
   CalendarViewComponent, DashboardComponent, FeedbackViewComponent, // common
   CustomReportComponent, SprintReportComponent, UserDaywiseReportComponent, // reports
-  UserGroupsComponent // settings
+  UserGroupsComponent, GeneralComponent
 } from './views'
 
 export const routes: Routes = [
@@ -56,10 +56,10 @@ export const routes: Routes = [
         path: 'settings/usergroups',
         component: UserGroupsComponent
       },
-      //{
-      //  path: 'settings/general',
-      //  loadChildren: './views/settings-view/settings.module#SettingsModule'
-      //},
+      {
+        path: 'settings/general',
+        component: GeneralComponent
+      },
       {
         path: 'feedback',
         component: FeedbackViewComponent

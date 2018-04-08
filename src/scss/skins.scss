@@ -52,6 +52,15 @@
     background-color: $header-bg;
     border: 1px solid $header-logo-bg;
   }*/
+  div.daysinweek {
+    > div.day:hover {
+      background-color: $header-bg !important;
+    }
+
+    > div.day.day-on {
+      background-color: $header-logo-bg;
+    }
+  }
 }
 
 @mixin base-style-light {

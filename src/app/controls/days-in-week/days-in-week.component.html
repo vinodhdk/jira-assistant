@@ -1,0 +1,4 @@
+<div class="daysinweek">
+  <div class="day" *ngFor="let day of ['Su','Mo','Tu','We','Th','Fr','Sa']; let $index = index"
+       [ngClass]="getClass($index)" (click)="daySelected($index)">{{day}}</div>
+</div>

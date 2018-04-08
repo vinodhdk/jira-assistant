@@ -21,187 +21,203 @@
           <br />
           <br />
         </div>
-        <div>
-          <div class="fs-hide" style="height:60px;">
-            <p-steps [model]="steps" styleClass="steps-custom" [(activeIndex)]="activeIndex" [readonly]="isStepReadonly"></p-steps>
-          </div>
-          <div [hidden]="activeIndex != 0">
-            <div>
-              <p-autoComplete [(ngModel)]="selectedRapidViews" [suggestions]="filteredRapidViews" [dropdown]="true" [multiple]="true" forceSelection="true"
-                              field="name" placeholder="add one or more rapid view to fetch sprints from" (completeMethod)="searchRapidView($event)"
-                              (onSelect)="rapidViewChanged()" (onUnselect)="rapidViewChanged()"
-                              [disabled]="!rapidViews || rapidViews.length == 0"></p-autoComplete>
+        <div [ngClass]="sprintDetails && sprintDetails.length > 0 ? 'fs-hide' : ''">
+          <div class="ui-g ui-fluid">
+            <div class="ui-g-12 ui-md-2 ui-lg-2 ui-xl-1">
+              <strong>Rapid view</strong>
             </div>
-            <div>
-              <p-autoComplete [(ngModel)]="selectedSprints" [suggestions]="filteredSprints" [dropdown]="true" [multiple]="true" forceSelection="true"
-                              field="name" placeholder="add one or more sprint to view report" (completeMethod)="searchSprints($event)"
-                              (onSelect)="sprintChanged()" (onUnselect)="sprintChanged()"
-                              [disabled]="!selectedRapidViews || selectedRapidViews.length == 0"></p-autoComplete>
+            <div class="ui-g-12 ui-md-5 ui-lg-4 ui-xl-3">
+              <div class="form-group">
+                <p-autoComplete [(ngModel)]="selectedRapidViews" [suggestions]="filteredRapidViews" [dropdown]="true" [multiple]="true" forceSelection="true"
+                                field="name" placeholder="add one or more rapid view to fetch sprints from" (completeMethod)="searchRapidView($event)"
+                                [size]="35" autoHighlight="true" maxlength="25" styleClass="autocomplete-350" scrollHeight="300px"
+                                (onSelect)="rapidViewChanged()" (onUnselect)="rapidViewChanged()"
+                                [disabled]="!rapidViews || rapidViews.length == 0"></p-autoComplete>
+              </div>
             </div>
           </div>
-          <div [hidden]="activeIndex != 1">
-            This part is not yet been implemented. Please proceed with viewing the report in next step.
+          <div class="ui-g ui-fluid">
+            <div class="ui-g-12 ui-md-2 ui-lg-2 ui-xl-1">
+              <strong>Sprints</strong>
+            </div>
+            <div class="ui-g-12 ui-md-5 ui-lg-4 ui-xl-3">
+              <div class="form-group">
+                <p-autoComplete [(ngModel)]="selectedSprints" [suggestions]="filteredSprints" [dropdown]="true" [multiple]="true" forceSelection="true"
+                                field="name" placeholder="add one or more sprint to view report" (completeMethod)="searchSprints($event)"
+                                [size]="35" autoHighlight="true" maxlength="25" styleClass="autocomplete-350" scrollHeight="300px"
+                                (onSelect)="sprintChanged()" (onUnselect)="sprintChanged()"
+                                [disabled]="!sprints || sprints.length == 0"></p-autoComplete>
+              </div>
+            </div>
           </div>
-          <div [hidden]="activeIndex != 2">
-            <table class="table table-bordered table-striped dataTable">
-              <thead>
-                <tr>
-                  <th rowspan="2">Sprint</th>
-                  <th rowspan="2">Start Date</th>
-                  <th rowspan="2">Completed Date</th>
-                  <th rowspan="2">Status</th>
-                  <th rowspan="2">Closed by</th>
-                  <th colspan="2" class="data-center">Estimated</th>
-                  <th colspan="2" class="data-center">Total Issues</th>
-                  <th colspan="2" class="data-center">Completed Issues</th>
-                  <th colspan="2" class="data-center">Issues Not Completed</th>
-                  <th colspan="2" class="data-center">Added to sprint</th>
-                  <th colspan="2" class="data-center">Removed from sprint</th>
-                </tr>
-                <tr>
-                  <th>Story Points</th>
-                  <th>Count <i class="fa fa-question-circle help-icon" title="Ticket with storypoints + Ticket without storypoints = Total story count"></i></th>
-                  <th>Story Points</th>
-                  <th>Count <i class="fa fa-question-circle help-icon" title="Ticket with storypoints + Ticket without storypoints = Total story count"></i></th>
-                  <th>Story Points</th>
-                  <th>Count <i class="fa fa-question-circle help-icon" title="Ticket with storypoints + Ticket without storypoints = Total story count"></i></th>
-                  <th>Story Points</th>
-                  <th>Count <i class="fa fa-question-circle help-icon" title="Ticket with storypoints + Ticket without storypoints = Total story count"></i></th>
-                  <th>Story Points</th>
-                  <th>Count <i class="fa fa-question-circle help-icon" title="Ticket with storypoints + Ticket without storypoints = Total story count"></i></th>
-                  <th>Story Points</th>
-                  <th>Count <i class="fa fa-question-circle help-icon" title="Ticket with storypoints + Ticket without storypoints = Total story count"></i></th>
-                </tr>
-              </thead>
-              <tbody *ngIf="reportLoading || !sprintDetails || sprintDetails.length == 0 || !selectedSprints || selectedSprints.length == 0">
-                <tr *ngIf="reportLoading"><td colspan="17">The report is being generated. Please wait...</td></tr>
-                <tr *ngIf="!selectedSprints || selectedSprints.length == 0"><td colspan="17">No sprints were selected to generate the report</td></tr>
-                <tr *ngIf="!reportLoading && (selectedSprints && selectedSprints.length > 0) && (!sprintDetails || sprintDetails.length == 0)"><td colspan="17">No records available for the selected criteria</td></tr>
-              </tbody>
-              <tbody *ngFor="let sprint of sprintDetails">
-                <tr (click)="sprint.expanded=!sprint.expanded" title="Click to expand and view individual ticket details">
-                  <td>
-                    <i class="pull-left drill-down fa" style="cursor:pointer;margin-right:5px !important;"
-                       [ngClass]="sprint.expanded ? 'fa-chevron-circle-down' : 'fa-chevron-circle-right'" title="Click to toggle sprint ticket details"></i>
-                    {{sprint.sprint.name}}
-                  </td>
-                  <td>{{sprint.sprint.startDate | formatDateTime}}</td>
-                  <td>{{sprint.sprint.completeDate | formatDateTime}}</td>
-                  <td>{{sprint.sprint.state}}</td>
-                  <td [innerHTML]="sprint.lastUserToClose"></td>
-
-                  <td class="data-center"><span *ngIf="sprint.estimateIssuesSPOld">{{sprint.estimateIssuesSPOld}} <i class="fa fa-arrow-right"></i></span>{{sprint.estimateIssuesSP}}</td>
-                  <td class="data-center">
-                    <span [hidden]="!sprint.estimateIssuesCount">
-                      {{sprint.estimateIssuesWithSP}} +
-                      {{sprint.estimateIssuesCount - sprint.estimateIssuesWithSP}} =
-                      {{sprint.estimateIssuesCount}}
-                    </span>
-                  </td>
-
-                  <td class="data-center"><span *ngIf="sprint.totalIssuesSPOld">{{sprint.totalIssuesSPOld}} <i class="fa fa-arrow-right"></i></span>{{sprint.totalIssuesSP}}</td>
-                  <td class="data-center">
-                    <span [hidden]="!sprint.totalIssuesCount">
-                      {{sprint.totalIssuesWithSP}} +
-                      {{sprint.totalIssuesCount - sprint.totalIssuesWithSP}} =
-                      {{sprint.totalIssuesCount}}
-                    </span>
-                  </td>
-
-                  <td class="data-center"><span *ngIf="sprint.completedSPOld">{{sprint.completedSPOld}} <i class="fa fa-arrow-right"></i></span>{{sprint.completedSP}}</td>
-                  <td class="data-center">
-                    <span [hidden]="!sprint.CompletedTotal">
-                      {{sprint.completedWithSP}} +
-                      {{sprint.CompletedTotal - sprint.completedWithSP}} =
-                      {{sprint.CompletedTotal}}
-                    </span>
-                  </td>
-
-                  <td class="data-center"><span *ngIf="sprint.incompletedSPOld">{{sprint.incompletedSPOld}} <i class="fa fa-arrow-right"></i></span>{{sprint.incompletedSP}}</td>
-                  <td class="data-center">
-                    <span [hidden]="!sprint.incompletedTotal">
-                      {{sprint.incompletedWithSP}} +
-                      {{sprint.incompletedTotal - sprint.incompletedWithSP}} =
-                      {{sprint.incompletedTotal}}
-                    </span>
-                  </td>
-
-                  <td class="log-less data-center"><span *ngIf="sprint.addedSPOld">{{sprint.addedSPOld}} <i class="fa fa-arrow-right"></i></span>{{sprint.addedSP}}</td>
-                  <td class="log-less data-center">
-                    <span [hidden]="!sprint.addedIssues">
-                      {{sprint.addedWithSP}} +
-                      {{sprint.addedIssues - sprint.addedWithSP}} =
-                      {{sprint.addedIssues}}
-                    </span>
-                  </td>
-
-                  <td class="data-center"><span *ngIf="sprint.removedSPOld">{{sprint.removedSPOld}} <i class="fa fa-arrow-right"></i></span>{{sprint.removedSP}}</td>
-                  <td class="data-center">
-                    <span [hidden]="!sprint.removedTotal">
-                      {{sprint.removedWithSP}} +
-                      {{sprint.removedTotal - sprint.removedWithSP}} =
-                      {{sprint.removedTotal}}
-                    </span>
-                  </td>
-                </tr>
-                <tr [hidden]="!sprint.expanded">
-                  <td colspan="17" style="padding:0 !important;">
-                    <table class="table table-bordered table-striped dataTable min-width-110">
-                      <thead>
-                        <tr>
-                          <th>Key</th>
-                          <th>Summary</th>
-                          <th>Issue Type</th>
-                          <th>Priority</th>
-                          <th>Status</th>
-                          <th>Story Points</th>
-                        </tr>
-                      </thead>
-                      <tbody [hidden]="!sprint.contents.completedIssues.length > 0">
-                        <tr><td colspan="6"><strong>Completed Issues</strong></td></tr>
-                        <tr *ngFor="let issue of sprint.contents.completedIssues" [ngClass]="(issue.addedLater ? 'log-high' : '')">
-                          <td>{{issue.key}} <span *ngIf="issue.addedLater">*</span></td>
-                          <td>{{issue.summary}}</td>
-                          <td><img class="img-x16" [src]="issue.typeUrl" /> {{issue.typeName}}</td>
-                          <td><img class="img-x16" [src]="issue.priorityUrl" /> {{issue.priorityName}}</td>
-                          <td><img class="img-x16" [src]="issue.statusUrl" /> {{issue.statusName}}</td>
-                          <td><span *ngIf="issue.oldSP != null">{{issue.oldSP}} <i class="fa fa-arrow-right"></i></span> {{issue.currentSP}}</td>
-                        </tr>
-                      </tbody>
-                      <tbody [hidden]="!sprint.contents.puntedIssues.length > 0">
-                        <tr><td colspan="6"><strong>Issues Removed From Sprint</strong></td></tr>
-                        <tr *ngFor="let issue of sprint.contents.puntedIssues" [ngClass]="(issue.addedLater ? 'log-high' : '')">
-                          <td>{{issue.key}} <span *ngIf="issue.addedLater">*</span></td>
-                          <td>{{issue.summary}}</td>
-                          <td><img class="img-x16" [src]="issue.typeUrl" /> {{issue.typeName}}</td>
-                          <td><img class="img-x16" [src]="issue.priorityUrl" /> {{issue.priorityName}}</td>
-                          <td><img class="img-x16" [src]="issue.statusUrl" /> {{issue.statusName}}</td>
-                          <td><span *ngIf="issue.oldSP != null">{{issue.oldSP}} <i class="fa fa-arrow-right"></i></span> {{issue.currentSP}}</td>
-                        </tr>
-                      </tbody>
-                      <tbody [hidden]="!sprint.contents.issuesNotCompletedInCurrentSprint.length > 0">
-                        <tr><td colspan="6"><strong>Issues Not Completed</strong></td></tr>
-                        <tr *ngFor="let issue of sprint.contents.issuesNotCompletedInCurrentSprint" [ngClass]="(issue.addedLater ? 'log-high' : '')">
-                          <td>{{issue.key}} <span *ngIf="issue.addedLater">*</span></td>
-                          <td>{{issue.summary}}</td>
-                          <td><img class="img-x16" [src]="issue.typeUrl" /> {{issue.typeName}}</td>
-                          <td><img class="img-x16" [src]="issue.priorityUrl" /> {{issue.priorityName}}</td>
-                          <td><img class="img-x16" [src]="issue.statusUrl" /> {{issue.statusName}}</td>
-                          <td><span *ngIf="issue.oldSP != null">{{issue.oldSP}} <i class="fa fa-arrow-right"></i></span> {{issue.currentSP}}</td>
-                        </tr>
-                      </tbody>
-                    </table>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
+          <div class="ui-g ui-fluid">
+            <div class="ui-g-12 ui-md-3 ui-lg-3 ui-xl-2">
+              <button pButton type="button" class="ui-button-primary" [disabled]="!selectedSprintIds || selectedSprintIds.length == 0" icon="fa-play-circle" label="Generate report" (click)="generateReport()"></button>
+            </div>
           </div>
-          <div [hidden]="activeIndex != 3">
-            This part is not yet been implemented. Please proceed with viewing the report in previous step.
-          </div>
-          <div>
-            <button class="btn btn-primary" [disabled]="isStepReadonly" (click)="activeIndex=activeIndex+1">Next</button>
-          </div>
+        </div>
+        <div *ngIf="isLoading || sprintDetails">
+          <p-blockUI [target]="pnlCtl" [blocked]="isLoading">
+            <i class="fa fa-refresh fa-spin fa-5x" style="position:absolute;top:25%;left:50%"></i>
+          </p-blockUI>
+          <p-panel [showHeader]="false" #pnlCtl>
+            <p-scrollPanel [style]="{width: '100%', height: contentHeight + 'px'}" styleClass="cont-div">
+              <div>
+                <table class="table table-bordered table-striped dataTable">
+                  <thead>
+                    <tr>
+                      <th rowspan="2">Sprint</th>
+                      <th rowspan="2">Start Date</th>
+                      <th rowspan="2">Completed Date</th>
+                      <th rowspan="2">Status</th>
+                      <th rowspan="2">Closed by</th>
+                      <th colspan="2" class="data-center">Estimated</th>
+                      <th colspan="2" class="data-center">Total Issues</th>
+                      <th colspan="2" class="data-center">Completed Issues</th>
+                      <th colspan="2" class="data-center">Issues Not Completed</th>
+                      <th colspan="2" class="data-center">Added to sprint</th>
+                      <th colspan="2" class="data-center">Removed from sprint</th>
+                    </tr>
+                    <tr>
+                      <th>Story Points</th>
+                      <th>Count <i class="fa fa-question-circle help-icon" title="Ticket with storypoints + Ticket without storypoints = Total story count"></i></th>
+                      <th>Story Points</th>
+                      <th>Count <i class="fa fa-question-circle help-icon" title="Ticket with storypoints + Ticket without storypoints = Total story count"></i></th>
+                      <th>Story Points</th>
+                      <th>Count <i class="fa fa-question-circle help-icon" title="Ticket with storypoints + Ticket without storypoints = Total story count"></i></th>
+                      <th>Story Points</th>
+                      <th>Count <i class="fa fa-question-circle help-icon" title="Ticket with storypoints + Ticket without storypoints = Total story count"></i></th>
+                      <th>Story Points</th>
+                      <th>Count <i class="fa fa-question-circle help-icon" title="Ticket with storypoints + Ticket without storypoints = Total story count"></i></th>
+                      <th>Story Points</th>
+                      <th>Count <i class="fa fa-question-circle help-icon" title="Ticket with storypoints + Ticket without storypoints = Total story count"></i></th>
+                    </tr>
+                  </thead>
+                  <tbody *ngIf="reportLoading || !sprintDetails || sprintDetails.length == 0 || !selectedSprints || selectedSprints.length == 0">
+                    <tr *ngIf="reportLoading"><td colspan="17">The report is being generated. Please wait...</td></tr>
+                    <tr *ngIf="!selectedSprints || selectedSprints.length == 0"><td colspan="17">No sprints were selected to generate the report</td></tr>
+                    <tr *ngIf="!reportLoading && (selectedSprints && selectedSprints.length > 0) && (!sprintDetails || sprintDetails.length == 0)"><td colspan="17">No records available for the selected criteria</td></tr>
+                  </tbody>
+                  <tbody *ngFor="let sprint of sprintDetails">
+                    <tr class="pointer" (click)="sprint.expanded=!sprint.expanded" title="Click to expand and view individual ticket details">
+                      <td>
+                        <i class="pull-left drill-down fa" style="cursor:pointer;margin-right:5px !important;"
+                           [ngClass]="sprint.expanded ? 'fa-chevron-circle-down' : 'fa-chevron-circle-right'" title="Click to toggle sprint ticket details"></i>
+                        {{sprint.sprint.name}}
+                      </td>
+                      <td>{{sprint.sprint.startDate | formatDateTime}}</td>
+                      <td>{{sprint.sprint.completeDate | formatDateTime}}</td>
+                      <td>{{sprint.sprint.state}}</td>
+                      <td [innerHTML]="sprint.lastUserToClose"></td>
+
+                      <td class="data-center"><span *ngIf="sprint.estimateIssuesSPOld">{{sprint.estimateIssuesSPOld}} <i class="fa fa-arrow-right"></i></span>{{sprint.estimateIssuesSP}}</td>
+                      <td class="data-center">
+                        <span [hidden]="!sprint.estimateIssuesCount">
+                          {{sprint.estimateIssuesWithSP}} +
+                          {{sprint.estimateIssuesCount - sprint.estimateIssuesWithSP}} =
+                          {{sprint.estimateIssuesCount}}
+                        </span>
+                      </td>
+
+                      <td class="data-center"><span *ngIf="sprint.totalIssuesSPOld">{{sprint.totalIssuesSPOld}} <i class="fa fa-arrow-right"></i></span>{{sprint.totalIssuesSP}}</td>
+                      <td class="data-center">
+                        <span [hidden]="!sprint.totalIssuesCount">
+                          {{sprint.totalIssuesWithSP}} +
+                          {{sprint.totalIssuesCount - sprint.totalIssuesWithSP}} =
+                          {{sprint.totalIssuesCount}}
+                        </span>
+                      </td>
+
+                      <td class="data-center"><span *ngIf="sprint.completedSPOld">{{sprint.completedSPOld}} <i class="fa fa-arrow-right"></i></span>{{sprint.completedSP}}</td>
+                      <td class="data-center">
+                        <span [hidden]="!sprint.CompletedTotal">
+                          {{sprint.completedWithSP}} +
+                          {{sprint.CompletedTotal - sprint.completedWithSP}} =
+                          {{sprint.CompletedTotal}}
+                        </span>
+                      </td>
+
+                      <td class="data-center"><span *ngIf="sprint.incompletedSPOld">{{sprint.incompletedSPOld}} <i class="fa fa-arrow-right"></i></span>{{sprint.incompletedSP}}</td>
+                      <td class="data-center">
+                        <span [hidden]="!sprint.incompletedTotal">
+                          {{sprint.incompletedWithSP}} +
+                          {{sprint.incompletedTotal - sprint.incompletedWithSP}} =
+                          {{sprint.incompletedTotal}}
+                        </span>
+                      </td>
+
+                      <td class="log-less data-center"><span *ngIf="sprint.addedSPOld">{{sprint.addedSPOld}} <i class="fa fa-arrow-right"></i></span>{{sprint.addedSP}}</td>
+                      <td class="log-less data-center">
+                        <span [hidden]="!sprint.addedIssues">
+                          {{sprint.addedWithSP}} +
+                          {{sprint.addedIssues - sprint.addedWithSP}} =
+                          {{sprint.addedIssues}}
+                        </span>
+                      </td>
+
+                      <td class="data-center"><span *ngIf="sprint.removedSPOld">{{sprint.removedSPOld}} <i class="fa fa-arrow-right"></i></span>{{sprint.removedSP}}</td>
+                      <td class="data-center">
+                        <span [hidden]="!sprint.removedTotal">
+                          {{sprint.removedWithSP}} +
+                          {{sprint.removedTotal - sprint.removedWithSP}} =
+                          {{sprint.removedTotal}}
+                        </span>
+                      </td>
+                    </tr>
+                    <tr [hidden]="!sprint.expanded">
+                      <td colspan="17" style="padding:0 !important;">
+                        <table class="table table-bordered table-striped dataTable min-width-110">
+                          <thead>
+                            <tr>
+                              <th>Key</th>
+                              <th>Summary</th>
+                              <th>Issue Type</th>
+                              <th>Priority</th>
+                              <th>Status</th>
+                              <th>Story Points</th>
+                            </tr>
+                          </thead>
+                          <tbody [hidden]="!sprint.contents.completedIssues.length > 0">
+                            <tr><td colspan="6"><strong>Completed Issues</strong></td></tr>
+                            <tr *ngFor="let issue of sprint.contents.completedIssues" [ngClass]="(issue.addedLater ? 'log-high' : '')">
+                              <td>{{issue.key}} <span *ngIf="issue.addedLater">*</span></td>
+                              <td>{{issue.summary}}</td>
+                              <td><img class="img-x16" [src]="issue.typeUrl" /> {{issue.typeName}}</td>
+                              <td><img class="img-x16" [src]="issue.priorityUrl" /> {{issue.priorityName}}</td>
+                              <td><img class="img-x16" [src]="issue.statusUrl" /> {{issue.statusName}}</td>
+                              <td><span *ngIf="issue.oldSP != null">{{issue.oldSP}} <i class="fa fa-arrow-right"></i></span> {{issue.currentSP}}</td>
+                            </tr>
+                          </tbody>
+                          <tbody [hidden]="!sprint.contents.puntedIssues.length > 0">
+                            <tr><td colspan="6"><strong>Issues Removed From Sprint</strong></td></tr>
+                            <tr *ngFor="let issue of sprint.contents.puntedIssues" [ngClass]="(issue.addedLater ? 'log-high' : '')">
+                              <td>{{issue.key}} <span *ngIf="issue.addedLater">*</span></td>
+                              <td>{{issue.summary}}</td>
+                              <td><img class="img-x16" [src]="issue.typeUrl" /> {{issue.typeName}}</td>
+                              <td><img class="img-x16" [src]="issue.priorityUrl" /> {{issue.priorityName}}</td>
+                              <td><img class="img-x16" [src]="issue.statusUrl" /> {{issue.statusName}}</td>
+                              <td><span *ngIf="issue.oldSP != null">{{issue.oldSP}} <i class="fa fa-arrow-right"></i></span> {{issue.currentSP}}</td>
+                            </tr>
+                          </tbody>
+                          <tbody [hidden]="!sprint.contents.issuesNotCompletedInCurrentSprint.length > 0">
+                            <tr><td colspan="6"><strong>Issues Not Completed</strong></td></tr>
+                            <tr *ngFor="let issue of sprint.contents.issuesNotCompletedInCurrentSprint" [ngClass]="(issue.addedLater ? 'log-high' : '')">
+                              <td>{{issue.key}} <span *ngIf="issue.addedLater">*</span></td>
+                              <td>{{issue.summary}}</td>
+                              <td><img class="img-x16" [src]="issue.typeUrl" /> {{issue.typeName}}</td>
+                              <td><img class="img-x16" [src]="issue.priorityUrl" /> {{issue.priorityName}}</td>
+                              <td><img class="img-x16" [src]="issue.statusUrl" /> {{issue.statusName}}</td>
+                              <td><span *ngIf="issue.oldSP != null">{{issue.oldSP}} <i class="fa fa-arrow-right"></i></span> {{issue.currentSP}}</td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </p-scrollPanel>
+          </p-panel>
         </div>
       </p-panel>
     </p-panel>
