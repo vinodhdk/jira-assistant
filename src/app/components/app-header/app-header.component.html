@@ -2,30 +2,36 @@
   <button class="navbar-toggler d-lg-none" type="button" appMobileSidebarToggler>
     <i class="fa fa-bars"></i>
   </button>
-  <a class="navbar-brand" href="#" target="_blank"><span>Jira Assistant</span></a>
+  <a class="navbar-brand" [attr.href]="storeUrl" target="_blank"><span>Jira Assistant</span></a>
   <button class="navbar-toggler d-md-down-none mr-auto" type="button" appSidebarToggler>
     <i class="fa fa-bars"></i>
   </button>
   <div class="pull-right d-sm-down-none">
     <ul class="right-menus">
-      <li>
-        <a title="Comments added in tickets mentioning you">
-          <i class="fa fa-comments"></i>
-          <!--<span class="label label-success">{{comments.length}}</span>-->
+      <li><a href="/index.min.html" style="color:white">Switch back to old UI</a></li>
+      <!--ToDo: Need to implement<li>
+            <a title="Comments added in tickets mentioning you">
+            <i class="fa fa-comments"></i>
+            <span class="label label-success">{{comments.length}}</span>
         </a>
-      </li>
+      </li>-->
       <li>
         <a title="Show help video specific to this page" (click)="showVideo()">
           <i class="fa fa-youtube-play"></i>
         </a>
       </li>
-      <li>
-        <a title="Show help specific to this page" (click)="showVideo()">
+      <!--<li>
+        <a title="Show help specific to this page">
           <i class="fa fa-question"></i>
+        </a>
+      </li>-->
+      <li>
+        <a title="Choose different skin" (click)="ctlSkins.show($event)">
+          <i class="fa fa-adjust"></i>
         </a>
       </li>
       <li>
-        <a title="Rate this tool, write a comment or share it with others.">
+        <a title="Rate this tool, write a comment or share it with others" (click)="ctlShare.show($event)">
           <i class="fa fa-share-alt"></i>
         </a>
       </li>
@@ -46,3 +52,58 @@
           dismissableMask="true" modal="true" [showHeader]="false" baseZIndex="9999">
   <iframe id="ifVideoHelp" style="width:100%; height:100%;" frameborder="0" allowfullscreen></iframe>
 </p-dialog>
+<p-overlayPanel #ctlShare dismissable="true" appendTo="body" styleClass="share">
+  <div class="header" title="Click on the icons below to share or rate this tool">Share or rate this tool</div>
+  <div>
+    <div class="share-items" title="Share this tool with others" style="max-height: 320px;">
+      <a [attr.href]="ratingUrl" target="_blank" title="Click to rate this tool or add a comment in chrome web store">
+        <i class="fa fa-star pull-left"></i>
+      </a>
+      <a [attr.href]="gMailShare" target="_blank" title="Share with GMail">
+        <i class="fa fa-envelope pull-left"></i>
+      </a>
+      <a [attr.href]="gPlusShare" target="_blank" title="Share with Google+">
+        <i class="fa fa-google-plus-square pull-left"></i>
+      </a>
+      <a [attr.href]="linkedInShare" target="_blank" title="Share with Linked in">
+        <i class="fa fa-linkedin-square pull-left"></i>
+      </a>
+      <a [attr.href]="fackbookShare" target="_blank" title="Share with Facebook">
+        <i class="fa fa-facebook-square pull-left"></i>
+      </a>
+      <a [attr.href]="twitterShare" target="_blank" title="Share with Twitter">
+        <i class="fa fa-twitter-square pull-left"></i>
+      </a>
+    </div>
+  </div>
+</p-overlayPanel>
+<p-overlayPanel #ctlSkins dismissable="true" appendTo="body" styleClass="skins">
+  <div class="skin-items" id="divSkins">
+    <div title="blue" (click)="setSkin('skin-blue')" style="border-color:#367fa9;background-color:#3c8dbc;">B</div>
+    <div title="meadow" (click)="setSkin('skin-meadow')" style="border-color:#1caf9a;background-color:#8cc1a2;">M</div>
+    <div title="sea" (click)="setSkin('skin-sea')" style="border-color:#2d7776;background-color:#379392;">S</div>
+    <div title="green" (click)="setSkin('skin-green')" style="border-color:#008d4c;background-color:#00a65a;">G</div>
+    <div title="green" (click)="setSkin('skin-green2')" style="border-color:#2b954b;background-color:#33b35a;">G</div>
+
+    <div title="purple" (click)="setSkin('skin-purple')" style="border-color:#555299;background-color:#605ca8;">P</div>
+    <div title="red" (click)="setSkin('skin-red')" style="border-color:#d73925;background-color:#dd4b39;">R</div>
+    <div title="yellow" (click)="setSkin('skin-yellow')" style="border-color:#e08e0b;background-color:#f39c12;">Y</div>
+    <div title="violet" (click)="setSkin('skin-violet')" style="border-color:#7a4889;background-color:#9055A2;">V</div>
+    <div title="pink" (click)="setSkin('skin-pink')" style="border-color:#ec2f6c;background-color:#ef5285;">P</div>
+
+    <div (click)="setSkin('skin-blue2')" style="border-color:#557a95;background-color:#7395ae;">B</div>
+    <div (click)="setSkin('skin-navy')" style="border-color:#0c0032;background-color:#190061;">B</div>
+    <div (click)="setSkin('skin-blue3')" style="border-color:#240090;background-color:#3500d3;">B</div>
+    <div (click)="setSkin('skin-green3')" style="border-color:#40561a;background-color:#729a2e;">B</div>
+    <div (click)="setSkin('skin-cust1')" style="border-color:#44318d;background-color:#e98074;">B</div>
+
+    <div (click)="setSkin('skin-cust2')" style="border-color:#5d5c61;background-color:#379683;">G</div>
+    <div (click)="setSkin('skin-cust3')" style="border-color:#ffe400;background-color:#747474;">G</div>
+    <div (click)="setSkin('skin-cust5')" style="border-color:#7e685a;background-color:#afd275;">G</div>
+    <div (click)="setSkin('skin-cust6')" style="border-color:#2e1114;background-color:#501b1d;">M</div>
+    <div (click)="setSkin('skin-cust7')" style="border-color:#2e151b;background-color:#da7b93;">M</div>
+
+    <div (click)="setSkin('skin-cust8')" style="border-color:#64485c;background-color:#83677b;">M</div>
+  </div>
+  <label><input type="checkbox" [(ngModel)]="useLightTheme" (click)="setSkin(skinClass, true)" />Use light sidebar</label>
+</p-overlayPanel>

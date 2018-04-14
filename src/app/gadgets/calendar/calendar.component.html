@@ -2,7 +2,7 @@
   <p-tieredMenu #menu [model]="contextMenuItems" [popup]="true" appendTo="body"></p-tieredMenu>
   <p-panel styleClass="p-no-padding">
     <p-header>
-      <div class="ui-helper-clearfix">
+      <div class="ui-helper-clearfix drag-handle" ngxDragHandle>
         <i class="fa fa-calendar"></i>
         <span class="ui-panel-title" style="font-size:16px;display:inline-block;margin-top:2px">Calendar - [{{dateRangeTitle}}]</span>
         <div class="pull-right">
@@ -29,17 +29,17 @@
                   (onViewRender)="viewRender($event.view,$event.element)"
                   (onEventDrop)="eventDrop($event.event,$event.delta,$event.revertFunc,$event.jsEvent,$event.ui,$event.view)"
                   (onEventResize)="eventResize($event.event,$event.delta,$event.revertFunc,$event.jsEvent,$event.ui,$event.view)"
-                  (onEventClick)="eventClick($event.calEvent, $event.jsEvent, $event.view)"
-                  (onDrop)="drop($event.date, $event.jsEvent, $event.ui, $event.resourceId)"></p-schedule>
+                  (onEventClick)="eventClick($event.calEvent, $event.jsEvent, $event.view)"></p-schedule>
     </p-panel>
   </p-panel>
 </div>
 
 <add-worklog [(showPopup)]="showAddWorklogPopup" (onDone)="showAddWorklogPopup=false; addEvent($event)" [(worklogItem)]="worklogItem"></add-worklog>
 
-<p-dialog header="Calendar configurations" [(visible)]="showSettings"
+<p-dialog [(visible)]="showSettings"
           breakpoint="800" width="800" appendTo="body" [baseZIndex]="9999"
-          modal="true" dismissableMask="false" autoAlign="true">
+          modal="true" dismissableMask="false" autoAlign="true" (onHide)="saveSettings()">
+  <p-header>Calendar configurations</p-header>
   <h3 class="control-sidebar-heading">Item Colors</h3>
   <div class="form-group row">
     <label class="col-md-3 col-form-label">Meeting entry color</label>
@@ -90,23 +90,23 @@
   <h3 class="control-sidebar-heading">Show / Hide Entries</h3>
   <div class="form-group">
     <label class="control-sidebar-subheading">
-      <input type="checkbox" ng-model="settings.showMeetings" />
+      <input type="checkbox" [(ngModel)]="settings.showMeetings" />
       Display entry for meetings integrated from calendar
     </label>
   </div>
   <div class="form-group">
     <label class="control-sidebar-subheading">
-      <input type="checkbox" ng-model="settings.showWorklogs" />
+      <input type="checkbox" [(ngModel)]="settings.showWorklogs" />
       Display worklog added by you
     </label>
   </div>
   <div class="form-group">
     <label class="control-sidebar-subheading">
-      <input type="checkbox" ng-model="settings.showInfo" />
+      <input type="checkbox" [(ngModel)]="settings.showInfo" />
       Display information about total hours logged on daily basis
     </label>
   </div>
   <p-footer>
-    <button class="btn btn-default pull-right" (click)="showSettings=false">Done</button>
+    <button pButton type="button" icon="fa-floppy-o" label="Done" (click)="showSettings=false"></button>
   </p-footer>
 </p-dialog>

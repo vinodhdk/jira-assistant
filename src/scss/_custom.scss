@@ -192,6 +192,10 @@ td .user-info .name {
   font-weight: bold;
 }
 
+td .user-info .email {
+  display: block;
+}
+
 .fa.drill-down {
   margin-top: 8px;
   margin-bottom: 8px;
@@ -369,14 +373,20 @@ body.fs-layout {
 
 .tags {
   padding: 0;
+  margin-bottom: 0;
 
   li {
     list-style: none;
     cursor: pointer;
+    display: inline;
+  }
+
+  .badge {
+    font-size: 100%;
   }
 }
 
-.ui-widget-content div.ui-widget-content {
+div:not(.ui-dialog-footer) .ui-widget-content div.ui-widget-content:not(.ui-panel-footer) {
   border: 0;
 }
 
@@ -496,7 +506,90 @@ div[jaexport] {
 
 .pnl-footer {
   height: 50px;
-  border-top: 1px solid #d6d6d6;
   background-color: #f6f7f9;
   padding: 10px;
+}
+
+.ui-panel-footer, .ui-dialog-footer {
+  background-color: #f6f7f9;
+}
+
+.fix-height {
+  .ui-datatable-scrollable-view, .ui-datatable-scrollable-wrapper {
+    height: 100%;
+  }
+
+  .ui-datatable-scrollable-body {
+    height: calc(100% - 28px);
+  }
+}
+
+.ui-datatable tbody td, .ui-datatable tfoot td {
+  white-space: normal !important;
+}
+
+/*
+  This cause issue in user daywise report
+  .ui-datatable-scrollable-body {
+  overflow: hidden;
+}
+
+.ui-datatable-scrollable-body:hover {
+  overflow: auto;
+}*/
+
+.link {
+  cursor: pointer;
+}
+
+.fc-event, .fc-event:hover, .ui-widget .fc-event {
+  color: #fff !important;
+  text-decoration: none;
+}
+
+.fc-time-grid-event .fc-time, .fc-time-grid-event .fc-title {
+  padding: 4px 4px;
+  font-size: 14px !important;
+}
+
+.share {
+  z-index: 1500 !important;
+
+  .header {
+    font-size: 17px;
+    font-weight: bold;
+  }
+}
+
+.share-items .fa {
+  font-size: 26px;
+  margin: 8px 4px;
+}
+
+.share-items .fa-star {
+  color: #ffdd23;
+}
+
+.share-items .fa-envelope {
+  color: #e93e30;
+}
+
+.share-items .fa-google-plus-square {
+  color: #dc4e41;
+}
+
+.share-items .fa-linkedin-square {
+  color: #0077b5;
+}
+
+.share-items .fa-facebook-square {
+  color: #3b5998;
+}
+
+.share-items .fa-twitter-square {
+  color: #55acee;
+}
+
+.drag-handle {
+  cursor: move;
 }

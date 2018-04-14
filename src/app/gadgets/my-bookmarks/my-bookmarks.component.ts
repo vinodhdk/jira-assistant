@@ -1,4 +1,4 @@
-import { Component, OnInit, Output, ElementRef } from '@angular/core';
+import { Component, Output, ElementRef } from '@angular/core';
 import { FacadeService, JiraService, MessageService, UtilsService } from '../../services/';
 import { BaseGadget, GadgetAction, GadgetActionType } from '../base-gadget';
 
@@ -6,7 +6,7 @@ import { BaseGadget, GadgetAction, GadgetActionType } from '../base-gadget';
   selector: '[myBookmarks]',
   templateUrl: './my-bookmarks.component.html'
 })
-export class MyBookmarksComponent extends BaseGadget implements OnInit {
+export class MyBookmarksComponent extends BaseGadget {
   bookmarksList: any[]
   isLoading: boolean
   contextMenu: any[]//MenuItem
@@ -25,14 +25,11 @@ export class MyBookmarksComponent extends BaseGadget implements OnInit {
     ];
   }
 
-  ngOnInit() {
-  }
-
   fillBookmarksList(): void {
     this.isLoading = true;
     this.$facade.getBookmarks()
       .then((result) => {
-        this.bookmarksList = result;
+        this.bookmarksList = result.ForEach((b: any) => b.rowClass = this.$jaUtils.getRowStatus(b));
         this.isLoading = false;
       });
   }
@@ -42,8 +39,8 @@ export class MyBookmarksComponent extends BaseGadget implements OnInit {
     menu.toggle($event);
   }
 
-  getRowStatus(d) {
-    return this.$jaUtils.getRowStatus(d);
+  getRowStatus(d, index) {
+    return d.rowClass;
   }
 
   selectAll(selAllWks: boolean) {

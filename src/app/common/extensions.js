@@ -38,11 +38,11 @@ Date.prototype.format = function (seperat) {
       .replace("HH", hh)
       .replace("H", hh - 0)
       .replace("hh", hh > 12 ? (hh - 12).pad(2) : hh)
-      .replace("h", hh > 12 ? hh - 12 : hh) // This can also cause issue
+      //.replace("h", hh > 12 ? hh - 12 : hh) // This also cause issue
       .replace("mm", min)
       .replace("ss", ss)
       .replace("tt", hh >= 12 ? "PM" : "AM")
-      .replace("t", hh >= 12 ? "P" : "A")
+      //.replace("t", hh >= 12 ? "P" : "A")
       ;
   }
   else {

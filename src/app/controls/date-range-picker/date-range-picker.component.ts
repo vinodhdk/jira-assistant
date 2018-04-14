@@ -14,7 +14,7 @@ export class DateRangePickerComponent implements OnChanges {
   ngModal: DateRange
 
   @Output()
-  selected: EventEmitter<DateRange>
+  selected: EventEmitter<any>
 
   @ViewChild('calendar')
   calendar: any;
@@ -89,7 +89,7 @@ export class DateRangePickerComponent implements OnChanges {
   setModelDate(rangeDates: Date[]): void {
     this.ngModal.fromDate = rangeDates[0];
     this.ngModal.toDate = rangeDates[1];
-    this.selected.emit(this.ngModal);
+    this.selected.emit({ date: this.ngModal });
   }
 
   ngOnChanges(change) {
@@ -101,6 +101,7 @@ export class DateRangePickerComponent implements OnChanges {
         this.ngModal.fromDate = dtRange[0];
         this.ngModal.toDate = dtRange[1];
       }
+      this.selected.emit({ auto: true, date: this.ngModal });
     }
   }
 

@@ -20,11 +20,13 @@ import { OverlayPanelModule } from 'primeng/overlaypanel';
 import { ColorPickerModule } from 'primeng/colorpicker';
 import { TabViewModule } from 'primeng/tabview';
 import { ProgressBarModule } from 'primeng/progressbar';
+import { DataTableModule } from 'primeng/datatable';
+import { ContextMenuModule } from 'primeng/contextmenu';
 
 export const PRIME_MODULES = [PanelModule, ButtonModule, BlockUIModule, ScrollPanelModule, TieredMenuModule,
   SplitButtonModule, DropdownModule, CalendarModule, DataViewModule, AutoCompleteModule, InplaceModule, DialogModule,
   InputMaskModule, CheckboxModule, ChipsModule, GrowlModule, ScheduleModule, OverlayPanelModule, ProgressBarModule,
-  ColorPickerModule, TabViewModule]
+  ColorPickerModule, TabViewModule, DataTableModule, ContextMenuModule]
 
 export const JA_DIRECTIVES: any = [];
 

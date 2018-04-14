@@ -9,6 +9,10 @@ export class BaseGadget implements OnChanges {
   isGadget: boolean
   isFullScreen: boolean
   bodyTag: any
+  columnResizeMode: string
+
+  @Input()
+  settings: any
 
   @Input()
   layout: number
@@ -21,6 +25,7 @@ export class BaseGadget implements OnChanges {
 
   constructor(private el: ElementRef) {
     this.isGadget = true;
+    this.settings = {};
     this.onAction = new EventEmitter<any>();
     this.bodyTag = $('body');
     this.widgetCtl = $(this.el.nativeElement).closest('.widget-cntr');
@@ -49,6 +54,7 @@ export class BaseGadget implements OnChanges {
     this.isFullScreen = !this.isFullScreen;
     if (this.isFullScreen) { this.bodyTag.addClass('fs-layout'); }
     else { this.bodyTag.removeClass('fs-layout'); }
+    this.columnResizeMode = this.isFullScreen ? 'fit' : 'expand';
     this.onResize();
   }
 
@@ -72,6 +78,10 @@ export class BaseGadget implements OnChanges {
     this.performAction(GadgetActionType.RemoveGadget);
   }
 
+  saveSettings() {
+    this.performAction(GadgetActionType.SettingsChanged, this.settings);
+  }
+
   executeEvent(action: GadgetAction) {
     if (action.type == GadgetActionType.RemoveGadget) {
       this.onResize();
@@ -90,5 +100,6 @@ export enum GadgetActionType {
   WorklogModified = 2,
   DeletedWorklog = 3,
   TicketBookmarked = 10,
+  SettingsChanged = 20,
   RemoveGadget = 100
 }

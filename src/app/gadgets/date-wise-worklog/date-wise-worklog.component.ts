@@ -14,11 +14,9 @@ export class DateWiseWorklogComponent extends BaseGadget {
   isLoading: boolean
   contextMenu: any[]//MenuItem
   selectedDay: any
-  dateRange: any
 
   constructor(private $jaFacade: FacadeService, private $jaUtils: UtilsService, private $transform: DataTransformService, el: ElementRef) {
     super(el);
-    this.dateRange = {};
     this.fillWorklogs();
     this.contextMenu = [
       { label: "Upload worklog", icon: "fa-clock-o", command: () => this.uploadWorklog() },
@@ -27,11 +25,14 @@ export class DateWiseWorklogComponent extends BaseGadget {
   }
 
   fillWorklogs(): void {
-    var selDate = this.dateRange;
+    var selDate = this.settings.dateRange;
     if (!selDate || !selDate.fromDate) { return; }
     this.isLoading = true;
     selDate.dateWise = true;
-    this.$jaFacade.getWorklogs(selDate).then((result) => { this.worklogs_DW = result; this.isLoading = false; });
+    this.$jaFacade.getWorklogs(selDate).then((result) => {
+      this.worklogs_DW = result.ForEach(b => b.rowClass = this.$jaUtils.getRowStatus(b));
+      this.isLoading = false;
+    });
   }
 
   getWorklogUrl(ticketNo: string, worklogId: number): string {
@@ -44,18 +45,25 @@ export class DateWiseWorklogComponent extends BaseGadget {
   }
 
   dateSelected($event: any): void {
+    this.settings.dateRange = $event.date;
     this.fillWorklogs();
+    if (!$event.auto) {
+      this.saveSettings();
+    }
   }
 
-  getRowStatus(d) {
-    return this.$jaUtils.getRowStatus(d);
+  getRowStatus(d, index) {
+    return d.rowClass;
   }
 
   uploadWorklog() {
     var toUpload = this.selectedDay.ticketList.Where(t => !t.worklogId).Select(t => t.id)
     if (toUpload.length == 0) { return; }
     this.isLoading = true;
-    this.$jaFacade.uploadWorklogs(toUpload).then(() => this.fillWorklogs(), (err) => { this.isLoading = false; });
+    this.$jaFacade.uploadWorklogs(toUpload).then(() => {
+      this.fillWorklogs();
+      super.performAction(GadgetActionType.WorklogModified);
+    }, (err) => { this.isLoading = false; });
   }
 
   addWorklog() {

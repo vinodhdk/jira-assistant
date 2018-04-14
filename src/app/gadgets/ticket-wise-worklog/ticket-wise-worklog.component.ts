@@ -13,11 +13,10 @@ export class TicketWiseWorklogComponent extends BaseGadget {
   isLoading: boolean
   contextMenu: any[]//MenuItem
   selectedTicket: any
-  dateRange: any
 
   constructor(private $facade: FacadeService, el: ElementRef, private $jaUtils: UtilsService) {
     super(el);
-    this.dateRange = {};
+    this.settings.dateRange = {};
     this.fillWorklogs();
     this.contextMenu = [
       { label: "Upload worklog", icon: "fa-clock-o", command: () => this.uploadWorklog() },
@@ -26,11 +25,14 @@ export class TicketWiseWorklogComponent extends BaseGadget {
   }
 
   fillWorklogs(): void {
-    var selDate = this.dateRange;
+    var selDate = this.settings.dateRange;
     if (!selDate || !selDate.fromDate) { return; }
     this.isLoading = true;
     selDate.dateWise = false;
-    this.$facade.getWorklogs(selDate).then((result) => { this.worklogs = result; this.isLoading = false; });
+    this.$facade.getWorklogs(selDate).then((result) => {
+      this.worklogs = result.ForEach(b => b.rowClass = this.$jaUtils.getRowStatus(b))
+      this.isLoading = false;
+    });
   }
 
   showContext($event: any, b: any, menu: any): any {
@@ -39,11 +41,19 @@ export class TicketWiseWorklogComponent extends BaseGadget {
   }
 
   dateSelected($event: any): void {
+    this.settings.dateRange = $event.date;
     this.fillWorklogs();
+    if (!$event.auto) {
+      this.saveSettings();
+    }
   }
 
   getWorklogUrl(ticketNo: string, worklogId: number): string {
     return this.$jaUtils.getWorklogUrl(ticketNo, worklogId);
+  }
+
+  getRowStatus(d, index) {
+    return d.rowClass;
   }
 
   getTicketUrl(ticketNo: string) { return this.$jaUtils.getTicketUrl(ticketNo); }

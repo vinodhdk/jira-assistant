@@ -1,13 +1,13 @@
 <div [ngClass]="isFullScreen?'full-screen':''">
   <p-panel styleClass="p-no-padding">
     <p-header>
-      <div class="ui-helper-clearfix">
+      <div class="ui-helper-clearfix drag-handle" ngxDragHandle>
         <i class="fa fa-filter"></i>
         <span class="ui-panel-title" style="font-size:16px;display:inline-block;margin-top:2px">Saved Query</span>
         <div class="pull-right">
           <button pButton [icon]="isFullScreen?'fa-compress':'fa-expand'" (click)="toggleFullScreen()"></button>
           <button pButton icon="fa-refresh" (click)="fillSavedQuery();"></button>
-          <button pButton icon="fa-plus"></button>
+          <!--<button pButton icon="fa-plus"></button>-->
           <button pButton icon="fa-trash-o" class="ui-button-danger" (click)="deleteQuery()"></button>
           <button pButton icon="fa-times" (click)="removeGadget()"></button>
         </div>
@@ -17,33 +17,31 @@
       <i class="fa fa-refresh fa-spin fa-5x" style="position:absolute;top:25%;left:50%"></i>
     </p-blockUI>
     <p-panel [showHeader]="false" #pnlCtl>
-      <p-scrollPanel [style]="{width: '100%', height: contentHeight + 'px'}" styleClass="cont-div">
-        <table class="table table-responsive-sm table-bordered table-striped table-sm no-margin">
-          <thead>
-            <tr>
-              <th style="width:25px;"><input type="checkbox" [(ngModel)]="selAllSQ" (click)="selectAll(selAllSQ)" /></th>
-              <th style="min-width:200px;">Name</th>
-              <th style="min-width:130px;">Created On</th>
-              <th style="min-width:60px;">Enabled</th>
-              <th style="min-width:60px;">Filter Fields</th>
-              <th style="min-width:60px;">Output fields</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr [hidden]="!savedQueries || savedQueries.length > 0"><td colspan="6">No records exists</td></tr>
-            <tr *ngFor="let w of savedQueries">
-              <td class="data-center">
-                <input type="checkbox" [(ngModel)]="w.selected" />
-              </td>
-              <td>{{w.queryName}}</td>
-              <td>{{w.dateCreated | formatDateTime}}</td>
-              <td class="data-center"><label class="switch switch-small"><input type="checkbox" [(ngModel)]="w.isEnabled" /><span (click)="queryEnabled(w)"></span></label></td>
-              <td>{{w.filtersCount}}</td>
-              <td>{{w.outputCount}}</td>
-            </tr>
-          </tbody>
-        </table>
-      </p-scrollPanel>
+      <p-dataTable [value]="savedQueries" sortMode="multiple" resizableColumns="true" [columnResizeMode]="columnResizeMode" responsive="false"
+                   reorderableColumns="true" scrollable="true" [style]="{'height':contentHeight+'px'}" styleClass="fix-height"
+                   [scrollHeight]="(contentHeight - 30) + 'px'" emptyMessage="No records exists!">
+        <p-column [style]="{'width':'30px'}" styleClass="data-center">
+          <ng-template pTemplate="header">
+            <input type="checkbox" [(ngModel)]="selAllSQ" (click)="selectAll(selAllSQ)" />
+          </ng-template>
+          <ng-template let-w="rowData" pTemplate="body">
+            <input type="checkbox" [(ngModel)]="w.selected" />
+          </ng-template>
+        </p-column>
+        <p-column header="Name" field="queryName" [sortable]="true" [style]="{'width':'200px'}"></p-column>
+        <p-column header="Created On" field="dateCreated" [sortable]="true" [style]="{'width':'130px'}">
+          <ng-template let-w="rowData" pTemplate="body">
+            {{w.dateCreated | formatDateTime}}
+          </ng-template>
+        </p-column>
+        <p-column header="Enabled" field="timeSpent" class="data-center" [sortable]="true" [style]="{'width':'60px'}">
+          <ng-template let-w="rowData" pTemplate="body">
+            <label class="switch switch-small"><input type="checkbox" [(ngModel)]="w.isEnabled" /><span (click)="queryEnabled(w)"></span></label>
+          </ng-template>
+        </p-column>
+        <p-column header="Filter Fields" field="filtersCount" [sortable]="true" [style]="{'width':'90px'}"></p-column>
+        <p-column header="Output fields" field="outputCount" [sortable]="true" [style]="{'width':'90px'}"></p-column>
+      </p-dataTable>
     </p-panel>
   </p-panel>
 </div>

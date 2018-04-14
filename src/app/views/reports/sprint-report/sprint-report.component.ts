@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { JiraService, UtilsService } from '../../../services/index';
+import * as $ from 'jquery'
 
 @Component({
   selector: 'app-sprint-report',
@@ -176,11 +177,10 @@ export class SprintReportComponent implements OnInit {
         }
 
         sprint.expanded = result.length === 1;
-        //var link = $(sprint.lastUserToClose)
-        //  .attr('target', '_blank');
-        //link = link.attr('href', this.$utils.mapJiraUrl(link.attr('href')));
-        //sprint.lastUserToClose = $("<div/>").append(link).html();
-        //sprint.lastUserToClose = sprint.lastUserToClose;
+        var link = $(sprint.lastUserToClose)
+          .attr('target', '_blank');
+        link = link.attr('href', this.$utils.mapJiraUrl(link.attr('href')));
+        sprint.lastUserToClose = $("<div/>").append(link).html();
       });
     });
   }

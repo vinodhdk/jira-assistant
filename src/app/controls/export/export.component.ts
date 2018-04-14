@@ -3,8 +3,7 @@ import * as $ from 'jquery'
 
 @Component({
   selector: '[jaExport]',
-  templateUrl: './export.component.html',
-  styleUrls: ['./export.component.scss']
+  templateUrl: './export.component.html'
 })
 export class ExportComponent implements OnInit {
 
@@ -15,14 +14,19 @@ export class ExportComponent implements OnInit {
   fileName: string
 
 
-  constructor() {
-  }
+  constructor() { }
 
   ngOnInit() {
   }
 
   exportToCsv() {
-    this.exportTable($(this.element), this.fileName || 'export');
+    if (this.element.exportCSV) { this.element.exportFilename = this.fileName; this.element.exportCSV(); }
+    else {
+      var el = (this.element.el || this.element).nativeElement || this.element;
+      var el = $(el);
+      if (!el.is('table')) { el = el.find('table:first-child'); }
+      this.exportTable(el, this.fileName || 'download');
+    }
   }
 
   /**

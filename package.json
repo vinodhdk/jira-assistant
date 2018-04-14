@@ -26,6 +26,7 @@
     "@angular/platform-browser-dynamic": "5.2.9",
     "@angular/router": "5.2.9",
     "@angular/upgrade": "5.2.9",
+    "@swimlane/ngx-dnd": "^3.2.0",
     "bootstrap": "4.0.0",
     "chart.js": "2.7.1",
     "core-js": "2.5.3",

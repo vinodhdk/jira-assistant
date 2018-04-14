@@ -9,7 +9,7 @@
   <div class="pull-left" *ngIf="isEditMode">
     <div class="ui-inputgroup">
       <button pButton type="button" icon="{{newIcon}}" class="ui-button-info" (click)="ctlIcons.show($event)"></button>
-      <input [(ngModel)]="newName" maxlength="20" />
+      <input [(ngModel)]="newName" maxlength="18" />
       <button pButton type="button" icon="fa-check" class="ui-button-success" (click)="currentBoard.name=newName;currentBoard.icon=newIcon;saveDashboardInfo();isEditMode=false"></button>
       <button pButton type="button" icon="fa-undo" class="ui-button-default" (click)="isEditMode=false"></button>
     </div>
@@ -18,17 +18,17 @@
     <p-splitButton label="Add gadgets" icon="fa-cubes" (onClick)="showGadgets()" [model]="contextMenu" styleClass="ui-button-primary btn-m-gadget"></p-splitButton>
   </div>
 </div>
-<div [ngClass]="'layout-' + currentBoard.layout">
+<div [ngClass]="'dashboard-gadz layout-' + currentBoard.layout" ngxDroppable [model]="currentBoard.widgets">
   <ng-container *ngFor="let ctrl of currentBoard.widgets; let idx=index" [ngSwitch]="ctrl.name">
-    <div #myGadget class="widget-cntr widget" [layout]="currentBoard.layout" *ngSwitchCase="'myOpenTickets'" myOpenTickets (onAction)="widgetAction($event,idx)"></div>
-    <div #myGadget class="widget-cntr widget" [layout]="currentBoard.layout" *ngSwitchCase="'myBookmarks'" myBookmarks (onAction)="widgetAction($event,idx)"></div>
-    <div #myGadget class="widget-cntr widget" [layout]="currentBoard.layout" *ngSwitchCase="'dateWiseWorklog'" dateWiseWorklog (onAction)="widgetAction($event,idx)"></div>
-    <div #myGadget class="widget-cntr widget" [layout]="currentBoard.layout" *ngSwitchCase="'pendingWorklog'" pendingWorklog (onAction)="widgetAction($event,idx)"></div>
-    <div #myGadget class="widget-cntr widget" [layout]="currentBoard.layout" *ngSwitchCase="'ticketWiseWorklog'" ticketWiseWorklog (onAction)="widgetAction($event,idx)"></div>
-    <div #myGadget class="widget-cntr widget" [layout]="currentBoard.layout" *ngSwitchCase="'myFilters'" myFilters (onAction)="widgetAction($event,idx)"></div>
-    <div #myGadget class="widget-cntr widget" [layout]="currentBoard.layout" *ngSwitchCase="'agendaDay'" jaCalendar viewMode="agendaDay" (onAction)="widgetAction($event,idx)"></div>
-    <div #myGadget class="widget-cntr widget" [layout]="currentBoard.layout" *ngSwitchCase="'agendaWeek'" jaCalendar viewMode="agendaWeek" (onAction)="widgetAction($event,idx)"></div>
-    <div [layout]="currentBoard.layout" *ngSwitchDefault dynamicGadget [gadgetName]="ctrl.name" (onAction)="widgetAction($event,idx)"></div>
+    <div #myGadget ngxDraggable [model]="ctrl" class="widget-cntr widget" [settings]="ctrl.settings" [layout]="currentBoard.layout" *ngSwitchCase="'myOpenTickets'" myOpenTickets (onAction)="widgetAction($event,ctrl,idx)"></div>
+    <div #myGadget ngxDraggable [model]="ctrl" class="widget-cntr widget" [settings]="ctrl.settings" [layout]="currentBoard.layout" *ngSwitchCase="'myBookmarks'" myBookmarks (onAction)="widgetAction($event,ctrl,idx)"></div>
+    <div #myGadget ngxDraggable [model]="ctrl" class="widget-cntr widget" [settings]="ctrl.settings" [layout]="currentBoard.layout" *ngSwitchCase="'dateWiseWorklog'" dateWiseWorklog (onAction)="widgetAction($event,ctrl,idx)"></div>
+    <div #myGadget ngxDraggable [model]="ctrl" class="widget-cntr widget" [settings]="ctrl.settings" [layout]="currentBoard.layout" *ngSwitchCase="'pendingWorklog'" pendingWorklog (onAction)="widgetAction($event,ctrl,idx)"></div>
+    <div #myGadget ngxDraggable [model]="ctrl" class="widget-cntr widget" [settings]="ctrl.settings" [layout]="currentBoard.layout" *ngSwitchCase="'ticketWiseWorklog'" ticketWiseWorklog (onAction)="widgetAction($event,ctrl,idx)"></div>
+    <div #myGadget ngxDraggable [model]="ctrl" class="widget-cntr widget" [settings]="ctrl.settings" [layout]="currentBoard.layout" *ngSwitchCase="'myFilters'" myFilters (onAction)="widgetAction($event,ctrl,idx)"></div>
+    <div #myGadget ngxDraggable [model]="ctrl" class="widget-cntr widget" [settings]="ctrl.settings" [layout]="currentBoard.layout" *ngSwitchCase="'agendaDay'" jaCalendar viewMode="agendaDay" (onAction)="widgetAction($event,ctrl,idx)"></div>
+    <div #myGadget ngxDraggable [model]="ctrl" class="widget-cntr widget" [settings]="ctrl.settings" [layout]="currentBoard.layout" *ngSwitchCase="'agendaWeek'" jaCalendar viewMode="agendaWeek" (onAction)="widgetAction($event,ctrl,idx)"></div>
+    <div ngxDraggable [model]="ctrl" [layout]="currentBoard.layout" *ngSwitchDefault dynamicGadget [gadgetName]="ctrl.name" (onAction)="widgetAction($event,ctrl,idx)"></div>
   </ng-container>
   <ng-container *ngIf="!currentBoard.widgets || currentBoard.widgets.length == 0">
     <div class="no-widget-div">

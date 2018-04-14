@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { CHROME_WS_URL } from '../_constants';
 
 @Injectable()
 export class AppBrowserService {
@@ -152,6 +153,6 @@ export class AppBrowserService {
   removeAuthTokken(authToken) {
     this.chrome.identity.removeCachedAuthToken({ 'token': authToken }, () => { })
   }
-  getStoreUrl(forRating) { return (forRating ? '/reviews' : ''); }//ToDo: CHROME_WS_URL + 
+  getStoreUrl(forRating?: boolean) { return CHROME_WS_URL + (forRating ? '/reviews' : ''); }//ToDo: 
 
 }

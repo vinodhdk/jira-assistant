@@ -43,12 +43,12 @@ export class FacadeService {
       if (!currentUser.settings) { currentUser.settings = {}; }
 
       var settings = {
-        page_Dashboard: currentUser.settings.page_dashboard,
-        page_Calendar: currentUser.settings.page_calendar,
-        page_Reports_UserDayWise: currentUser.settings.page_reports_UserDayWise
+        page_dashboard: currentUser.settings.page_dashboard,
+        page_calendar: currentUser.settings.page_calendar,
+        page_reports_UserDayWise: currentUser.settings.page_reports_UserDayWise
       };
 
-      var gridList = (settings.page_Dashboard || {}).gridList;
+      var gridList = (settings.page_dashboard || {}).gridList;
       if (gridList && gridList.length > 0) {
         var converter = {
           'myTickets': 'myOpenTickets', 'bookmarksList': 'myBookmarks', 'dtWiseWL': 'dateWiseWorklog',
@@ -209,7 +209,7 @@ export class FacadeService {
     });
 
     if (toFetch.length > 0) {
-      var jql = "'" + tickets.join("', '") + "'";
+      var jql = "'" + toFetch.join("', '") + "'";
       jql = "key in (" + jql + ")";
       return this.$jaDataSvc.searchTickets(jql, fields).then((list) => {
         result.AddRange(list); return result;
@@ -337,8 +337,9 @@ export class FacadeService {
   saveSettings(pageName: string) {
     return this.getCurrentUser().then((usr) => {
       if (!usr.settings) { usr.settings = {}; }
+
       usr.settings["page_" + pageName] = this.$session.pageSettings[pageName];
-      return this.$db.users.put(usr);
+      return this.$db.users.put(usr).then(r => r);
     });
   }
 
@@ -551,8 +552,10 @@ export class FacadeService {
     return obj;
   }
 
-  getTimeSpent(entry: IWorklog, ticks?): number {
-    var tmp = (entry.overrideTimeSpent || entry.timeSpent).replace(" ", "0").split(':');
+  getTimeSpent(entry: IWorklog | string, ticks?): number {
+    if (!entry) { return 0; }
+    var timeSpent = (typeof entry === 'string') ? entry : (entry.overrideTimeSpent || entry.timeSpent);
+    var tmp = timeSpent.replace(" ", "0").split(':');
     if (tmp.length === 2)
       return ((parseInt("0" + tmp[0]) * 60) + parseInt("0" + tmp[1])) * (ticks ? 60 * 1000 : 1);
     else return 0;
@@ -643,18 +646,21 @@ export class FacadeService {
 
   authenticate(): Promise<any> {
     return this.getUserDetails().then(userDetails => {
+      //Temp code: Need to be removed once old UI is removed
+      this.$jaCache.set("useNewUI", true);
+
       this.$session.CurrentUser = userDetails;
       this.$session.userId = userDetails.userId;
       //ToDo:
 
       var settings = userDetails.settings;
       this.$session.pageSettings = {
-        dashboard: this.parseIfJson(settings.page_Dashboard,
+        dashboard: this.parseIfJson(settings.page_dashboard,
           {
             viewMode: 0,
             gridList: ["myTickets", "bookmarksList", "dtWiseWL", "pendingWL"]
           }),
-        calendar: this.parseIfJson(settings.page_Calendar, {
+        calendar: this.parseIfJson(settings.page_calendar, {
           viewMode: 'agendaWeek',
           showWorklogs: true,
           showMeetings: true,
@@ -665,7 +671,7 @@ export class FacadeService {
           infoColor_less: '#f0d44f',
           infoColor_high: '#f06262'
         }),
-        reports_UserDayWise: this.parseIfJson(settings.page_Reports_UserDayWise, { logFormat: 1, breakupMode: 1, groupMode: 1 })
+        reports_UserDayWise: this.parseIfJson(settings.page_reports_UserDayWise, { logFormat: '1', breakupMode: '1', groupMode: '1' })
       };
 
       if (userDetails.dashboards) { updateDashboard(userDetails.dashboards) }

@@ -1,7 +1,7 @@
 import { Component, ViewChildren, QueryList, ContentChildren, ElementRef } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { DatabaseService, SessionService } from '../../services/index';
-import { IDashboard, IUser } from '../../common/interfaces';
+import { IDashboard, IUser, IWidget } from '../../common/interfaces';
 import { updateDashboard } from '../../_nav';
 import { DASHBOARD_ICONS } from '../../_constants';
 import { FacadeService } from '../../services/facade.service';
@@ -134,7 +134,7 @@ export class DashboardComponent {
     this.currentBoard.widgets.RemoveAll(g => g.name === gadgetName);
   }
 
-  widgetAction($event: GadgetAction, widgetIndex?: number) {
+  widgetAction($event: GadgetAction, gadget?: IWidget, widgetIndex?: number) {
     switch ($event.type) {
       case GadgetActionType.AddWorklog: this.worklogItem = $event.data; this.showWorklogPopup = true; break;
       //case 2: this.worklogIdToEdit = $event.worklogId; this.showWorklogPopup = true; break;
@@ -142,6 +142,10 @@ export class DashboardComponent {
         this.currentBoard.widgets.RemoveAt(widgetIndex);
         this.saveDashboardInfo(true);
         this.emitToChildren($event, widgetIndex);
+        break;
+      case GadgetActionType.SettingsChanged:
+        gadget.settings = $event.data;
+        this.saveDashboardInfo(true);
         break;
       default:
         this.emitToChildren($event, widgetIndex);

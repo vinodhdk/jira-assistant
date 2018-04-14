@@ -5,6 +5,7 @@ import * as moment from 'moment';
 import * as $ from 'jquery';
 import { FormatSecsPipe } from '../../pipes/format-secs.pipe';
 import { BaseGadget, GadgetAction, GadgetActionType } from '../base-gadget';
+import { UtilsService } from '../../services/utils.service';
 
 @Component({
   selector: '[jaCalendar]',
@@ -65,7 +66,7 @@ export class CalendarComponent extends BaseGadget implements OnChanges {
 
     this.fullCalendarOpts = {
       displayEventTime: true, selectable: true, selectHelper: true, timezone: 'local',
-      select: (start, end, allDay) => this.select(start, end, allDay),
+      select: (start, end, jsEvent) => this.select(start, end, jsEvent),
       eventRender: (event, element, view) => this.eventRender(event, element, view)
     };
     this.CurrentUser = $session.CurrentUser;
@@ -74,13 +75,13 @@ export class CalendarComponent extends BaseGadget implements OnChanges {
     this.endOfDay = this.CurrentUser.endOfDay || "19:00";//"22:00:00",
     this.businessHours = {
       // days of week. an array of zero-based day of week integers (0=Sunday)
-      dow: [1, 2, 3, 4, 5],
+      dow: this.$session.CurrentUser.workingDays || [1, 2, 3, 4, 5],
       start: this.CurrentUser.startOfDay || "10:00",
       end: this.CurrentUser.endOfDay || "19:00",
     };
 
 
-    this.maxTime = this.maxHours;
+    this.maxTime = this.CurrentUser.maxHours;
     if (this.maxTime) {
       this.maxTime = this.maxTime * 60 * 60;
     }
@@ -91,6 +92,7 @@ export class CalendarComponent extends BaseGadget implements OnChanges {
       this.settings.viewMode = this.viewMode;
       //this.viewModeChanged();
     }
+    super.ngOnChanges(change);
   }
 
   fillCalendar() {
@@ -99,6 +101,7 @@ export class CalendarComponent extends BaseGadget implements OnChanges {
 
   viewModeChanged() {
     this.calendar.changeView(this.settings.viewMode);
+    this.saveSettings();
   }
 
   private createWorklog($event, m) {
@@ -210,24 +213,16 @@ export class CalendarComponent extends BaseGadget implements OnChanges {
 
   private updateAllDayEvent(result) {
     var key = moment(result.start).format("YYYY-MM-DD");
-    //var allDayEvent = this.calendar.fullCalendar('clientEvents', (e) => { return e.id === key && e.entryType === 3; });
-    var allDayEvent = this.events.First((e) => { return e.id == key && e.entryType === 3; });
-    //var logs = this.calendar.fullCalendar('clientEvents', (a) => { return a.entryType === 1 && moment(a.start).format("YYYY-MM-DD") === key; });
+    this.events.RemoveAll((e) => e.id == key && e.entryType === 3);
     var logs = this.events.Where((a) => { return a.entryType === 1 && moment(a.start).format("YYYY-MM-DD") == key; });
-    if (allDayEvent) {
-      allDayEvent = this.setLoggedTime(logs, allDayEvent);
+    if (logs && logs.length > 0) {
+      var allDayEvent = this.getAllDayObj({ key: key, values: logs });
       if (allDayEvent.logged) {
-        //this.calendar.fullCalendar('updateEvent', allDayEvent);
+        this.events.Add(allDayEvent);
+        //this.calendar.renderEvent(allDayEvent);
+        this.setLoggedTime(logs, allDayEvent);
+        //this.calendar.updateEvent(allDayEvent)
       }
-      else {
-        //this.calendar.fullCalendar('removeEvents', allDayEvent.id);
-        this.events.RemoveAll((e) => e.id === allDayEvent.id);
-      }
-    }
-    else {
-      allDayEvent = this.getAllDayObj({ key: key, values: logs });
-      //this.calendar.fullCalendar('renderEvent', );
-      this.setLoggedTime(logs, allDayEvent);
     }
     this.performAction(GadgetActionType.WorklogModified);
   }
@@ -265,9 +260,9 @@ export class CalendarComponent extends BaseGadget implements OnChanges {
     else if (result.added) {
       result = result.added;
       result.color = this.settings.worklogColor; // Set color for newely added worklog
-      //this.calendar.fullCalendar('removeEvents', (e) => { return e.id === result.id && e.entryType === 1; });
-      //this.calendar.fullCalendar('renderEvent', result);
+      //this.calendar.removeEvents((e) => { return e.id === result.id && e.entryType === 1; });
       this.latestData.Add(result);
+      //this.calendar.renderEvent(result);
       resp = true;
     }
     this.updateAllDayEvent(result);
@@ -294,31 +289,15 @@ export class CalendarComponent extends BaseGadget implements OnChanges {
   }
 
 
-  select(start, end, allDay) {
-    if (!start.hasTime()) { return false; }
-    this.showWorklogPopup({ isMonthMode: this.settings.viewMode === "month", start: start, end: end, allDay: allDay });
+  select(start, end, jsEvent) {
+    var isMonthMode = this.settings.viewMode === "month";
+    if (!isMonthMode && !start.hasTime()) { return false; }
+    this.showWorklogPopup({ isMonthMode: isMonthMode, start: start, end: end });
     return false;
   }
 
   showCalendarDetails(event, jsEvent, view) {
     //ToDo : implementation 
-  }
-
-  drop(date, allDay, ui, resourceId) {
-    var originalEventObject = $(this).data('eventObject');
-
-    var copiedEventObject = $.extend({}, originalEventObject);
-
-    copiedEventObject.start = date;
-    copiedEventObject.allDay = allDay;
-
-    $('#calendar').fullCalendar('renderEvent', copiedEventObject, true);
-
-
-    if ($('#drop-remove').is(':checked')) {
-      $(this).remove();
-    }
-
   }
 
   eventClick(calEvent, jsEvent, view) {
@@ -340,14 +319,24 @@ export class CalendarComponent extends BaseGadget implements OnChanges {
   eventDrop(event, delta, revertFunc, jsEvent, ui, view) {
     if (jsEvent.ctrlKey || jsEvent.altKey) {
       revertFunc();
-      this.$jaFacade.copyWorklog(event.sourceObject.id, event.start.format("YYYY-MM-DD HH:mm")).then((result) => { this.addEvent({ added: result }); });
+      var eventFromArr: any = this.events.First(e => e.entryType == 1 && e.id == event.sourceObject.id);
+      if (eventFromArr) {
+        var srcObj = eventFromArr.sourceObject;
+        eventFromArr.start = moment(new Date(srcObj.dateStarted)).toDate();
+        eventFromArr.end = moment(new Date(srcObj.dateStarted))
+          .add(this.$jaFacade.getTimeSpent(srcObj), "minutes").toDate();
+        //.add(this.$utils.getTotalSecs(srcObj.overrideTimeSpent || srcObj.timeSpent), 'seconds').toDate();
+      }
+      this.$jaFacade.copyWorklog(event.sourceObject.id, event.start.format("YYYY-MM-DD HH:mm"))
+        .then((result) => { this.addEvent({ added: result }); });
     }
     else {
       this.$jaFacade.changeWorklogDate(event.sourceObject.id, event.start.format("YYYY-MM-DD HH:mm")).then(() => {
-        var evnt = this.latestData.First((e) => { return e.id === event.id && e.entryType === 1; });
-        this.updateAllDayEvent(evnt);
-        evnt.start = event.start.toDate();
-        evnt.end = event.end.toDate();
+        this.updateAllDayEvent({ start: event.sourceObject.dateStarted }); // This is to update the info of previous date
+        event.sourceObject.dateStarted = event.start.toDate();
+        //var evnt = this.latestData.First((e) => { return e.id === event.id && e.entryType === 1; });
+        //evnt.start = event.start.toDate();
+        //evnt.end = event.end.toDate();
 
         this.updateAllDayEvent(event);
       });
@@ -363,8 +352,11 @@ export class CalendarComponent extends BaseGadget implements OnChanges {
     if (event.entryType === 1) {
       let w = event.sourceObject;
       let icon = $('<i class="fa fa-ellipsis-v pull-left" title="Show options"></i>')
-        .on('click', (e) => { e.stopPropagation(); this.currentWLItem = w; this.contextMenu.toggle(e); });
+        .on('click', (e) => { e.stopPropagation(); this.currentWLItem = w; this.contextMenu.hide(); this.contextMenu.toggle(e); });
       element.find(".fc-time").prepend(icon);
+      element.bind('contextmenu', (e) => {
+        e.stopPropagation(); e.preventDefault(); icon.click();
+      });
     }
     else if (event.entryType === 2) {
       if (!this.latestData.Any((e) => { return e.parentId === event.id && e.entryType === 1; })) {
@@ -373,6 +365,9 @@ export class CalendarComponent extends BaseGadget implements OnChanges {
         var icon = $('<i class="fa fa-clock-o pull-left" title="Create worklog for this meeting"></i>')
           .on('click', (e) => { e.stopPropagation(); this.createWorklog(e, m); });
         element.find(".fc-time").prepend(icon);
+        element.bind('contextmenu', (e) => {
+          e.stopPropagation(); e.preventDefault(); this.contextMenu.toggle(e);
+        });
       }
     }
   }
@@ -405,6 +400,11 @@ export class CalendarComponent extends BaseGadget implements OnChanges {
     else {
       super.executeEvent(action);
     }
+  }
+
+  saveSettings() {
+    this.fillCalendar();
+    this.$jaFacade.saveSettings('calendar');
   }
 }
 

@@ -1,5 +1,6 @@
 import { Component, OnInit, ViewChild, Input, ElementRef, Output, EventEmitter } from '@angular/core';
 import { JiraService, FacadeService } from 'app/services';
+import { MessageService } from '../../services/message.service';
 
 @Component({
   selector: 'app-group-editor',
@@ -24,7 +25,7 @@ export class GroupEditorComponent implements OnInit {
   isPlugged: boolean
   mode_groupAdd: boolean
 
-  constructor(private $jira: JiraService, private $facade: FacadeService) {
+  constructor(private $jira: JiraService, private $facade: FacadeService, private message: MessageService) {
     this.selectedGroup = { name: 'Loading...', users: [] };
   }
 
@@ -58,7 +59,7 @@ export class GroupEditorComponent implements OnInit {
     groupName = groupName.trim();
 
     if (this.groups.Any(g => g.name.toLowerCase() === groupName.toLowerCase())) {
-      // ToDo: Show error message
+      this.message.warning("The group with the name '" + groupName + "' already exists!", "Group already exists");
       return false;
     }
     else {
@@ -71,7 +72,7 @@ export class GroupEditorComponent implements OnInit {
   updateGroupName(groupName: string): boolean {
     groupName = groupName.trim();
     if (this.groups.Any(g => g.name.toLowerCase() === groupName.toLowerCase() && g != this.selectedGroup)) {
-      // ToDo: Show error message
+      this.message.warning("The group with the name '" + groupName + "' already exists!", "Group already exists");
       return false;
     }
     else {
@@ -87,6 +88,8 @@ export class GroupEditorComponent implements OnInit {
   }
 
   addUsers(): void {
+    var existingUsers = this.selectedGroup.users.Select(u => u.name.toLowerCase());
+    this.selectedUsers.RemoveAll(u => existingUsers.indexOf(u.name.toLowerCase()) > -1);
     this.selectedGroup.users.AddRange(this.selectedUsers);
     this.clearUsers();
   }
@@ -101,7 +104,10 @@ export class GroupEditorComponent implements OnInit {
 
   saveGroups(): void {
     this.saveInProg = true;
-    this.$facade.saveUserGroups(this.groups).then(u => this.saveInProg = false);
+    this.$facade.saveUserGroups(this.groups).then(u => {
+      this.saveInProg = false;
+      this.message.success("Changes saved successfully!", "Group saved");
+    });
   }
 
   done(): void { this.onDone.emit(true); }

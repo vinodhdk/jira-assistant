@@ -293,6 +293,15 @@ export class QueryEditorComponent implements OnInit {
     }, { label: 'Custom Fields', items: customFields }]; // false
   }
 
+  columnReordered(event) {
+    var item = event.value;
+    var drpIdx = event.dropIndex;
+    var targItem = this.ngModel.outputFields[drpIdx + 1] || this.ngModel.outputFields[drpIdx - 1];
+    if (targItem) {
+      item.groupBy = targItem.groupBy;
+    }
+  }
+
   //private getOptionTags(data, group, forFilter) {
   //  if (forFilter) { data = data.Where((f) => { return f.clauseNames && f.clauseNames.length > 0; }); }
   //  var html = data.OrderBy((f) => { return f.name; })//.Where( (f) =>{ return f.searchable; })

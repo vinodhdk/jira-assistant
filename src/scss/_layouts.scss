@@ -15,7 +15,11 @@ div.layout-1 {
     width: calc(50% - 3px);
     float: left;
     height: calc(50vh - 48px);
-    margin-bottom: 8px;
+    margin-top: 6px;
+  }
+
+  .widget-cntr:nth-child(1), .widget-cntr:nth-child(2) {
+    margin-top: 0px;
   }
 
   .widget-cntr:nth-child(odd) {
@@ -40,7 +44,11 @@ div.layout-2 {
     width: 100%;
     float: left;
     height: calc(50vh - 48px);
-    margin-bottom: 8px;
+    margin-top: 6px;
+  }
+
+  .widget-cntr:first-child {
+    margin-top: 0px;
   }
 }
 
@@ -56,7 +64,7 @@ div.layout-3 {
   .widget-cntr {
     width: calc(50% - 3px);
     float: left;
-    height: calc(100vh - 95px);
+    height: calc(100vh - 90px);
   }
 
   .widget-cntr:nth-child(odd) {
@@ -83,7 +91,7 @@ div.layout-4 {
 
   .widget-cntr:nth-child(3n-2) {
     height: calc(100vh - 95px);
-    margin-bottom: 6px;
+    margin-top: 6px;
     margin-right: 3px;
   }
 
@@ -91,7 +99,11 @@ div.layout-4 {
     float: right;
     height: calc(50vh - 50px);
     margin-left: 3px;
-    margin-bottom: 6px;
+    margin-top: 6px;
+  }
+
+  .widget-cntr:first-child, .widget-cntr:nth-child(2) {
+    margin-top: 0px;
   }
 }
 
@@ -111,7 +123,7 @@ div.dummy-layout-4 {
 div.layout-5 {
   .widget-cntr {
     height: calc(50vh - 48px);
-    margin-bottom: 6px;
+    margin-top: 6px;
   }
 
   .widget-cntr:nth-child(3n-2) {
@@ -124,6 +136,10 @@ div.layout-5 {
 
   .widget-cntr:nth-child(3n-1) {
     margin-right: 6px;
+  }
+
+  .widget-cntr:first-child {
+    margin-top: 0;
   }
 }
 
@@ -148,7 +164,7 @@ div.dummy-layout-5 {
 div.layout-6 {
   .widget-cntr {
     height: calc(50vh - 48px);
-    margin-bottom: 6px;
+    margin-top: 6px;
   }
 
   .widget-cntr:nth-child(3n-2) {
@@ -162,6 +178,10 @@ div.layout-6 {
 
   .widget-cntr:nth-child(3n) {
     width: 100%;
+  }
+
+  .widget-cntr:first-child, .widget-cntr:nth-child(2) {
+    margin-top: 0px;
   }
 }
 
@@ -184,8 +204,12 @@ div.dummy-layout-6 {
 
 div.layout-7 {
   .widget-cntr {
-    height: calc(100vh - 48px);
+    height: calc(100vh - 44px);
     width: 100%;
+  }
+
+  &.dashboard-gadz .widget-cntr {
+    height: calc(100vh - 90px);
   }
 }
 

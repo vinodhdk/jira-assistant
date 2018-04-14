@@ -85,22 +85,25 @@ export class CacheService {
     clear: () => { this.storage.clear(); }
   }
 
-  set(key: string, value: any, expires?: any) {
+  set(key: string, value: any, expires?: any, raw?: boolean) {
     if (!key) { return; }
     if (value) {
-      value = { value: value };
-      if (expires) {
-        if (typeof expires === "number" && expires > 0) {
-          value.expires = moment().add(expires, 'days').toDate();
+      if (!raw) {
+        value = { value: value };
+        if (expires) {
+          if (typeof expires === "number" && expires > 0) {
+            value.expires = moment().add(expires, 'days').toDate();
+          }
+          else if (expires instanceof Date) {
+            value.expires = expires;
+          }
+          else if (moment.isMoment(expires)) {
+            value.expires = expires.toDate();
+          }
         }
-        else if (expires instanceof Date) {
-          value.expires = expires;
-        }
-        else if (moment.isMoment(expires)) {
-          value.expires = expires.toDate();
-        }
+        value = this.stringify(value);
       }
-      localStorage.setItem(key, this.stringify(value));
+      localStorage.setItem(key, value);
     }
     else {
       localStorage.removeItem(key);

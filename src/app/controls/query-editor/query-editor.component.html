@@ -61,8 +61,8 @@
               <th class="data-center" style="width:30px;">Remove</th>
             </tr>
           </thead>
-          <tbody ui-sortable="sortOpt" ng-model="ngModel.outputFields">
-            <tr *ngFor="let row of ngModel.outputFields; let $index = index">
+          <tbody ngxDroppable [model]="ngModel.outputFields" (drop)="columnReordered($event)">
+            <tr style="cursor:move" *ngFor="let row of ngModel.outputFields; let $index = index" ngxDraggable [model]="row">
               <td class="data-center">{{$index + 1}}</td>
               <td>{{row.name}}</td>
               <td>{{row.type}} {{row.isArray?'(multiple)':''}}</td>
@@ -70,6 +70,8 @@
               <td jaBindFunction [row]="row"></td>
               <td class="data-center"><i class="fa fa-times pointer" (click)="removeField(ngModel.outputFields, row)"></i></td>
             </tr>
+          </tbody>
+          <tbody>
             <tr>
               <td class="data-center">{{ngModel.outputFields.length + 1}}</td>
               <td>
@@ -86,7 +88,7 @@
       </p-tabPanel>
     </p-tabView>
     <p-footer>
-      <div style="height: 32px;">
+      <div class="pnl-footer">
         <div class="pull-left" [hidden]="!ngModel.id">
           <button pButton type="button" icon="fa-trash" label="Delete Query" class="ui-button-danger" (click)="deleteQuery()"></button>
           <button pButton type="button" icon="fa-floppy-o" label="Save Query As" class="ui-button-success" (click)="saveQuery()" [disabled]="!isSaveEnabled()"></button>
@@ -101,13 +103,15 @@
   </p-panel>
 </div>
 
-<p-dialog header="Save Query As" [(visible)]="showSaveDialog" breakpoint="300" width="300" appendTo="body" [baseZIndex]="9999"
+<p-dialog [(visible)]="showSaveDialog" breakpoint="300" width="300" appendTo="body" [baseZIndex]="9999"
           modal="true" dismissableMask="false" autoAlign="true">
+  <p-header>Save Query As</p-header>
   <label for="txtQueryName">Query Name</label>
   <p><input id="txtQueryName" type="text" [(ngModel)]="newQueryName" /></p>
   <p [hidden]="!ngModel.id"><input id="chkCopy" type="checkbox" [(ngModel)]="copyQuery" /> <label for="chkCopy">Create as a new query</label></p>
   <p-footer>
-    <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-    <button type="button" class="btn btn-primary" [disabled]="!newQueryName || newQueryName.length < 3" (click)="saveQuery(newQueryName,copyQuery)">Save</button>
+    <button pButton type="button" label="Cancel" class="ui-button-secondary" (click)="showSaveDialog=false"></button>
+    <button pButton type="button" icon="fa-floppy-o" label="Save" class="ui-button-primary"
+            [disabled]="!newQueryName || newQueryName.length < 3" (click)="saveQuery(newQueryName,copyQuery)"></button>
   </p-footer>
 </p-dialog>

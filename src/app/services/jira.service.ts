@@ -37,6 +37,12 @@ export class JiraService {
             retryCount = 3;
           }
           else { resolve(issues); }
+        }, (err) => {
+          var messages = (err.error || {}).errorMessages;
+          if (messages && messages.length > 0) {
+            this.message.error(messages.join('<br/>'), "Error fetching ticket details");
+          }
+          return err;
         });
     });
   }
@@ -61,7 +67,7 @@ export class JiraService {
     if (value) {
       return new Promise((resolve, reject) => resolve(value));
     }
-    
+
     return this.$jaHttp.get(ApiUrls.rapidViews, { customHandle: true })
       .then((result) => { this.$jaCache.session.set("rapidViews", result.views, 10); return result.views; });
   }

@@ -1,12 +1,13 @@
 <div [ngClass]="isFullScreen?'full-screen':''">
   <p-tieredMenu #menu [model]="contextMenu" [popup]="true" appendTo="body"></p-tieredMenu>
+  <p-contextMenu #cm [model]="contextMenu"></p-contextMenu>
   <p-panel styleClass="p-no-padding">
     <p-header>
-      <div class="ui-helper-clearfix">
+      <div class="ui-helper-clearfix drag-handle" ngxDragHandle>
         <i class="fa fa-list-alt"></i>
         <span class="ui-panel-title" style="font-size:16px;display:inline-block;margin-top:2px">Ticketwise worklog</span>
         <div class="pull-right">
-          <app-date-range-picker [(ngModal)]="dateRange" (selected)="dateSelected($event)"></app-date-range-picker>
+          <app-date-range-picker [(ngModal)]="settings.dateRange" (selected)="dateSelected($event)"></app-date-range-picker>
           <button pButton [icon]="isFullScreen?'fa-compress':'fa-expand'" (click)="toggleFullScreen()"></button>
           <button pButton icon="fa-refresh" (click)="fillWorklogs();"></button>
           <div jaExport [element]="tbl" fileName="Ticketwise worklog"></div>
@@ -18,40 +19,47 @@
       <i class="fa fa-refresh fa-spin fa-5x" style="position:absolute;top:25%;left:50%"></i>
     </p-blockUI>
     <p-panel [showHeader]="false" #pnlCtl>
-      <p-scrollPanel [style]="{width: '100%', height: contentHeight + 'px'}" styleClass="cont-div">
-        <table #tbl class="table table-responsive-sm table-bordered table-striped table-sm no-margin">
-          <thead>
-            <tr>
-              <th style="min-width:100px;">Ticket No</th>
-              <th style="min-width:150px;">Summary</th>
-              <th style="min-width:90px;">Total Hours</th>
-              <th style="min-width:80px;">Uploaded</th>
-              <th style="min-width:110px;">Pending Upload</th>
-              <th style="min-width:180px;">Parent Ticket</th>
-              <th style="min-width:400px;">Dates Logged</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr *ngIf="worklogs && worklogs.length == 0"><td colspan="8">No records exists</td></tr>
-            <tr *ngFor="let w of worklogs">
-              <td><a href="{{getTicketUrl(w.ticketNo)}}" class="link" target="_blank">{{w.ticketNo}}</a></td>
-              <td>{{w.summary}}</td>
-              <td>{{w.totalHours | formatTs}}</td>
-              <td>{{w.uploaded | formatTs}}</td>
-              <td>{{w.pendingUpload | formatTs}}</td>
-              <td>{{w.parentKey ? (w.parentKey + ' - ' + w.parentSumm) : ''}}</td>
-              <td>
-                <ul class="tags">
-                  <li *ngFor="let ld of w.logData">
-                    <a class="link badge badge-pill skin-bg-font" *ngIf="ld.worklogId" href="{{getWorklogUrl(w.ticketNo, ld.worklogId)}}" target="_blank" title="{{ld.comments}}"><span class="fa fa-clock-o"></span> {{ld.dateLogged | formatDate}}: {{ld.uploaded | formatTs}}</a>
-                    <a class="link badge badge-pill skin-bg-font" *ngIf="!ld.worklogId" nohref (click)="editWorklog(ld.id)" title="{{ld.comments}}"><span class="fa fa-clock-o"></span> {{ld.dateLogged | formatDate}}: {{ld.uploaded | formatTs}}</a>
-                  </li>
-                </ul>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </p-scrollPanel>
+      <p-dataTable #tbl [value]="worklogs" sortMode="multiple" resizableColumns="true" [columnResizeMode]="columnResizeMode" responsive="false"
+                   reorderableColumns="true" scrollable="true" [contextMenu]="cm" [style]="{'height':contentHeight+'px'}" styleClass="fix-height"
+                   selectionMode="single" [(selection)]="selectedTicket" [scrollHeight]="(contentHeight - 30) + 'px'"
+                   emptyMessage="No records exists" [rowStyleClass]="getRowStatus">
+        <p-column header="Ticket No" field="ticketNo" [sortable]="true" [style]="{'width':'100px'}">
+          <ng-template let-w="rowData" pTemplate="body">
+            <a href="{{getTicketUrl(w.ticketNo)}}" class="link" target="_blank">{{w.ticketNo}}</a>
+          </ng-template>
+        </p-column>
+        <p-column header="Summary" field="summary" [style]="{'width':'150px'}"></p-column>
+        <p-column header="Total Hours" field="totalHours" [sortable]="true" [style]="{'width':'110px'}">
+          <ng-template let-w="rowData" pTemplate="body">
+            {{w.totalHours | formatTs}}
+          </ng-template>
+        </p-column>
+        <p-column header="Uploaded" field="uploaded" [sortable]="true" [style]="{'width':'110px'}">
+          <ng-template let-w="rowData" pTemplate="body">
+            {{w.uploaded | formatTs}}
+          </ng-template>
+        </p-column>
+        <p-column header="Pending Upload" field="pendingUpload" [sortable]="true" [style]="{'width':'130px'}">
+          <ng-template let-w="rowData" pTemplate="body">
+            {{w.pendingUpload | formatTs}}
+          </ng-template>
+        </p-column>
+        <p-column header="Parent Ticket" field="parentKey" [sortable]="true" [style]="{'width':'180px'}">
+          <ng-template let-w="rowData" pTemplate="body">
+            {{w.parentKey ? (w.parentKey + ' - ' + w.parentSumm) : ''}}
+          </ng-template>
+        </p-column>
+        <p-column header="Dates Logged" [style]="{'width':'400px'}">
+          <ng-template let-w="rowData" pTemplate="body">
+            <ul class="tags">
+              <li *ngFor="let ld of w.logData">
+                <a class="link badge badge-pill skin-bg-font" *ngIf="ld.worklogId" href="{{getWorklogUrl(w.ticketNo, ld.worklogId)}}" target="_blank" title="{{ld.comments}}"><span class="fa fa-clock-o"></span> {{ld.dateLogged | formatDate}}: {{ld.uploaded | formatTs}}</a>
+                <a class="link badge badge-pill skin-bg-font" *ngIf="!ld.worklogId" nohref (click)="editWorklog(ld.id)" title="{{ld.comments}}"><span class="fa fa-clock-o"></span> {{ld.dateLogged | formatDate}}: {{ld.uploaded | formatTs}}</a>
+              </li>
+            </ul>
+          </ng-template>
+        </p-column>
+      </p-dataTable>
     </p-panel>
   </p-panel>
 </div>

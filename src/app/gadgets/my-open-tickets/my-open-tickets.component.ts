@@ -20,9 +20,8 @@ export class MyOpenTicketsComponent extends BaseGadget implements OnInit {
     this.fillOpenTickets();
     this.contextMenu = [
       { label: "Add worklog", icon: "fa-clock-o", command: () => this.addWorklogOn(this.selectedTicket.ticketNo) },
-      { label: "Bookmark", icon: "fa-bookmark", command: () => this.addBookmark() },
-      { label: "Start progress", icon: "fa-play", command: () => this.startProgress() },
-      //ToDo: Add option for move to progress, show in tree view
+      { label: "Bookmark", icon: "fa-bookmark", command: () => this.addBookmark() }
+      //{ label: "Start progress", icon: "fa-play", command: () => this.startProgress() } //ToDo: Add option for move to progress, show in tree view
     ];
   }
 

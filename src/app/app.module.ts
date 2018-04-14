@@ -9,7 +9,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { AppComponent } from './app.component';
 
 import { PRIME_MODULES, JA_CONTROLS, JA_PIPES, JA_VIEWS, JA_GADGETS, JA_DIRECTIVES } from './imports'
-
+import { NgxDnDModule } from '@swimlane/ngx-dnd'
 
 // Import services
 import {
@@ -109,6 +109,7 @@ import { MessageService as PrimeMessageService } from 'primeng/components/common
     //ChartsModule,
     HttpClientModule,
     BrowserAnimationsModule,
+    NgxDnDModule,
     ...PRIME_MODULES
   ],
   declarations: [

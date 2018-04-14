@@ -21,9 +21,9 @@
       </div>
       <div class="ui-g-12 ui-md-9 ui-lg-9 ui-xl-10">
         <div class="form-group">
-          <input type="text" class="form-control timepicker24" [(ngModel)]="settings.startOfDay" maxlength="5" style="width:150px; display:inline-block;" />
-          <input type="text" class="form-control timepicker24" [(ngModel)]="settings.endOfDay" maxlength="5" style="width:150px; display:inline-block;" />
-          <span class="help-block">Select your preferred date and time format to be displayed throughout the application</span>
+          <p-inputMask mask="99:99" [(ngModel)]="settings.startOfDay" placeholder="00:00" maxlength="5" [style]="{'width':'150px','display':'inline-block'}"></p-inputMask>
+          <p-inputMask mask="99:99" [(ngModel)]="settings.endOfDay" placeholder="00:00" maxlength="5" [style]="{'width':'150px','display':'inline-block'}"></p-inputMask>
+          <span class="help-block">Select your working hours range</span>
         </div>
       </div>
 

@@ -43,6 +43,10 @@ export class GeneralComponent implements OnInit {
 
     this.dateFormats = result.dateFormats;
     this.timeFormats = result.timeFormats;
+
+    cUser.dateFormat = sett.dateFormat;
+    cUser.timeFormat = sett.timeFormat;
+
     cUser.workingDays = sett.workingDays;
     cUser.gIntegration = sett.googleIntegration;
     cUser.maxHours = sett.maxHours;

@@ -1,9 +1,10 @@
-import { Component, OnInit, HostListener } from '@angular/core';
+import { Component, HostListener, ElementRef } from '@angular/core';
 import * as moment from 'moment';
 import { JiraService } from '../../services/jira.service';
-import { UtilsService, CacheService } from 'app/services';
-import { FormatTimePipe, ConvertSecsPipe } from 'app/pipes';
+import { UtilsService, CacheService, SessionService } from '../../services';
+import { FormatTimePipe, ConvertSecsPipe } from '../../pipes';
 import { FacadeService } from '../../services/facade.service';
+import { BaseGadget } from '../base-gadget';
 
 
 // ToDo: Sprint wise filters
@@ -15,29 +16,28 @@ import { FacadeService } from '../../services/facade.service';
   selector: '[dayWiseWorklog]',
   templateUrl: './day-wise-worklog.component.html'
 })
-export class DayWiseWorklogComponent implements OnInit {
+export class DayWiseWorklogComponent extends BaseGadget {
   dateRange: any
-  dates: Date[]
+  dates: any[]
   userDayWise: any[]
   months: any[]
   userList: any[]
   groups: any[]
   isLoading: boolean
   showSettings: boolean
-  isFullScreen: boolean
-  showGroups: boolean
+  showGroupsPopup: boolean
   pageSettings: any = { breakupMode: '1', groupMode: '1' } // ToDo : Implement page settings
 
-  availableHeight: number
+  groupedData: any // Contains data for grouped report
+  flatData: any[] // Contains data for flat report
 
-  constructor(private $jaDataSvc: JiraService, private $jaCache: CacheService, $facade: FacadeService,
-    private $utils: UtilsService, private formatTime: FormatTimePipe, private convertSecs: ConvertSecsPipe) {
+  constructor(el: ElementRef, private $jaDataSvc: JiraService, private $jaCache: CacheService, private $facade: FacadeService,
+    private $utils: UtilsService, private formatTime: FormatTimePipe, private convertSecs: ConvertSecsPipe, $session: SessionService) {
+    super(el);
     this.dateRange = {};
     $facade.getUserGroups().then(grps => this.groups = grps);
-    this.onResize({ target: window });
-  }
-
-  ngOnInit() {
+    this.pageSettings = $session.pageSettings.reports_UserDayWise;
+    //this.onResize({ target: window });
   }
 
   dateSelected($event): void {
@@ -53,25 +53,39 @@ export class DayWiseWorklogComponent implements OnInit {
     };
     this.isLoading = true;
     this.getDayWiseReportData(req).then(res => {
-      this.processReportData(res);
+      //this.processReportData(res);
+      this.generateGroupData(res);
+      this.generateFlatData(res);
       this.isLoading = false;
       this.onResize({ target: window });
     });
   }
 
   getDayWiseReportData(req) {
-    var userList = req.userList;
+    var userList = req.userList.Distinct();
     var mfromDate = moment(req.fromDate);
     var mtoDate = moment(req.toDate);
     var fromDate = mfromDate.toDate();
     var toDate = mtoDate.toDate();
+
+    var dateArr = this.getDateArray(fromDate, toDate);
+    this.dates = dateArr.Select(d => {
+      return {
+        prop: d.format('yyyyMMdd'),
+        display: d.format('DDD, dd'),
+        date: d,
+        isHoliday: this.$utils.isHoliday(d)
+      }
+    });
+
+    this.months = dateArr.GroupBy((d) => d.format("MMM, yyyy")).Select(grp => { return { monthName: grp.key, days: grp.values.length }; });
 
     var jql = "worklogAuthor in ('" + userList.join("','") + "') and worklogDate >= '"
       + mfromDate.clone().add(-1, 'days').format("YYYY-MM-DD") + "' and worklogDate < '" + mtoDate.clone().add(1, 'days').format("YYYY-MM-DD") + "'";
 
     return this.$jaDataSvc.searchTickets(jql, ["summary", "worklog", "issuetype", "parent"])//, "status", "assignee"
       .then((issues) => {
-        var arr = userList.Select((u) => { return { logData: [], userName: u }; });
+        var arr = userList.Select((u) => { return { logData: [], userName: u.toLowerCase() }; });
 
         var report = {};
         for (var x = 0; x < arr.length; x++) {
@@ -116,6 +130,124 @@ export class DayWiseWorklogComponent implements OnInit {
       });
   }
 
+  private generateGroupData(data) {
+    this.groupedData = this.groups.Select(grp => {
+      var grpInfo = {
+        name: grp.name,
+        total: {},
+        grandTotal: 0,
+        users: null
+      };
+
+      grpInfo.users = grp.users.Select(usr => {
+        var usrInfo = {
+          name: usr.name,
+          displayName: usr.displayName,
+          emailAddress: usr.emailAddress,
+          //timeZone: usr.timeZone,
+          imageUrl: usr.avatarUrls['48x48'] || usr.avatarUrls['32x32'],
+          profileUrl: usr.self,
+          tickets: null,
+          total: {},
+          logClass: {},
+          grandTotal: 0
+        };
+
+        var logData: any[] = data.First(d => d.userName == usr.name.toLowerCase()).logData;
+        usrInfo.tickets = logData.GroupBy(lGrp => lGrp.ticketNo)
+          .Select(tGrp => {
+            var items = tGrp.values;
+            var firstTkt = items.First();
+            var logs = {};
+            var ticket = {
+              ticketNo: tGrp.key,
+              parent: firstTkt.parent,
+              parentUrl: firstTkt.parent ? this.$utils.getTicketUrl(firstTkt.parent) : null,
+              issueType: firstTkt.issueType,
+              summary: firstTkt.summary,
+              url: firstTkt.url,
+              logs: logs
+            };
+
+            items.ForEach(item => {
+              var dateFormated = item.logTime.format('yyyyMMdd');
+              var logForDate = logs[dateFormated];
+              if (!logForDate) { logForDate = []; logs[dateFormated] = logForDate; }
+              logForDate.Add({ logTime: item.logTime, totalHours: item.totalHours, comment: item.comment });
+            });
+
+            return ticket;
+          });
+
+        // Set date wise total per user
+        var logClass = usrInfo.logClass;
+        var usrTotal = usrInfo.total;
+        var usrGTotal = 0;
+        this.dates.ForEach(d => {
+          var totalHrs = usrInfo.tickets.Sum(t => {
+            var lgArr = t.logs[d.prop];
+            if (lgArr) { return lgArr.Sum(l => l.totalHours) }
+            else { return 0; }
+          });
+          if (totalHrs > 0) { usrTotal[d.prop] = totalHrs; usrGTotal += totalHrs; }
+          logClass[d.prop] = this.getCssClass(d, totalHrs);
+        });
+        usrInfo.grandTotal = usrGTotal;
+
+        return usrInfo;
+      });
+
+      // Set date wise total per group
+      var grpTotal = grpInfo.total;
+      var grpGTotal = 0;
+      this.dates.ForEach(d => {
+        var totalHrs = grpInfo.users.Sum(u => u.total[d.prop] || 0);
+        if (totalHrs > 0) { grpTotal[d.prop] = totalHrs; grpGTotal += totalHrs; }
+      });
+      grpInfo.grandTotal = grpGTotal;
+
+      return grpInfo;
+    });
+
+    // Set date wise total for all groups
+    var grandTotal = 0;
+    var grpTotal = {};
+    this.dates.ForEach(d => {
+      var totalHrs = this.groupedData.Sum(u => u.total[d.prop] || 0);
+      if (totalHrs > 0) { grpTotal[d.prop] = totalHrs; grandTotal += totalHrs; }
+    });
+    this.groupedData.grandTotal = grandTotal;
+    this.groupedData.total = grpTotal;
+  }
+
+  private generateFlatData(data) {
+    this.flatData = this.groups.Union(grp => {
+      var groupName = grp.name;
+
+      return grp.users.Union(usr => {
+        var userName = usr.displayName;
+        return data.First(d => d.userName == usr.name.toLowerCase()).logData
+          .Select(log => {
+            return {
+              groupName: groupName,
+              userDisplay: userName,
+
+              parent: log.parent,
+              parentUrl: log.parent ? this.$utils.getTicketUrl(log.parent) : null,
+
+              ticketNo: log.ticketNo,
+              ticketUrl: log.url,
+              issueType: log.issueType,
+              summary: log.summary,
+
+              logTime: log.logTime,
+              timeSpent: log.totalHours,
+              comment: log.comment
+            };
+          });
+      });
+    });
+  }
 
   private processReportData(data) {
     var param = { fromDate: this.dateRange.fromDate, toDate: this.dateRange.toDate, dateArr: [] };
@@ -222,6 +354,19 @@ export class DayWiseWorklogComponent implements OnInit {
     }
   }
 
+  private getCssClass(day: any, time: number) {
+    time = time > 0 ? time : 0;
+    if (day.isHoliday) {
+      return time ? 'log-high' : 'col-holiday';
+    }
+    else {
+      var secsPerDay = (8 * 60 * 60);
+      if (time === secsPerDay) return 'log-good';
+      else if (time < secsPerDay) return 'log-less';
+      else if (time > secsPerDay) return 'log-high';
+    }
+  }
+
   getComments(arr) {
     if (!arr || arr.length === 0) { return ""; }
     var param = { format: this.pageSettings.logFormat == '1' };
@@ -235,7 +380,7 @@ export class DayWiseWorklogComponent implements OnInit {
     return arr.Sum((a) => { return a.totalHours; });
   }
 
-  private getDateArray(startDate, endDate) {
+  private getDateArray(startDate: Date, endDate: Date) {
     var interval = 1;
     var retVal = [];
     var current = new Date(startDate);
@@ -248,8 +393,7 @@ export class DayWiseWorklogComponent implements OnInit {
     return retVal;
   }
 
-  @HostListener('window:resize', ['$event'])
-  onResize(event) {
-    this.availableHeight = (event.target.innerHeight - 187) + (this.userDayWise && this.userDayWise.Any() ? 90 : 0);
+  saveSettings() {
+    this.$facade.saveSettings('reports_UserDayWise');
   }
 }

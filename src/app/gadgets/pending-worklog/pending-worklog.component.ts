@@ -31,7 +31,10 @@ export class PendingWorklogComponent extends BaseGadget {
     this.isLoading = true;
     return this.$facade.getPendingWorklogs()
       .then((result) => {
-        this.worklogs = result.ForEach((w) => w.selected = this.selAllWks);
+        this.worklogs = result.ForEach((w) => {
+          w.selected = this.selAllWks;
+          w.rowClass = this.$jaUtils.getRowStatus(w);
+        });
         this.isLoading = false;
       });
   }
@@ -46,8 +49,8 @@ export class PendingWorklogComponent extends BaseGadget {
     this.worklogs.ForEach(wl => wl.selected = !selAllWks);
   }
 
-  getRowStatus(d: any) {
-    return this.$jaUtils.getRowStatus(d);
+  getRowStatus(d, index) {
+    return d.rowClass;
   }
 
   getTicketUrl(ticketNo: string) { return this.$jaUtils.getTicketUrl(ticketNo); }
@@ -68,9 +71,10 @@ export class PendingWorklogComponent extends BaseGadget {
     this.$facade.uploadWorklogs(ids).then((result) => {
       this.worklogs = result;
       this.isLoading = false;
+      super.performAction(GadgetActionType.WorklogModified);
     }, (obj) => {
       if (obj && obj.message) { this.message.warning(obj.message); }
-      //this.pnlLoggedWork_PW.onrefresh($scope.pnlLoggedWork_PW); // ToDo: handle it differently
+      this.fillWorklogs();
       this.isLoading = false;
     });
   }

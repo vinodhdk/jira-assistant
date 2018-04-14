@@ -1,14 +1,15 @@
 <div [ngClass]="isFullScreen?'full-screen':''">
   <p-tieredMenu #menu [model]="contextMenu" [popup]="true" appendTo="body"></p-tieredMenu>
+  <p-contextMenu #cm [model]="contextMenu"></p-contextMenu>
   <p-panel styleClass="p-no-padding">
     <p-header>
-      <div class="ui-helper-clearfix">
+      <div class="ui-helper-clearfix drag-handle" ngxDragHandle>
         <i class="fa fa-eye"></i>
-        <span class="ui-panel-title" style="font-size:16px;display:inline-block;margin-top:2px">My Open Tickets</span>
+        <span class="ui-panel-title" style="font-size:16px;display:inline-block;margin-top:2px">My open tickets</span>
         <div class="pull-right">
           <button pButton [icon]="isFullScreen?'fa-compress':'fa-expand'" (click)="toggleFullScreen()"></button>
           <button pButton icon="fa-refresh" (click)="fillOpenTickets(true);"></button>
-          <div jaExport [element]="tbl" fileName="OpenTickets"></div>
+          <div jaExport [element]="tbl" fileName="OpenTickets" elType="dataTable"></div>
           <button pButton icon="fa-times" (click)="removeGadget()"></button>
         </div>
       </div>
@@ -17,40 +18,56 @@
       <i class="fa fa-refresh fa-spin fa-5x" style="position:absolute;top:25%;left:50%"></i>
     </p-blockUI>
     <p-panel [showHeader]="false" #pnlCtl>
-      <p-scrollPanel [style]="{width: '100%', height: contentHeight + 'px'}" styleClass="cont-div">
+      <p-dataTable #tbl [value]="ticketsList" sortMode="multiple" resizableColumns="true" [columnResizeMode]="columnResizeMode" responsive="false"
+                   reorderableColumns="true" scrollable="true" [contextMenu]="cm" [style]="{'height':contentHeight+'px'}" styleClass="fix-height"
+                   selectionMode="single" [(selection)]="selectedTicket" [scrollHeight]="(contentHeight - 30) + 'px'"
+                   emptyMessage="No open tickets were assigned to you. Enjoy your day!">
+        <p-column header="Ticket No" field="ticketNo" [sortable]="true" [style]="{'width':'100px'}">
+          <ng-template let-b="rowData" pTemplate="body">
+            <i class="fa fa-ellipsis-v" style="margin-right:3px;" (click)="showContext($event, b, menu);"></i>
+            <a href="{{b.ticketNo | toTicketUrl}}" class="link strike" target="_blank">{{b.ticketNo}}</a>
+          </ng-template>
+        </p-column>
+        <p-column header="Type" class="strike" field="issuetype" [sortable]="true" [style]="{'width':'100px'}">
+          <ng-template let-b="rowData" pTemplate="body">
+            <img class="img-x16" src="{{b.issuetypeIcon}}" />{{b.issuetype}}
+          </ng-template>
+        </p-column>
+        <p-column header="Summary" class="strike" field="summary" [style]="{'width':'280px'}"></p-column>
+        <p-column header="Reporter" field="reporter" [sortable]="true" [style]="{'width':'130px'}"></p-column>
+        <p-column header="Priority" field="priority" [sortable]="true" [style]="{'width':'90px'}">
+          <ng-template let-b="rowData" pTemplate="body">
+            <img class="img-x16" src="{{b.priorityIcon}}" />{{b.priority}}
+          </ng-template>
+        </p-column>
+        <p-column header="Status" field="status" [sortable]="true" [style]="{'width':'90px'}">
+          <ng-template let-b="rowData" pTemplate="body">
+            <img class="img-x16" src="{{b.statusIcon}}" />{{b.status}}
+          </ng-template>
+        </p-column>
+        <p-column header="Resolution" field="resolution" [sortable]="true" [style]="{'width':'120px'}">
+          <ng-template let-b="rowData" pTemplate="body">
+            <img class="img-x16" src="{{b.resolutionIcon}}" *ngIf="b.resolutionIcon" />{{b.resolution}}
+          </ng-template>
+        </p-column>
+        <p-column header="Created" field="created" [sortable]="true" [style]="{'width':'170px'}">
+          <ng-template let-b="rowData" pTemplate="body">
+            {{b.created | formatDateTime}}
+          </ng-template>
+        </p-column>
+        <p-column header="Updated" field="updated" [sortable]="true" [style]="{'width':'170px'}">
+          <ng-template let-b="rowData" pTemplate="body">
+            {{b.updated | formatDateTime}}
+          </ng-template>
+        </p-column>
+      </p-dataTable>
+      <!--<p-scrollPanel [style]="{width: '100%', height: contentHeight + 'px'}" styleClass="cont-div">
         <table #tbl class="table table-responsive-sm table-bordered table-striped table-sm no-margin">
-          <thead>
-            <tr>
-              <th style="min-width:100px;">Ticket No</th>
-              <th style="min-width:100px;">Type</th>
-              <th style="min-width:280px;">Summary</th>
-              <th style="min-width:130px;">Reporter</th>
-              <th style="min-width:80px;">Priority</th>
-              <th style="min-width:80px;">Status</th>
-              <th style="min-width:120px;">Resolution</th>
-              <th style="min-width:170px;">Created</th>
-              <th style="min-width:170px;">Updated</th>
-            </tr>
-          </thead>
           <tbody>
             <tr *ngIf="ticketsList && ticketsList.length == 0"><td colspan="10">No open tickets were assigned to you. Enjoy your day!</td></tr>
-            <tr *ngFor="let b of ticketsList">
-              <td>
-                <i class="fa fa-ellipsis-v" style="margin-right:3px;" (click)="showContext($event, b, menu);"></i>
-                <a href="{{b.ticketNo | toTicketUrl}}" class="link strike" target="_blank">{{b.ticketNo}}</a>
-              </td>
-              <td class="strike"><img class="img-x16" src="{{b.issuetypeIcon}}" />{{b.issuetype}}</td>
-              <td class="strike">{{b.summary}}</td>
-              <td>{{b.reporter}}</td>
-              <td><img class="img-x16" src="{{b.priorityIcon}}" />{{b.priority}}</td>
-              <td><img class="img-x16" src="{{b.statusIcon}}" />{{b.status}}</td>
-              <td><img class="img-x16" src="{{b.resolutionIcon}}" *ngIf="b.resolutionIcon" />{{b.resolution}}</td>
-              <td>{{b.created | formatDateTime}}</td>
-              <td>{{b.updated | formatDateTime}}</td>
-            </tr>
           </tbody>
         </table>
-      </p-scrollPanel>
+      </p-scrollPanel>-->
     </p-panel>
   </p-panel>
 </div>

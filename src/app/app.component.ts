@@ -20,6 +20,13 @@ export class AppComponent implements OnInit {
     });
 
     var skinName = this.$cache.get('skin', true) || 'skin-blue';
-    $(this.el.nativeElement).addClass(skinName);
+    var isSideBarToggled = this.$cache.get('SideBarToggled');
+    var isSideBarHidden = this.$cache.get('SideBarHidden');
+
+    var body = $(this.el.nativeElement);
+    body.addClass(skinName);
+
+    if (isSideBarHidden) { body.addClass('sidebar-hidden brand-minimized'); }
+    else if (isSideBarToggled) { body.addClass('sidebar-minimized brand-minimized'); }
   }
 }

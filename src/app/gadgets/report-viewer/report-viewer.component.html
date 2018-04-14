@@ -1,7 +1,7 @@
 <div [ngClass]="isFullScreen?'full-screen':''">
   <p-panel styleClass="p-no-padding">
     <p-header>
-      <div class="ui-helper-clearfix">
+      <div class="ui-helper-clearfix drag-handle" ngxDragHandle>
         <i class="fa fa-clock-o"></i>
         <span class="ui-panel-title" style="font-size:16px;display:inline-block;margin-top:2px">{{ queryModel.queryName || 'Query report viewer' }}</span>
         <div class="pull-right">

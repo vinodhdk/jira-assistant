@@ -119,6 +119,8 @@ export class AddWorklogComponent implements OnInit {
     validation = (vald.dateStarted = !(!log.dateStarted || log.dateStarted.length < 16)) && validation;
 
     vald.overrideTimeSpent = (log.allowOverride && log.overrideTimeSpent && log.overrideTimeSpent.length >= 4);
+    
+    vald.overrideTimeSpent = vald.overrideTimeSpent && this.$jaFacade.getTimeSpent(log.overrideTimeSpent) > 0;
 
     validation = (vald.overrideTimeSpent = vald.overrideTimeSpent || (!log.allowOverride && log.timeSpent && log.timeSpent.length >= 4)) && validation;
 
@@ -155,7 +157,7 @@ export class AddWorklogComponent implements OnInit {
 
   private getTicketNo(worklog): string {
     if (!worklog || !worklog.ticketNo) { return null; }
-    return worklog.ticketNo.value || worklog.ticketNo;
+    return (typeof worklog.ticketNo === 'string') ? worklog.ticketNo : worklog.ticketNo.value;
   }
 
   deleteWorklog(log) {

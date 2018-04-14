@@ -1,6 +1,7 @@
 import { Component, AfterViewInit } from '@angular/core';
 import { SessionService } from '../../services/session.service';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
+import { AppBrowserService } from '../../services/app-browser.service';
 
 @Component({
   selector: 'app-feedback-view',
@@ -8,9 +9,12 @@ import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 })
 export class FeedbackViewComponent implements AfterViewInit {
   feedbackUrl: SafeResourceUrl
-  constructor($session: SessionService, sanit: DomSanitizer) {
+  constructor($session: SessionService, sanit: DomSanitizer, $jaBrowserExtn: AppBrowserService) {
     var cUser = $session.CurrentUser;
-    this.feedbackUrl = sanit.bypassSecurityTrustResourceUrl(cUser.feedbackUrl.format([cUser.displayName, cUser.emailAddress, $session.siteVersionNumber, navigator.userAgent]));
+    $jaBrowserExtn.getAppVersion().then((version) => {
+      var siteVersionNumber = (version || '*0.34') + " (BETA UI)";
+      this.feedbackUrl = sanit.bypassSecurityTrustResourceUrl(cUser.feedbackUrl.format([cUser.displayName, cUser.emailAddress, siteVersionNumber, navigator.userAgent]));
+    });
   }
 
   ngAfterViewInit() {
