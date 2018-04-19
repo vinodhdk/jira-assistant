@@ -20,6 +20,7 @@ export interface IUser {
   startOfDay?: any
   endOfDay?: any
   highlightVariance?: boolean
+  launchAction?: any
   dataStore?: any
   autoLaunch?: number
   notifyBefore?: number

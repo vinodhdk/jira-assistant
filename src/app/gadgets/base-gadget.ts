@@ -2,8 +2,11 @@ import { HostListener, ElementRef, AfterViewInit, EventEmitter, Output, OnChange
 import * as $ from 'jquery'
 
 export class BaseGadget implements OnChanges {
+  //title: string
+  //iconClass: string
   totalHeight: number
   contentHeight: number
+  @Input()
   hideHeader: boolean
   @Input()
   isGadget: boolean
@@ -23,7 +26,7 @@ export class BaseGadget implements OnChanges {
   widgetCtl: any
   widgetHdrCtl: any
 
-  constructor(private el: ElementRef) {
+  constructor(private el: ElementRef, public title: string, public iconClass: string) {
     this.isGadget = true;
     this.settings = {};
     this.onAction = new EventEmitter<any>();
@@ -40,13 +43,16 @@ export class BaseGadget implements OnChanges {
   onResize(event?: any) {
     setTimeout(() => {
       this.totalHeight = this.isFullScreen ? window.innerHeight : this.widgetCtl.height();
-      this.contentHeight = this.totalHeight - ((this.widgetHdrCtl.outerHeight() || 44) + 3);
+      this.contentHeight = this.totalHeight + (this.hideHeader ? 0 : -((this.widgetHdrCtl.outerHeight() || 44) + 3));
     }, 20);
   }
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes.layout && changes.layout.currentValue) {
       this.onResize();
+    }
+    if (!this.settings) {
+      this.settings = {};
     }
   }
 

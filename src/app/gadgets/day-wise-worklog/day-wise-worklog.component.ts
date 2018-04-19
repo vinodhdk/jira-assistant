@@ -33,7 +33,7 @@ export class DayWiseWorklogComponent extends BaseGadget {
 
   constructor(el: ElementRef, private $jaDataSvc: JiraService, private $jaCache: CacheService, private $facade: FacadeService,
     private $utils: UtilsService, private formatTime: FormatTimePipe, private convertSecs: ConvertSecsPipe, $session: SessionService) {
-    super(el);
+    super(el, 'Logged Work - [User - Day wise]', 'fa-list-alt');
     this.dateRange = {};
     $facade.getUserGroups().then(grps => this.groups = grps);
     this.pageSettings = $session.pageSettings.reports_UserDayWise;
@@ -45,6 +45,7 @@ export class DayWiseWorklogComponent extends BaseGadget {
   }
 
   generateReport(): void {
+    if (!this.groups) { return; }
     this.userList = this.groups.Union(grps => grps.users.ForEach(gu => gu.groupName = grps.name));
     var req = {
       userList: this.userList.Select(u => u.name.toLowerCase()),

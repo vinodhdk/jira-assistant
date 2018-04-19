@@ -1,0 +1,15 @@
+body.quick-view {
+  width: 700px;
+
+  .dashboard-gadz {
+    height: 550px;
+  }
+
+  .right-menus {
+    display: none;
+  }
+
+  .app-header.navbar a.navbar-brand {
+    background-color: transparent !important;
+  }
+}

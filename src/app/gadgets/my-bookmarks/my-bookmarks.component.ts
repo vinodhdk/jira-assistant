@@ -16,7 +16,7 @@ export class MyBookmarksComponent extends BaseGadget {
   showAddPopup: boolean
 
   constructor(private $jaDataSvc: JiraService, private $facade: FacadeService, private $jaUtils: UtilsService, el: ElementRef, private message: MessageService) {
-    super(el);
+    super(el, 'Bookmark','fa-bookmark');
     this.fillBookmarksList();
     this.contextMenu = [
       { label: "Select Bookmark", icon: "fa-check-square-o", command: () => this.selectedTicket.selected = true },

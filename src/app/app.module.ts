@@ -8,7 +8,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 //NoopAnimationsModule
 import { AppComponent } from './app.component';
 
-import { PRIME_MODULES, JA_CONTROLS, JA_PIPES, JA_VIEWS, JA_GADGETS, JA_DIRECTIVES } from './imports'
+import { PRIME_MODULES, JA_PIPES,  JA_VIEWS,  JA_DIRECTIVES } from './imports'
 import { NgxDnDModule } from '@swimlane/ngx-dnd'
 
 // Import services
@@ -92,6 +92,8 @@ const APP_DIRECTIVES = [
 
 // Import routing module
 import { AppRoutingModule } from './app.routing';
+import { ServicesModule } from './services.module';
+import { GadgetsModule } from './gadgets.module';
 
 // Import 3rd party components
 //import { BsDropdownModule } from 'ngx-bootstrap/dropdown';
@@ -103,6 +105,8 @@ import { MessageService as PrimeMessageService } from 'primeng/components/common
   imports: [
     BrowserModule,
     AppRoutingModule,
+    ServicesModule.forRoot(),
+    GadgetsModule,
     FormsModule,
     //BsDropdownModule.forRoot(),
     //TabsModule.forRoot(),
@@ -117,10 +121,10 @@ import { MessageService as PrimeMessageService } from 'primeng/components/common
     ...APP_COMPONENTS,
     ...APP_DIRECTIVES,
     ...JA_DIRECTIVES,
-    ...JA_PIPES,
+    //...JA_PIPES,
     ...JA_VIEWS,
-    ...JA_GADGETS,
-    ...JA_CONTROLS
+    //...JA_GADGETS,
+    //...JA_CONTROLS
   ],
   providers: [
     {
@@ -129,7 +133,7 @@ import { MessageService as PrimeMessageService } from 'primeng/components/common
     },
     PrimeMessageService,
     ...JA_SERVICES,
-    ...JA_PIPES
+    //...JA_PIPES
   ],
   bootstrap: [AppComponent]
 })

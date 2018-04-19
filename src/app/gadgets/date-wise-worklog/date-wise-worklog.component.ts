@@ -16,7 +16,7 @@ export class DateWiseWorklogComponent extends BaseGadget {
   selectedDay: any
 
   constructor(private $jaFacade: FacadeService, private $jaUtils: UtilsService, private $transform: DataTransformService, el: ElementRef) {
-    super(el);
+    super(el, 'Daywise worklog', 'fa-list-alt');
     this.fillWorklogs();
     this.contextMenu = [
       { label: "Upload worklog", icon: "fa-clock-o", command: () => this.uploadWorklog() },

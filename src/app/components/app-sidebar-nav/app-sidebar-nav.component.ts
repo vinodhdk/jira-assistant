@@ -1,4 +1,5 @@
 import { Component, ElementRef, Input, OnInit, Renderer2 } from '@angular/core';
+import { isQuickView } from '../../app.routing';
 
 // Import navigation elements
 import { navigation } from './../../_nav';
@@ -87,7 +88,7 @@ export class AppSidebarNavItemComponent {
       <span *ngIf="isBadge()" [ngClass]="'badge badge-' + link.badge.variant">{{ link.badge.text }}</span>
     </a>
     <ng-template #external>
-      <a [ngClass]="hasVariant() ? 'nav-link nav-link-' + link.variant : 'nav-link'" href="{{link.url}}">
+      <a [ngClass]="!link.name ? 'hide' : (hasVariant() ? 'nav-link nav-link-' + link.variant : 'nav-link')" href="{{linkPrefix + link.url}}" target="_blank">
         <i *ngIf="isIcon()" class="{{ link.icon }}"></i>
         {{ link.name }}
         <span *ngIf="isBadge()" [ngClass]="'badge badge-' + link.badge.variant">{{ link.badge.text }}</span>
@@ -98,6 +99,12 @@ export class AppSidebarNavItemComponent {
 export class AppSidebarNavLinkComponent {
   @Input() link: any;
 
+  linkPrefix: string
+
+  constructor() {
+    this.linkPrefix = isQuickView ? '/index.html#' : '';
+  }
+
   public hasVariant() {
     return this.link.variant ? true : false
   }
@@ -107,14 +114,12 @@ export class AppSidebarNavLinkComponent {
   }
 
   public isExternalLink() {
-    return this.link.url.substring(0, 4) === 'http' ? true : false
+    return isQuickView || this.link.url.substring(0, 4) === 'http';
   }
 
   public isIcon() {
     return this.link.icon ? true : false
   }
-
-  constructor() { }
 }
 
 @Component({

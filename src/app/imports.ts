@@ -22,11 +22,12 @@ import { TabViewModule } from 'primeng/tabview';
 import { ProgressBarModule } from 'primeng/progressbar';
 import { DataTableModule } from 'primeng/datatable';
 import { ContextMenuModule } from 'primeng/contextmenu';
+import { ListboxModule } from 'primeng/listbox';
 
 export const PRIME_MODULES = [PanelModule, ButtonModule, BlockUIModule, ScrollPanelModule, TieredMenuModule,
   SplitButtonModule, DropdownModule, CalendarModule, DataViewModule, AutoCompleteModule, InplaceModule, DialogModule,
   InputMaskModule, CheckboxModule, ChipsModule, GrowlModule, ScheduleModule, OverlayPanelModule, ProgressBarModule,
-  ColorPickerModule, TabViewModule, DataTableModule, ContextMenuModule]
+  ColorPickerModule, TabViewModule, DataTableModule, ContextMenuModule, ListboxModule]
 
 export const JA_DIRECTIVES: any = [];
 
@@ -42,39 +43,7 @@ export const JA_PIPES = [
   YesnoPipe, ConvertSecsPipe, FormatTimePipe, FormatSecsPipe, CutPipe, BytesPipe
 ]
 
-// Import controls
 
-import { GroupEditorComponent } from './controls/group-editor/group-editor.component';
-import { DateRangePickerComponent } from './controls/date-range-picker/date-range-picker.component'
-import { AddWorklogComponent } from './controls/add-worklog/add-worklog.component'
-import { ColorPickerComponent } from './controls/color-picker/color-picker.component';
-import { ExportComponent } from './controls/export/export.component';
-import { QueryEditorComponent } from './controls/query-editor/query-editor.component';
-import { BindOperatorComponent } from './controls/bind-operator/bind-operator.component';
-import { BindValueComponent } from './controls/bind-value/bind-value.component';
-import { BindFunctionComponent } from './controls/bind-function/bind-function.component';
-import { DaysInWeekComponent } from './controls/days-in-week/days-in-week.component';
-
-export const JA_CONTROLS = [DateRangePickerComponent, GroupEditorComponent, AddWorklogComponent, ColorPickerComponent,
-  ExportComponent, QueryEditorComponent, BindOperatorComponent, BindValueComponent, BindFunctionComponent, DaysInWeekComponent]
-
-import {
-  CalendarComponent, MyOpenTicketsComponent, DateWiseWorklogComponent, TicketWiseWorklogComponent, DynamicGadgetComponent,
-  PendingWorklogComponent, MyBookmarksComponent, MyFiltersComponent, DayWiseWorklogComponent, ReportViewerComponent
-} from './gadgets'
-
-export const JA_GADGETS = [
-  CalendarComponent,
-  MyOpenTicketsComponent,
-  DateWiseWorklogComponent,
-  TicketWiseWorklogComponent,
-  PendingWorklogComponent,
-  MyBookmarksComponent,
-  MyFiltersComponent,
-  DayWiseWorklogComponent,
-  ReportViewerComponent,
-  DynamicGadgetComponent
-]
 
 // Import Views
 import {

@@ -13,7 +13,7 @@ export class DynamicGadgetComponent extends BaseGadget implements OnChanges {
   gadgetType: string
   param1: any
 
-  constructor(el: ElementRef) { super(el); }
+  constructor(el: ElementRef) { super(el, "Loading...", ""); }
 
   ngOnChanges(change: SimpleChanges) {
     if (change.gadgetName && change.gadgetName.currentValue) {

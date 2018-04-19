@@ -1,7 +1,7 @@
 <p-tieredMenu #menu [model]="contextMenu" [popup]="true" appendTo="body"></p-tieredMenu>
 <p-contextMenu #cm [model]="contextMenu"></p-contextMenu>
 <div [ngClass]="isFullScreen?'full-screen':''">
-  <p-panel styleClass="p-no-padding">
+  <p-panel styleClass="p-no-padding" [showHeader]="!hideHeader">
     <p-header>
       <div class="ui-helper-clearfix drag-handle" ngxDragHandle>
         <i class="fa fa-bookmark"></i>

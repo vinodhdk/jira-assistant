@@ -13,10 +13,12 @@ import {
   UserGroupsComponent, GeneralComponent
 } from './views'
 
+export const isQuickView = document.location.href.indexOf('?quick=true') > -1;
+
 export const routes: Routes = [
   {
     path: '',
-    redirectTo: 'dashboard',
+    redirectTo: 'dashboard/0',
     pathMatch: 'full',
   },
   {
@@ -33,6 +35,11 @@ export const routes: Routes = [
       },
       {
         path: 'dashboard/:index',
+        component: DashboardComponent
+        //loadChildren: './views/dashboard/dashboard.module#DashboardModule'
+      },
+      {
+        path: 'dashboard/:index/:isQuickView',
         component: DashboardComponent
         //loadChildren: './views/dashboard/dashboard.module#DashboardModule'
       },

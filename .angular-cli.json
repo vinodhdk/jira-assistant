@@ -8,7 +8,7 @@
     {
       "root": "src",
       "outDir": "dist",
-      "assets": [ "assets" ],
+      "assets": [ "menu_new.min.html", "menu.min.js" ],
       "index": "index.html",
       "main": "main.ts",
       "polyfills": "polyfills.ts",

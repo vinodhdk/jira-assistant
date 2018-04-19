@@ -103,6 +103,7 @@ export class CacheService {
         }
         value = this.stringify(value);
       }
+      if (typeof (value) === "object") { value = this.stringify(value); }
       localStorage.setItem(key, value);
     }
     else {

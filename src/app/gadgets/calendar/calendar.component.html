@@ -1,10 +1,10 @@
 <div [ngClass]="isFullScreen?'full-screen':''">
   <p-tieredMenu #menu [model]="contextMenuItems" [popup]="true" appendTo="body"></p-tieredMenu>
-  <p-panel styleClass="p-no-padding">
+  <p-panel styleClass="p-no-padding" [showHeader]="!hideHeader">
     <p-header>
       <div class="ui-helper-clearfix drag-handle" ngxDragHandle>
         <i class="fa fa-calendar"></i>
-        <span class="ui-panel-title" style="font-size:16px;display:inline-block;margin-top:2px">Calendar - [{{dateRangeTitle}}]</span>
+        <span class="ui-panel-title" style="font-size:16px;display:inline-block;margin-top:2px">{{title}}</span>
         <div class="pull-right">
           <div *ngIf="!isGadget" style="display:inline-block">
             <button pButton icon="fa-arrow-left" (click)="calendar.prev()"></button>
@@ -33,6 +33,65 @@
     </p-panel>
   </p-panel>
 </div>
+
+<p-overlayPanel #opEvent [dismissable]="true" [showCloseIcon]="true" styleClass="event-popover">
+  <div class="event-details" *ngIf="currentMeetingItem">
+    <div class="header">
+      <div class="controls"></div>
+      <div class="title">{{currentMeetingItem.summary}}</div>
+    </div>
+    <div class="body">
+      <div class="detail">
+        <div class="title"><i class="fa fa-clock-o"></i></div>
+        <div class="info">
+          <span>{{currentMeetingItem.schedule.date}}</span>
+          <span class="info">{{currentMeetingItem.schedule.startTime}} - {{currentMeetingItem.schedule.endTime}}</span>
+        </div>
+      </div>
+      <div class="detail" *ngIf="currentMeetingItem.location">
+        <div class="title"><i class="fa fa-map-marker"></i></div>
+        <div class="info">{{currentMeetingItem.location}}</div>
+      </div>
+      <div class="detail" *ngIf="currentMeetingItem.videoCall">
+        <div class="title"><i class="fa fa-video-camera"></i></div>
+        <div class="info"><a [attr.href]="currentMeetingItem.videoCall.url">Join Hangouts: {{currentMeetingItem.videoCall.name}}</a></div>
+      </div>
+      <div class="detail pointer" *ngIf="currentMeetingItem.attendees">
+        <div class="title"><i class="fa fa-users"></i></div>
+        <div class="info" (click)="currentMeetingItem.showAttendees=!currentMeetingItem.showAttendees">
+          <div class="icon pull-right"><i class="fa" [ngClass]="currentMeetingItem.showAttendees ? 'fa-angle-up' : 'fa-angle-down'"></i></div>
+          <div>
+            <span>{{currentMeetingItem.attendees.total}} guests</span>
+            <span class="info">
+              <font *ngIf="currentMeetingItem.attendees.yes">{{currentMeetingItem.attendees.yes}} yes,</font>
+              <font *ngIf="currentMeetingItem.attendees.no">{{currentMeetingItem.attendees.no}} no,</font>
+              <font *ngIf="currentMeetingItem.attendees.tentative">{{currentMeetingItem.attendees.tentative}} tentative,</font>
+              <font *ngIf="currentMeetingItem.attendees.awaiting">{{currentMeetingItem.attendees.awaiting}} awaiting</font>
+            </span>
+          </div>
+        </div>
+        <div class="attendees" [hidden]="!currentMeetingItem.showAttendees">
+          <div class="attendee" *ngFor="let attendee of currentMeetingItem.attendees.list">
+            <span class="name" *ngIf="attendee.displayName">{{attendee.displayName}}</span>
+            <span class="email" *ngIf="attendee.email">({{attendee.email}})</span>
+          </div>
+        </div>
+      </div>
+      <div class="detail">
+        <div class="title"><i class="fa fa-align-justify"></i></div>
+        <div class="info" [innerHTML]="currentMeetingItem.description | cut:currentMeetingItem.descrLimit"></div>
+        <div style="text-align:center;" *ngIf="currentMeetingItem.description > currentMeetingItem.descrLimit">
+          <span class="link" *ngIf="currentMeetingItem.descrLimit > 0; else showLess" (click)="currentMeetingItem.descrLimit=-1">show all</span>
+          <ng-template #showLess><span class="link" (click)="currentMeetingItem.descrLimit=350">show less</span></ng-template>
+        </div>
+      </div>
+      <!--<div class="detail">
+        <div class="title"></div>
+        <div class="info"></div>
+      </div>-->
+    </div>
+  </div>
+</p-overlayPanel>
 
 <add-worklog [(showPopup)]="showAddWorklogPopup" (onDone)="showAddWorklogPopup=false; addEvent($event)" [(worklogItem)]="worklogItem"></add-worklog>
 

@@ -304,6 +304,10 @@ div.ja-loader > i.fa-refresh {
   color: #555555;
 }
 
+.ui-widget {
+  font-size: 1.013em;
+}
+
 td.help-icon {
   font-size: 15px;
   color: #C95000;
@@ -383,6 +387,7 @@ body.fs-layout {
 
   .badge {
     font-size: 100%;
+    font-weight: 400;
   }
 }
 
@@ -515,6 +520,8 @@ div[jaexport] {
 }
 
 .fix-height {
+  overflow-y: hidden;
+
   .ui-datatable-scrollable-view, .ui-datatable-scrollable-wrapper {
     height: 100%;
   }
@@ -550,6 +557,10 @@ div[jaexport] {
 .fc-time-grid-event .fc-time, .fc-time-grid-event .fc-title {
   padding: 4px 4px;
   font-size: 14px !important;
+}
+
+.fc-toolbar.fc-header-toolbar {
+  display: none;
 }
 
 .share {
@@ -592,4 +603,89 @@ div[jaexport] {
 
 .drag-handle {
   cursor: move;
+}
+
+.event-popover {
+  padding: 0 !important;
+
+  .ui-overlaypanel-content {
+    padding: 0 !important;
+  }
+}
+
+.event-details {
+  width: 350px;
+
+  .header {
+    padding: 10px;
+    height: 60px;
+
+    .controls {
+      float: right;
+    }
+
+    .title {
+      padding-top: 10px;
+      font-size: 25px;
+      padding-left: 15px;
+    }
+  }
+
+  .body {
+    max-height: calc(100vh - 200px);
+    overflow-y: auto;
+
+    .detail {
+      padding: 5px;
+      width: 100%;
+      display: block;
+      margin-bottom: 10px;
+
+      .title {
+        font-size: 20px;
+        width: 35px;
+        display: inline-block;
+        vertical-align: top;
+      }
+
+      .info {
+        font-size: 14px;
+        display: inline-block;
+        width: calc(100% - 43px);
+
+        span {
+          display: block;
+        }
+
+        span.info {
+          font-size: 12px;
+          color: grey;
+        }
+
+        .icon {
+          display: inline-block;
+          float: right;
+        }
+      }
+
+      .attendees {
+        padding-left: 40px;
+
+        .attendee {
+          padding: 10px 0;
+
+          .name {
+            font-size: 12px;
+            display: block;
+          }
+
+          .email {
+            font-size: 11px;
+            color: grey;
+            display: block;
+          }
+        }
+      }
+    }
+  }
 }

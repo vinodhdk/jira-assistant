@@ -6,6 +6,7 @@ import { updateDashboard } from '../../_nav';
 import { DASHBOARD_ICONS } from '../../_constants';
 import { FacadeService } from '../../services/facade.service';
 import { BaseGadget, GadgetAction, GadgetActionType } from '../../gadgets/base-gadget';
+import { CacheService } from '../../services/cache.service';
 
 
 @Component({
@@ -25,16 +26,19 @@ export class DashboardComponent {
   newName: string
   newIcon: any
   savedQueries: any[]
-
+  isQuickView: boolean
   @ViewChildren('myGadget') gadgetsList: QueryList<BaseGadget>;
 
   constructor(private route: ActivatedRoute, private $db: DatabaseService, private $session: SessionService,
-    private $jaFacade: FacadeService, private router: Router) {
+    private $jaFacade: FacadeService, private router: Router, private $cache: CacheService) {
     this.dashboardIcons = DASHBOARD_ICONS;
   }
 
   ngOnInit() {
-    this.route.params.subscribe(params => this.loadDashboard(parseInt(params['index'] || 0)));
+    this.route.params.subscribe(params => {
+      this.isQuickView = parseInt(params['isQuickView'] || 0) == 1;
+      this.loadDashboard(parseInt(params['index'] || 0))
+    });
   }
 
   loadDashboard(index: number) {
@@ -92,6 +96,15 @@ export class DashboardComponent {
     this.$db.users.get(this.$session.userId).then(u => {
       if (!u.dashboards) { u.dashboards = [this.currentBoard]; }
       else { u.dashboards.ForEach((dboard, i) => dboard.isQuickView = i === this.dashboardIndex); }
+      var quickMenu = this.$cache.get("menuAction", true);
+      if (quickMenu) {
+        quickMenu = JSON.parse(quickMenu);
+        if (quickMenu.action == 3) {
+          if (this.dashboardIndex == 0) { delete quickMenu.index; }
+          else { quickMenu.index = this.dashboardIndex; }
+        }
+        this.$cache.set("menuAction", quickMenu, false, true);
+      }
       return this.saveUserDashboards(u);
     });
   }
@@ -157,5 +170,23 @@ export class DashboardComponent {
     this.gadgetsList.forEach((item, index, arr) => {
       item.executeEvent($event);
     });
+  }
+
+  gadgetReordered($event) {
+    this.saveDashboardInfo(true);
+  }
+
+  getGadgetName(idx): string {
+    if (this.gadgetsList && this.gadgetsList.length > 0) {
+      var gadget: BaseGadget = this.gadgetsList.toArray()[idx];
+      return gadget ? gadget.title : '';
+    }
+  }
+
+  getGadgetIcon(idx): string {
+    if (this.gadgetsList && this.gadgetsList.length > 0) {
+      var gadget: BaseGadget = this.gadgetsList.toArray()[idx];
+      return gadget ? gadget.iconClass : '';
+    }
   }
 }

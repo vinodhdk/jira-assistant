@@ -9,7 +9,8 @@ export var navigation: any[] = [
   },
   {
     name: 'Default',
-    url: '/dashboard',
+    id: 'D-0',
+    url: '/dashboard/0',
     icon: 'fa fa-tachometer',
     badge: {
       variant: 'info',
@@ -23,11 +24,13 @@ export var navigation: any[] = [
   },
   {
     name: 'User - Daywise',
+    id: 'R-UD',
     url: '/reports/userdaywise',
     icon: 'fa fa-users'
   },
   {
     name: 'Sprint Report',
+    id: 'R-SP',
     url: '/reports/sprint',
     icon: 'fa fa-history',
     badge: {
@@ -37,6 +40,7 @@ export var navigation: any[] = [
   },
   {
     name: 'Custom Report',
+    id: 'R-CG',
     url: '/reports/customgrouped',
     icon: 'fa fa-table'
   },
@@ -46,6 +50,7 @@ export var navigation: any[] = [
   },
   {
     name: 'Calendar / Worklogs',
+    id: 'CAL',
     url: '/calendar',
     icon: 'fa fa-calendar'
   },
@@ -55,11 +60,13 @@ export var navigation: any[] = [
   },
   {
     name: 'General',
+    id: 'S-GE',
     url: '/settings/general',
     icon: 'fa fa-cog'
   },
   {
     name: 'User groups',
+    id: 'S-UG',
     url: '/settings/usergroups',
     icon: 'fa fa-users',
     badge: {
@@ -82,6 +89,7 @@ export function updateDashboard(dashboards: IDashboard[]) {
   dashboards.ForEach((d: IDashboard, i: number) => {
     var item = navigation.InsertAt(i + 1, {
       name: d.name,
+      id: 'D-' + i,
       url: '/dashboard' + (i ? '/' + i : ''),
       icon: d.icon,
       //badge: {

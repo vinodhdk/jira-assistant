@@ -1,7 +1,7 @@
 <p-tieredMenu #menu [model]="contextMenu" [popup]="true" appendTo="body"></p-tieredMenu>
 <p-contextMenu #cm [model]="contextMenu"></p-contextMenu>
 <div [ngClass]="isFullScreen?'full-screen':''">
-  <p-panel styleClass="p-no-padding">
+  <p-panel styleClass="p-no-padding" [showHeader]="!hideHeader">
     <p-header>
       <div class="ui-helper-clearfix drag-handle" ngxDragHandle>
         <i class="fa fa-list-alt"></i>
@@ -29,18 +29,18 @@
             {{w.dateLogged | formatDate}}
           </ng-template>
         </p-column>
-        <p-column header="Total Hours" field="totalHours" [sortable]="true" [style]="{'width':'100px'}">
+        <p-column header="Total Hours" field="totalHours" [sortable]="true" [style]="{'width':'120px'}">
           <ng-template let-w="rowData" pTemplate="body">
             {{w.totalHours | formatTs}}
             <span *ngIf="w.difference">({{w.difference | formatTs}})</span>
           </ng-template>
         </p-column>
-        <p-column header="Uploaded" field="uploaded" [sortable]="true" [style]="{'width':'90px'}">
+        <p-column header="Uploaded" field="uploaded" [sortable]="true" [style]="{'width':'100px'}">
           <ng-template let-w="rowData" pTemplate="body">
             {{w.uploaded | formatTs}}
           </ng-template>
         </p-column>
-        <p-column header="Pending Upload" field="pendingUpload" [sortable]="true" [style]="{'width':'130px'}">
+        <p-column header="Pending Upload" field="pendingUpload" [sortable]="true" [style]="{'width':'150px'}">
           <ng-template let-w="rowData" pTemplate="body">
             {{w.pendingUpload | formatTs}}
           </ng-template>

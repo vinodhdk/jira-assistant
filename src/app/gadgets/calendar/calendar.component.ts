@@ -6,6 +6,7 @@ import * as $ from 'jquery';
 import { FormatSecsPipe } from '../../pipes/format-secs.pipe';
 import { BaseGadget, GadgetAction, GadgetActionType } from '../base-gadget';
 import { UtilsService } from '../../services/utils.service';
+import { DataTransformService } from '../../services/data-transform.service';
 
 @Component({
   selector: '[jaCalendar]',
@@ -23,14 +24,13 @@ export class CalendarComponent extends BaseGadget implements OnChanges {
   CurrentUser: ISessionUser
   maxHours: number
   maxTime: number
-
+  @ViewChild('opEvent') opEvent: any
   isLoading: boolean
 
   viewModes: any[]
   @Input()
   viewMode: any
 
-  dateRangeTitle: string
   showAddWorklogPopup: boolean
 
   worklogItem: any
@@ -49,13 +49,19 @@ export class CalendarComponent extends BaseGadget implements OnChanges {
   contextMenu: any
   contextMenuItems: any[]
   currentWLItem: any
+  currentMeetingItem: any
 
   constructor(private $session: SessionService, private $jaFacade: FacadeService, private message: MessageService,
     private $jaAnalytics: AnalyticsService, private $jaCalendar: CalendarService, private $formatSecs: FormatSecsPipe,
-    el: ElementRef) {
-    super(el);
+    private $transform: DataTransformService, el: ElementRef) {
+    super(el, "Calendar", "fa-calendar");
     this.viewModes = [{ value: 'month', label: 'Month' }, { value: 'agendaWeek', label: 'Week' }, { value: 'agendaDay', label: 'Day' }];
-    this.settings = this.$session.pageSettings.calendar || { viewMode: 'agendaWeek', showMeetings: true, showWorklogs: true, showInfo: true };
+    if (this.$session.pageSettings.calendar) {
+      this.settings = { ...this.$session.pageSettings.calendar };
+    }
+    else {
+      this.settings = { viewMode: 'agendaWeek', showMeetings: true, showWorklogs: true, showInfo: true }
+    }
 
     this.contextMenuItems = [
       { label: "Edit worklog", icon: "fa-edit", command: () => this.showWorklogPopup({ id: this.currentWLItem.id }) },
@@ -297,7 +303,43 @@ export class CalendarComponent extends BaseGadget implements OnChanges {
   }
 
   showCalendarDetails(event, jsEvent, view) {
-    //ToDo : implementation 
+    jsEvent.preventDefault();
+    jsEvent.stopPropagation();
+
+    var item = event.sourceObject;
+    console.log(item);
+    this.currentMeetingItem = {
+      summary: item.summary,
+      schedule: {
+        date: this.$transform.formatDate(item.start.dateTime),
+        startTime: this.$transform.formatTime(item.start.dateTime),
+        endTime: this.$transform.formatTime(item.end.dateTime),
+      },
+      htmlLink: item.htmlLink,
+      location: item.location,
+      description: item.description,
+      descrLimit: 350,
+      creator: item.creator,
+      organizer: item.organizer
+    };
+    if (item.attendees) {
+      this.currentMeetingItem.attendees = {
+        total: item.attendees.length,
+        yes: item.attendees.Count(a => a.responseStatus == 'accepted'),
+        no: item.attendees.Count(a => a.responseStatus == 'notAccepted'),
+        awaiting: item.attendees.Count(a => a.responseStatus == 'needsAction'),
+        tentative: item.attendees.Count(a => a.responseStatus == 'tentative'),
+        list: item.attendees
+      };
+    }
+    if (item.hangoutLink) {
+      var name = item.hangoutLink;
+      if (name.lastIndexOf('/') > 0) {
+        name = name.substring(name.lastIndexOf('/') + 1);
+      }
+      this.currentMeetingItem.videoCall = { url: item.hangoutLink, name: name };
+    }
+    this.opEvent.show(jsEvent);
   }
 
   eventClick(calEvent, jsEvent, view) {
@@ -312,7 +354,7 @@ export class CalendarComponent extends BaseGadget implements OnChanges {
     this.startDate = view.start;
     this.endDate = view.end;
     this.fillCalendar();
-    this.dateRangeTitle = view.title.replace(/[^a-zA-Z0-9, ]+/g, '-');
+    this.title = 'Calendar - [' + view.title.replace(/[^a-zA-Z0-9, ]+/g, '-') + ']';
     $(this.calendar.el.nativeElement).find(".fc-header-toolbar").hide();
   }
 
@@ -403,6 +445,8 @@ export class CalendarComponent extends BaseGadget implements OnChanges {
   }
 
   saveSettings() {
+    if (this.isGadget) { return; }
+    this.$session.pageSettings.calendar = this.settings;
     this.fillCalendar();
     this.$jaFacade.saveSettings('calendar');
   }

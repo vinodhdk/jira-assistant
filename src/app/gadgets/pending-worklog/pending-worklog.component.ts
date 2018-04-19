@@ -15,7 +15,7 @@ export class PendingWorklogComponent extends BaseGadget {
 
   //dateStarted
   constructor(private $facade: FacadeService, private $jaUtils: UtilsService, el: ElementRef, private message: MessageService) {
-    super(el)
+    super(el, 'Worklog - [Pending upload]','fa-clock-o')
     this.selAllWks = true;
     this.fillWorklogs();
     this.contextMenu = [

@@ -51,7 +51,7 @@ export class DataTransformService {
   }
 
   cut(value: string, max?: any, wordwise?: boolean, tail?: string): any {
-    if (!value) return value;
+    if (!value || max == -1) return value;
 
     max = parseInt(max || 20, 10);
     if (!max) return value;

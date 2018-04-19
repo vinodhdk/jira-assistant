@@ -132,6 +132,7 @@ export class FacadeService {
   }
 
   removeBookmark(tickets: any) {
+    if (typeof (tickets) === 'string') { tickets = [tickets]; }
     return this.$db.users.get(this.$session.userId).then((u) => {
       var favTickets = u.favTicketList;
       if (!favTickets) {
@@ -166,6 +167,12 @@ export class FacadeService {
               updatedDate: i.fields.updated
             };
           });
+        }, (err) => {
+          var msg = ((err.error || {}).errorMessages || [])[0];
+          if (msg.indexOf('does not exist')) {
+            var bks = tickets.Where(t => msg.indexOf(t) > -1);
+            if (bks.length > 0) { return this.removeBookmark(bks); }
+          }
         });
       }
       else {
@@ -470,9 +477,15 @@ export class FacadeService {
         startOfDay: user.startOfDay || "10:00",
         endOfDay: user.endOfDay || "19:00",
 
+        launchAction: user.launchAction,
+
         highlightVariance: user.highlightVariance,
         notifyWL: user.notifyWL || (user.notifyWL == null ? true : false)
       };
+      if (settings.launchAction && user.dashboards) {
+        var idx = user.dashboards.indexOf(user.dashboards.First(d => d.isQuickView));
+        settings.launchAction.quickIndex = 'D-' + idx;
+      }
       var curDate = new Date();
       return {
         settings: settings,
@@ -500,6 +513,13 @@ export class FacadeService {
       user.startOfDay = settings.startOfDay;
       user.endOfDay = settings.endOfDay;
       user.highlightVariance = settings.highlightVariance;
+      user.launchAction = settings.launchAction;
+
+      if (user.launchAction && user.launchAction.action == 3) {
+        var idx = parseInt((user.launchAction.quickIndex || '0').replace('D-', '')) || 0;
+        delete user.launchAction.quickIndex;
+        user.dashboards.ForEach((dboard, i) => dboard.isQuickView = i === idx);
+      }
 
       if (!settings.hasGoogleCredentials && user.dataStore) {
         var tokken = user.dataStore.access_token;

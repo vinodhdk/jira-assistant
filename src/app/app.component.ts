@@ -28,5 +28,9 @@ export class AppComponent implements OnInit {
 
     if (isSideBarHidden) { body.addClass('sidebar-hidden brand-minimized'); }
     else if (isSideBarToggled) { body.addClass('sidebar-minimized brand-minimized'); }
+
+    if (document.location.href.indexOf('?quick=true') > -1) {
+      body.addClass('quick-view');
+    }
   }
 }

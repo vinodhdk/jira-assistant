@@ -1,0 +1,14 @@
+[
+  {
+    "outputFileName": "menu_new.min.html",
+    "inputFiles": [
+      "menu.html"
+    ]
+  },
+  {
+    "outputFileName": "menu.min.js",
+    "inputFiles": [
+      "menu.js"
+    ]
+  }
+]

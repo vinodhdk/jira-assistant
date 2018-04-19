@@ -15,7 +15,7 @@ export class TicketWiseWorklogComponent extends BaseGadget {
   selectedTicket: any
 
   constructor(private $facade: FacadeService, el: ElementRef, private $jaUtils: UtilsService) {
-    super(el);
+    super(el, 'Ticketwise worklog','fa-list-alt');
     this.settings.dateRange = {};
     this.fillWorklogs();
     this.contextMenu = [

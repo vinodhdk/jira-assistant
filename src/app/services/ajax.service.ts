@@ -1,21 +1,35 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Observable } from 'rxjs/Observable';
 import { ApiUrls } from '../_constants';
 import { SessionService } from './session.service';
+import * as $ from 'jquery'
 
 @Injectable()
 export class AjaxService {
   _basePath: string
-
-  httpOptions = {
-    headers: new HttpHeaders({
-      'Content-Type': 'application/json'
-      //, 'User-Agent': 'Chrome'
-    })
-  };
+  httpOptions: any
 
   constructor(private $ajax: HttpClient, private $session: SessionService) {
+    var headerObj = { 'Content-Type': 'application/json' };
+
+    // Jira has issue with user agent of firefox
+    if (typeof window['InstallTrigger'] !== 'undefined') {
+      headerObj['User-Agent'] = 'Chrome';
+    }
+
+    this.httpOptions = {
+      headers: new HttpHeaders(headerObj)
+    };
+
+    //// Jira has issue with user agent of firefox
+    //if (typeof window['InstallTrigger'] !== 'undefined') {
+    //  $.ajaxSetup({
+    //    beforeSend: function (request) {
+    //      console.log("chrome setting user agent");
+    //      request.setRequestHeader("User-Agent", "Chrome");
+    //    }
+    //  });
+    //}
   }
 
   prepareUrl(url: ApiUrls, params: any[]): string {
@@ -29,9 +43,18 @@ export class AjaxService {
     if (urlStr.startsWith('~/')) { return this._basePath + urlStr.substring(2); }
 
     return urlStr;
-  } // ToDo: need to fix this method
+  }
 
   public get(url: ApiUrls, ...params: any[]): Promise<any> {
+    //return new Promise((resolve, reject) => {
+    //  $.get(this.prepareUrl(url, params))
+    //    .done((data) => {
+    //      resolve(data);
+    //    })
+    //    .fail((err) => {
+    //      reject(err);
+    //    });
+    //});
     return this.$ajax.get(this.prepareUrl(url, params), this.httpOptions).toPromise();
   }
 

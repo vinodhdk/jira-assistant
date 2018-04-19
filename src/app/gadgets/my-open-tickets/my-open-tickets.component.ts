@@ -16,7 +16,7 @@ export class MyOpenTicketsComponent extends BaseGadget implements OnInit {
   dateRange: any
 
   constructor(private $jaDataSvc: JiraService, private $facade: FacadeService, el: ElementRef) {
-    super(el);
+    super(el, "My open tickets", "fa-eye");
     this.fillOpenTickets();
     this.contextMenu = [
       { label: "Add worklog", icon: "fa-clock-o", command: () => this.addWorklogOn(this.selectedTicket.ticketNo) },

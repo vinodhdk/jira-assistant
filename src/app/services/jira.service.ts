@@ -42,7 +42,7 @@ export class JiraService {
           if (messages && messages.length > 0) {
             this.message.error(messages.join('<br/>'), "Error fetching ticket details");
           }
-          return err;
+          reject(err);
         });
     });
   }

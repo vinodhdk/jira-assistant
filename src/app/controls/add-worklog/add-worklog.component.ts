@@ -36,9 +36,6 @@ export class AddWorklogComponent implements OnInit {
   }
 
   ngOnInit() {
-    return this.$jaFacade.getTicketSuggestion().then(u => {
-      this.allTicketList = u;
-    });
   }
 
   ngOnChanges(changes) {
@@ -75,6 +72,9 @@ export class AddWorklogComponent implements OnInit {
   }
 
   ngAfterViewInit() {
+    this.$jaFacade.getTicketSuggestion().then(u => {
+      this.allTicketList = u;
+    });
     this.cd.detectChanges();
   }
 
@@ -119,7 +119,7 @@ export class AddWorklogComponent implements OnInit {
     validation = (vald.dateStarted = !(!log.dateStarted || log.dateStarted.length < 16)) && validation;
 
     vald.overrideTimeSpent = (log.allowOverride && log.overrideTimeSpent && log.overrideTimeSpent.length >= 4);
-    
+
     vald.overrideTimeSpent = vald.overrideTimeSpent && this.$jaFacade.getTimeSpent(log.overrideTimeSpent) > 0;
 
     validation = (vald.overrideTimeSpent = vald.overrideTimeSpent || (!log.allowOverride && log.timeSpent && log.timeSpent.length >= 4)) && validation;

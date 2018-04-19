@@ -30,13 +30,14 @@ export class ReportViewerComponent extends BaseGadget implements OnChanges {
   reportHtml: string
 
   constructor(el: ElementRef, private $facade: FacadeService, private $jaDataSvc: JiraService, private $jaAnalytics: AnalyticsService, private dataTransform: DataTransformService) {
-    super(el)
+    super(el, 'Query report viewer', 'fa-clock-o')
     this.queryModel = {};
   }
 
   ngOnChanges(change) {
     if ((change.queryModel && change.queryModel.currentValue)
       || (change.queryId && change.queryId.currentValue)) {
+      this.title = this.queryModel.queryName;
       this.refreshReport();
     }
     else {

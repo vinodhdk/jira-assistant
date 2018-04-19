@@ -13,7 +13,7 @@ export class MyFiltersComponent extends BaseGadget {
   selAllSQ: boolean
 
   constructor(private $jaFacade: FacadeService, el: ElementRef, private message: MessageService) {
-    super(el);
+    super(el, 'Saved Query','fa-filter');
     this.fillSavedQuery();
   }
 
