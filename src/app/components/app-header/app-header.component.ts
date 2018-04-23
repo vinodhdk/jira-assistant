@@ -22,6 +22,7 @@ export class AppHeaderComponent {
   skinClass: string
   selectedSkin: string
   useLightTheme: boolean
+  searchText: string
 
   constructor(private $location: Router, sanit: DomSanitizer, $jaBrowserExtn: AppBrowserService, private $cache: CacheService) {
     this.selectedSkin = this.$cache.get('skin', true) || 'skin-blue';
@@ -86,5 +87,12 @@ export class AppHeaderComponent {
     body.addClass(this.selectedSkin);
     $('#divSkins .selected').removeClass('selected');
     $('#divSkins .' + this.selectedSkin).addClass('selected');
+  }
+
+  search(event) {
+    this.searchText = (this.searchText || "").trim();
+    if (!this.searchText) { return; }
+
+    this.$location.navigateByUrl("/faq/" + this.searchText).then(res => { if (res) { this.searchText = ""; } });
   }
 }

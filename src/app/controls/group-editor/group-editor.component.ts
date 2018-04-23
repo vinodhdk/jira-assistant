@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, Input, ElementRef, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { JiraService, FacadeService } from 'app/services';
 import { MessageService } from '../../services/message.service';
 
@@ -7,103 +7,88 @@ import { MessageService } from '../../services/message.service';
   templateUrl: './group-editor.component.html'
 })
 export class GroupEditorComponent implements OnInit {
-  @ViewChild('userSuggestion')
-  userSuggestion: any
-  newGroupName: string
+  private groupsList: any[]
 
-  @Input()
-  groups: any[]
-  selectedGroup: any
+  @Input() get groups() { return this.groupsList; }
 
-  @Output()
-  onDone = new EventEmitter<boolean>();
+  @Output() onDone = new EventEmitter<boolean>();
+  @Output() groupsChange = new EventEmitter<any[]>();
 
+  set groups(val: any[]) {
+    this.groupsList = val;
+    this.groupsChange.emit(val);
+  }
+
+  newName: string
   saveInProg: boolean
-
-  selectedUsers: any[]
   userList: any[]
-  isPlugged: boolean
+  @Input() isPlugged: boolean
   mode_groupAdd: boolean
 
   constructor(private $jira: JiraService, private $facade: FacadeService, private message: MessageService) {
-    this.selectedGroup = { name: 'Loading...', users: [] };
   }
 
   ngOnInit() {
-    setTimeout(() => {
-      if (!this.groups) {
-        this.$facade.getUserGroups().then(grps => {
-          this.setDefaultGroup(grps);
-        });
-      }
-      else {
-        this.selectedGroup = this.groups[0];
-        this.isPlugged = true;
-      }
-    }, 400);
+    if (!this.groups) {
+      this.$facade.getUserGroups().then(grps => this.setDefaultGroup(grps));
+    }
+    else {
+      this.isPlugged = true;
+    }
   }
 
   private setDefaultGroup(grps: any[]) {
     this.groups = grps && grps.length > 0 ? grps.Select() : [{ name: 'Default group: No name set', users: [] }];
-    this.selectedGroup = this.groups[0];
+  }
+
+  addUsersToGroup(group) {
+    var existingUsers = group.users.Select(u => u.name.toLowerCase());
+    group.selectedUsers.RemoveAll(u => existingUsers.indexOf(u.name.toLowerCase()) > -1);
+    group.users.AddRange(group.selectedUsers);
+    group.selectedUsers = [];
   }
 
   searchUsers($event) {
     return this.$jira.searchUsers($event.query).then(u => {
       this.userList = u;
-      this.userSuggestion.show();
+      //this.userSuggestion.show();
     });
   }
 
-  addNewGroup(groupName: string): boolean {
+  addNewGroup(groupName: string) {
     groupName = groupName.trim();
 
     if (this.groups.Any(g => g.name.toLowerCase() === groupName.toLowerCase())) {
       this.message.warning("The group with the name '" + groupName + "' already exists!", "Group already exists");
-      return false;
     }
     else {
-      this.selectedGroup = this.groups.Add({ name: groupName, users: [] });
-      this.groups = this.groups.Select();
-      return true;
+      this.groups.Add({ name: groupName, users: [] });
+      this.mode_groupAdd = false;
     }
   }
 
-  updateGroupName(groupName: string): boolean {
+  updateGroupName(group: any, groupName: string) {
     groupName = groupName.trim();
-    if (this.groups.Any(g => g.name.toLowerCase() === groupName.toLowerCase() && g != this.selectedGroup)) {
+    if (this.groups.Any(g => g.name.toLowerCase() === groupName.toLowerCase() && g != group)) {
       this.message.warning("The group with the name '" + groupName + "' already exists!", "Group already exists");
-      return false;
     }
     else {
-      this.selectedGroup.name = groupName;
-      this.groups = this.groups.Select();
-      return true;
+      group.name = groupName;
+      delete group.editMode;
     }
   }
 
-  deleteGroup() {
-    this.groups.Remove(this.selectedGroup);
-    this.setDefaultGroup(this.groups);
+  deleteGroup(group) {
+    this.groups.Remove(group);
   }
 
-  addUsers(): void {
-    var existingUsers = this.selectedGroup.users.Select(u => u.name.toLowerCase());
-    this.selectedUsers.RemoveAll(u => existingUsers.indexOf(u.name.toLowerCase()) > -1);
-    this.selectedGroup.users.AddRange(this.selectedUsers);
-    this.clearUsers();
-  }
-
-  removeUser(user): void {
-    this.selectedGroup.users.Remove(user);
-  }
-
-  clearUsers(): void {
-    this.selectedUsers = [];
+  removeUser(group: any, user: any): void {
+    group.users.Remove(user);
   }
 
   saveGroups(): void {
     this.saveInProg = true;
+    this.groups.ForEach(g => delete g.editMode);
     this.$facade.saveUserGroups(this.groups).then(u => {
       this.saveInProg = false;
       this.message.success("Changes saved successfully!", "Group saved");

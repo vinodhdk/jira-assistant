@@ -254,8 +254,15 @@ Array.prototype.LastOrDefault = function (defaultValue, clause) {
   return this.Last(clause) || defaultValue;
 }
 Array.prototype.ForEach = function (clause) {
-  for (var index = 0; index < this.length; index++) {
-    clause(this[index], index)
+  var total = this.length;
+  for (var index = 0; index < total; index++) {
+    clause(this[index], index, {
+      prev: this[index - 1],
+      next: this[index + 1],
+      count: total,
+      isLast: index == total - 1,
+      isFirst: index === 0
+    })
   }
   return this;
 }
@@ -293,7 +300,7 @@ Array.prototype.InsertAt = function (index, item) {
   return item;
 };
 Array.prototype.InsertRangeAt = function (index, items) {
-  this.splice(index, 0, item);
+  this.splice(index, 0, ...items);
   return this;
 };
 Array.prototype.AddDistinct = function (item) {
@@ -355,6 +362,50 @@ Array.prototype.Clone = function (items) {
   }
   return result;
 };
+Array.prototype.NotIn = function (items, condition) {
+  if (!items || (Array.isArray(items) && items.length === 0)) { return this; }
+  var ignoreCase = condition === true;
+  if (ignoreCase) { items = items.Select(function (item) { return typeof item === "string" ? item.toLowerCase() : item; }); }
+  if (condition && typeof condition != "function") { condition = null; }
+
+  if (Array.isArray(items)) {
+    if (!condition) {
+      return this.Where(function (itm) {
+        if (ignoreCase && typeof itm === 'string') { itm = itm.toLowerCase(); }
+
+        return items.indexOf(itm) === -1
+      });
+    }
+    else {
+      return this.Where(function (itm) { return !items.Any(function (excl) { return condition(itm, excl); }); });
+    }
+  }
+  else {
+
+  }
+}
+Array.prototype.In = function (items, condition) {
+  if (!items || (Array.isArray(items) && items.length === 0)) { return this; }
+  var ignoreCase = condition === true;
+  if (ignoreCase) { items = items.Select(function (item) { return typeof item === "string" ? item.toLowerCase() : item; }); }
+  if (condition && typeof condition != "function") { condition = null; }
+
+  if (Array.isArray(items)) {
+    if (!condition) {
+      return this.Where(function (itm) {
+        if (ignoreCase && typeof itm === 'string') { itm = itm.toLowerCase(); }
+
+        return items.indexOf(itm) > -1
+      });
+    }
+    else {
+      return this.Where(function (itm) { return items.Any(function (excl) { return condition(itm, excl); }); });
+    }
+  }
+  else {
+
+  }
+}
 Array.prototype.Skip = function (index) {
   if (index < 0) { index = 0; }
   var result = [];

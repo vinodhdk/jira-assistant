@@ -1,0 +1,26 @@
+<div [ngClass]="isFullScreen?'full-screen':''">
+  <p-panel styleClass="p-no-padding" [showHeader]="!hideHeader">
+    <p-header>
+      <div class="ui-helper-clearfix drag-handle" ngxDragHandle>
+        <i class="fa fa-area-chart"></i>
+        <span class="ui-panel-title" style="font-size:16px;display:inline-block;margin-top:2px">{{ title }}</span>
+        <div class="pull-right">
+          <button pButton [icon]="isFullScreen?'fa-compress':'fa-expand'" (click)="toggleFullScreen()"></button>
+          <button pButton icon="fa-refresh" (click)="fillReport()"></button>
+          <button *ngIf="isGadget" pButton icon="fa-times" (click)="removeGadget()"></button>
+        </div>
+      </div>
+    </p-header>
+    <p-blockUI [target]="pnlCtl" [blocked]="isLoading">
+      <i class="fa fa-refresh fa-spin fa-5x" style="position:absolute;top:25%;left:50%"></i>
+    </p-blockUI>
+    <p-panel [showHeader]="false" #pnlCtl>
+      <p-scrollPanel [style]="{width: '100%', height: contentHeight + 'px'}" styleClass="cont-div">
+        <div class="placeholder-msg">
+          Development of burndown chart is still in progress. You can have it added to dashboard.
+          Once development is completed it will start appearing automatically.
+        </div>
+      </p-scrollPanel>
+    </p-panel>
+  </p-panel>
+</div>

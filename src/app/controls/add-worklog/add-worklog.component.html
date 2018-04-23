@@ -10,7 +10,7 @@
           <p-calendar [(ngModel)]="log.dateStarted" [showTime]="true"></p-calendar>
           <span class="ui-inputgroup-addon"><i class="fa fa-calendar"></i></span>
         </div>
-        <span class="help-block">Provide the time you had started the work</span>
+        <span class="help-block" [ngClass]="vald.dateStarted?'':'msg-error'">Provide the time you had started the work</span>
       </div>
     </div>
 
@@ -25,7 +25,7 @@
           <span style="font-size:12px;margin:10px 10px 0 0">{{ticket.value}} - {{ticket.label}}</span>
         </ng-template>
       </p-autoComplete>
-      <span class="help-block">Provide the ticket no on which you had to log your work</span>
+      <span class="help-block" [ngClass]="vald.ticketNo?'':'msg-error'">Provide the ticket no on which you had to log your work</span>
     </div>
 
     <div class="ui-g-12 ui-md-3 no-b-padding">
@@ -46,16 +46,16 @@
       </div>
     </div>
     <div class="ui-g-12 ui-md-9 ui-g-offset-3 no-t-padding">
-      <span class="help-block">Provide the time spent on this task (override to change existing)</span>
+      <span class="help-block" [ngClass]="vald.overrideTimeSpent?'':'msg-error'">Provide the time spent on this task (override to change existing)</span>
     </div>
 
     <div class="ui-g-12 ui-md-3">
       <strong>Comments</strong>
     </div>
     <div class="ui-g-12 ui-md-9">
-      <textarea class="form-control" rows="5" [(ngModel)]="log.description" placeholder="Provide a brief info about the task you had done"></textarea>
+      <textarea class="form-control" rows="5" [(ngModel)]="log.description" [ngClass]="vald.description?'':'ctl-error'"
+                placeholder="Provide a brief info about the task you had done"></textarea>
     </div>
-
   </div>
 
   <p-footer>

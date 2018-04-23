@@ -17,6 +17,7 @@ export enum ApiUrls {
   sprintListAll = "~/rest/greenhopper/1.0/integration/teamcalendars/sprint/list?jql=project+in+({0})",
   sprintListOpen = "~/rest/greenhopper/1.0/integration/teamcalendars/sprint/list?jql=project+in+({0})+and+Sprint+not+in+closedSprints()",
   rapidViews = "~/rest/greenhopper/1.0/rapidview",
+  burndownChart = "~/rest/greenhopper/1.0/rapid/charts/scopechangeburndownchart.json?rapidViewId={0}&sprintId={1}",//&statisticFieldId=field_customfield_10042
 
   googleLogoutUrl = "https://accounts.google.com/o/oauth2/revoke?token={0}"
 };

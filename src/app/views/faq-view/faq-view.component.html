@@ -1,0 +1,38 @@
+<div class="layout-7">
+  <div class="widget-cntr">
+    <p-panel styleClass="p-no-padding" [showHeader]="false">
+      <div class="search-box">
+        <div>
+          <span class="title-text">Search for a feature or FAQs:</span>
+          <p-autoComplete [(ngModel)]="searchText" [suggestions]="suggestions" field="text" styleClass="faq-sug"
+                          minLength="3" placeholder="Ask a question or the name of the feature you would like to know about"
+                          (completeMethod)="getSuggestion($event)" (keydown.enter)="search()"></p-autoComplete>
+          <p-button typeof="button" label="Search" icon="fa fa-search" (click)="search()" [disabled]="!searchText"></p-button>
+          <span class="link" (click)="searchText=null">Clear text</span>
+        </div>
+      </div>
+      <p-accordion styleClass="search-results">
+        <p-accordionTab [header]="res.strand" class="result" *ngFor="let res of searchResults">
+          <div class="descr" [innerHtml]="getDescription(res)"></div>
+          <div class="interests" *ngIf="res.links && res.links.length>0">
+            <span>You may also need to look at:</span>
+            <ul class="tags">
+              <li *ngFor="let id of res.links" (click)="addInterest(id)" class="badge badge-pill skin-bg-font">
+                {{getInterestText(id)}}
+              </li>
+            </ul>
+          </div>
+        </p-accordionTab>
+      </p-accordion>
+      <div class="no-results" *ngIf="searchText && searchResults && searchResults.length == 0">
+        <h4>Oops! we couldn't find anything related to your query.</h4>
+        <span>For better results ask a question about the functionality or type a word about the functionality / module. Below are some examples:</span>
+        <ul>
+          <li>How can I edit the name of dashboard?</li>
+          <li>edit name</li>
+          <li>edit layout</li>
+        </ul>
+      </div>
+    </p-panel>
+  </div>
+</div>

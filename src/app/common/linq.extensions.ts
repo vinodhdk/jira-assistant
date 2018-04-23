@@ -38,7 +38,7 @@ interface Array<T> {
   InsertAt(index: number, item: T): T
   ToString(seperator?: string): string
 
-  ForEach(func: (x: T, i?: number) => void): Array<T>
+  ForEach(func: (x: T, i?: number, opt?: ListOptions<T>) => void): Array<T>
   Remove(func: (x: T) => boolean): Array<T>
   RemoveAt(index: number, count?: number): Array<T>
   RemoveAll(func?: (x: T) => boolean): Array<T>
@@ -51,6 +51,12 @@ interface Array<T> {
   Skip(count: number): Array<T>
   Take(count: number): Array<T>
   Union<X>(func?: (x: T) => Array<X>): Array<X>
+
+  NotIn<X>(items: X[], func?: (item: T, ignoreItem: X) => boolean): Array<T>
+  NotIn(items: string[], ignoreCase: boolean): Array<T>
+
+  In<X>(items: X[], func?: (item: T, filterItem: X) => boolean): Array<T>
+  In(items: string[], ignoreCase: boolean): Array<T>
 
   GroupBy<X>(func: (x: T) => X): Array<LinqGroup<X, T>>
   InnerJoin<X>(array: Array<X>, onclause: (left: T, right: X) => boolean): Array<LinqJoinedTable<T, X>>
@@ -66,4 +72,12 @@ interface LinqGroup<X, T> {
 interface LinqJoinedTable<T, X> {
   left: T
   right: X
+}
+
+interface ListOptions<T> {
+  prev: T
+  next: T
+  count: number
+  isLast: boolean
+  isFirst: boolean
 }

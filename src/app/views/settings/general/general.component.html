@@ -124,6 +124,45 @@
       </div>
     </div>-->
   </p-tabPanel>
+  <p-tabPanel header="Default values" leftIcon="fa-clock-o">
+    <div class="ui-g ui-fluid">
+      <div class="form-label ui-g-12 ui-md-3 ui-lg-3 ui-xl-2">
+        <strong>Projects</strong>
+      </div>
+      <div class="ui-g-12 ui-md-9 ui-lg-9 ui-xl-10">
+        <div class="form-group">
+          <p-autoComplete [(ngModel)]="settings.projects" [suggestions]="filteredProjects" [dropdown]="true" [multiple]="true" forceSelection="true"
+                          field="name" placeholder="start typing the project name here" (completeMethod)="searchProject($event)"
+                          [size]="35" autoHighlight="true" maxlength="25" styleClass="autocomplete-350" scrollHeight="300px"
+                          [disabled]="!projects || projects.length == 0"></p-autoComplete>
+          <span class="help-block">Add one or more projects which you are interested in</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="ui-g ui-fluid">
+      <div class="form-label ui-g-12 ui-md-3 ui-lg-3 ui-xl-2">
+        <strong>Rapid board</strong>
+      </div>
+      <div class="ui-g-12 ui-md-9 ui-lg-9 ui-xl-10">
+        <div class="form-group">
+          <p-autoComplete [(ngModel)]="settings.rapidViews" [suggestions]="filteredRapidViews" [dropdown]="true" [multiple]="true" forceSelection="true"
+                          field="name" placeholder="start typing the board name here" (completeMethod)="searchRapidView($event)"
+                          [size]="35" autoHighlight="true" maxlength="25" styleClass="autocomplete-350" scrollHeight="300px"
+                          [disabled]="!rapidViews || rapidViews.length == 0"></p-autoComplete>
+          <span class="help-block">Add one or more rapid view board which you are interested in</span>
+        </div>
+      </div>
+    </div>
+
+    <!--<div class="form-group">
+      <label class="col-md-3 control-label">Highlight incorrect worklogs</label>
+      <div class="col-md-9">
+        <label class="check"><input type="checkbox" class="icheckbox" [(ngModel)]="settings.highlightWorklog" /> Enable highlight</label>
+        <span class="help-block">Highlights worklogs if it does not fall under your regular working hours</span>
+      </div>
+    </div>-->
+  </p-tabPanel>
   <p-tabPanel header="Meetings" leftIcon="fa-calendar">
     <p>This page allows you to integrate your calendar from external sources like Google. Worklog will be automatically created for the events in your calendar based on your preferences</p>
     <div class="block">

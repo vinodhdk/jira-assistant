@@ -20,11 +20,12 @@ const JA_CONTROLS = [DateRangePickerComponent, GroupEditorComponent, AddWorklogC
   ExportComponent, QueryEditorComponent, BindOperatorComponent, BindValueComponent, BindFunctionComponent, DaysInWeekComponent]
 
 import {
-  CalendarComponent, MyOpenTicketsComponent, DateWiseWorklogComponent, TicketWiseWorklogComponent, DynamicGadgetComponent,
+  BurndownChartComponent, CalendarComponent, MyOpenTicketsComponent, DateWiseWorklogComponent, TicketWiseWorklogComponent, DynamicGadgetComponent,
   PendingWorklogComponent, MyBookmarksComponent, MyFiltersComponent, DayWiseWorklogComponent, ReportViewerComponent
 } from './gadgets'
 
 const JA_GADGETS = [
+  BurndownChartComponent,
   CalendarComponent,
   MyOpenTicketsComponent,
   DateWiseWorklogComponent,

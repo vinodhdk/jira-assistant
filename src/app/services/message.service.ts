@@ -4,7 +4,7 @@ import { MessageService as PrimeMessageService } from 'primeng/components/common
 
 @Injectable()
 export class MessageService {
-
+  private lastErrorTime: number
   constructor(private messageService: PrimeMessageService) { }
 
   warning(message: string, title?: string) {
@@ -12,7 +12,10 @@ export class MessageService {
     this.messageService.add(msg);
   }
 
-  error(message: string, title?: string) {
+  error(message: string, title?: string, suspendable?: boolean) {
+    var curErrTime = new Date().getTime();
+    if (suspendable && this.lastErrorTime + 500 > curErrTime) { return; }
+    this.lastErrorTime = curErrTime;
     var msg: Message = { summary: title, detail: message, severity: "error" };
     this.messageService.add(msg);
   }

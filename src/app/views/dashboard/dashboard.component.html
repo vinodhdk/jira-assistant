@@ -139,6 +139,17 @@
           <button pButton type="button" icon="fa-times" label="Remove gadget" class="ui-button-danger" *ngIf="hasGadget('agendaDay')" (click)="removeGadget('agendaDay')"></button>
         </div>
       </div>
+      <div class="gadget-info" *ngFor="let view of rapidViews">
+        <div class="icon"><i class="fa fa-area-chart"></i></div>
+        <div class="details">
+          <span class="name">Burndown chart : [{{view.name}}]</span>
+          <span class="desc">Display the burndown chart of board '{{view.name}}'</span>
+        </div>
+        <div class="controls">
+          <button pButton type="button" icon="fa-plus" label="Add gadget" class="ui-button-success" *ngIf="!hasGadget('burndown:'+view.id)" (click)="addGadget('burndown:'+view.id)"></button>
+          <button pButton type="button" icon="fa-times" label="Remove gadget" class="ui-button-danger" *ngIf="hasGadget('burndown:'+view.id)" (click)="removeGadget('burndown:'+view.id)"></button>
+        </div>
+      </div>
       <div class="gadget-info">
         <div class="icon"><i class="fa fa-calendar"></i></div>
         <div class="details">

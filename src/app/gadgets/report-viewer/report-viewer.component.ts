@@ -8,8 +8,7 @@ import { FacadeService } from '../../services/facade.service';
 
 @Component({
   selector: '[jaReportViewer]',
-  templateUrl: './report-viewer.component.html',
-  styleUrls: ['./report-viewer.component.scss']
+  templateUrl: './report-viewer.component.html'
 })
 export class ReportViewerComponent extends BaseGadget implements OnChanges {
   @Input('queryModel')

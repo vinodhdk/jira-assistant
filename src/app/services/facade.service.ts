@@ -78,6 +78,8 @@ export class FacadeService {
         maxHours: currentUser.maxHours || 8,
         meetingTicket: currentUser.meetingTicket,
         team: currentUser.team || [],
+        projects: currentUser.projects,
+        rapidViews: currentUser.rapidViews,
         settings: settings,
         gIntegration: currentUser.googleIntegration,
         hasGoogleCreds: currentUser.dataStore != null,
@@ -150,21 +152,22 @@ export class FacadeService {
       if (tickets && tickets.length > 0) {
         return this.getTicketDetails(tickets, true).then((tickets: any[]) => {
           return tickets.Select((i) => {
+            let fields = i.fields;
             return {
               ticketNo: i.key,
-              summary: i.fields.summary,
-              assigneeName: (i.fields.assignee || "").displayName,
-              reporterName: (i.fields.reporter || "").displayName,
-              issuetype: i.fields.issuetype.name,
-              issuetypeIcon: i.fields.issuetype.iconUrl,
-              priority: (i.fields.priority || {}).name,
-              priorityIcon: (i.fields.priority || {}).iconUrl,
-              statusIcon: i.fields.status.iconUrl,
-              status: i.fields.status.name,
-              resolutionIcon: (i.fields.resolution || {}).iconUrl,
-              resolution: (i.fields.resolution || {}).name,
-              createdDate: i.fields.created,
-              updatedDate: i.fields.updated
+              summary: fields.summary,
+              assigneeName: (fields.assignee || "").displayName,
+              reporterName: (fields.reporter || "").displayName,
+              issuetype: (fields.issuetype || {}).name,
+              issuetypeIcon: (fields.issuetype || {}).iconUrl,
+              priority: (fields.priority || {}).name,
+              priorityIcon: (fields.priority || {}).iconUrl,
+              statusIcon: (fields.status || {}).iconUrl,
+              status: (fields.status || {}).name,
+              resolutionIcon: (fields.resolution || {}).iconUrl,
+              resolution: (fields.resolution || {}).name,
+              createdDate: fields.created,
+              updatedDate: fields.updated
             };
           });
         }, (err) => {
@@ -204,7 +207,7 @@ export class FacadeService {
     });
   }
 
-  fetchTicketDetails(tickets: string[], fields) {
+  fetchTicketDetails(tickets: string[], fields: string[]) {
     var result = [];
     var toFetch = [];
 
@@ -478,6 +481,8 @@ export class FacadeService {
         endOfDay: user.endOfDay || "19:00",
 
         launchAction: user.launchAction,
+        rapidViews: user.rapidViews,
+        projects: user.projects,
 
         highlightVariance: user.highlightVariance,
         notifyWL: user.notifyWL || (user.notifyWL == null ? true : false)
@@ -530,6 +535,16 @@ export class FacadeService {
         }
         delete user.dataStore;
       }
+
+      if (settings.rapidViews && settings.rapidViews.length > 0) {
+        user.rapidViews = settings.rapidViews;
+      }
+      else { delete user.rapidViews; }
+
+      if (settings.projects && settings.projects.length > 0) {
+        user.projects = settings.projects;
+      }
+      else { delete user.projects; }
 
       var autoLaunch = parseInt(settings.autoLaunch);
       if (autoLaunch > 0) {

@@ -1,1 +1,4 @@
-<div class="widget-cntr" [hideHeader]="hideHeader" [layout]="layout" jaReportViewer [queryId]="param1" (onAction)="onAction.emit($event)"></div>
+<ng-container [ngSwitch]="gadgetType">
+  <div class="widget-cntr" *ngSwitchCase="'burndown'" [hideHeader]="hideHeader" [layout]="layout" jaBurndownChart [rapidViewId]="param1" (onAction)="onAction.emit($event)"></div>
+  <div class="widget-cntr" *ngSwitchCase="'SQ'" [hideHeader]="hideHeader" [layout]="layout" jaReportViewer [queryId]="param1" (onAction)="onAction.emit($event)"></div>
+</ng-container>

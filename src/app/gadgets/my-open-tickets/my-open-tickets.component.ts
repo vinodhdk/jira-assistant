@@ -33,20 +33,21 @@ export class MyOpenTicketsComponent extends BaseGadget implements OnInit {
     this.$jaDataSvc.getOpenTickets(refresh)
       .then((result) => {
         this.ticketsList = result.Select(t => {
+          var fields = t.fields;
           return {
             ticketNo: t.key,
-            issuetypeIcon: t.fields.issuetype.iconUrl,
-            issuetype: t.fields.issuetype.name,
-            summary: t.fields.summary,
-            reporter: t.fields.reporter.displayName,
-            priorityIcon: t.fields.priority.iconUrl,
-            priority: t.fields.priority.name,
-            statusIcon: t.fields.status.iconUrl,
-            status: t.fields.status.name,
-            resolutionIcon: (t.fields.resolution || {}).iconUrl,
-            resolution: (t.fields.resolution || {}).name,
-            created: t.fields.created,
-            updated: t.fields.updated
+            issuetypeIcon: (fields.issuetype || {}).iconUrl,
+            issuetype: (fields.issuetype || {}).name,
+            summary: fields.summary,
+            reporter: fields.reporter.displayName,
+            priorityIcon: (fields.priority || {}).iconUrl,
+            priority: (fields.priority || {}).name,
+            statusIcon: (fields.status || {}).iconUrl,
+            status: (fields.status || {}).name,
+            resolutionIcon: (fields.resolution || {}).iconUrl,
+            resolution: (fields.resolution || {}).name,
+            created: fields.created,
+            updated: fields.updated
           };
         });
         this.isLoading = false;

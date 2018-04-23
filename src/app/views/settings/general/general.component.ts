@@ -7,6 +7,7 @@ import { CalendarService } from '../../../services/calendar.service';
 import { MessageService } from '../../../services/message.service';
 import { navigation } from '../../../_nav';
 import { CacheService } from '../../../services/cache.service';
+import { JiraService } from '../../../services/jira.service';
 
 @Component({
   selector: 'ja-general',
@@ -25,7 +26,13 @@ export class GeneralComponent implements OnInit {
   dashboards: any[]
   selectedDashboard: any
 
-  constructor(private $jaFacade: FacadeService, private $jaBrowserExtn: AppBrowserService,
+  rapidViews: any[]
+  filteredRapidViews: any[]
+
+  projects: any[]
+  filteredProjects: any[]
+
+  constructor(private $jaFacade: FacadeService, private $jaBrowserExtn: AppBrowserService, private $jira: JiraService,
     private $jaAnalytics: AnalyticsService, private $session: SessionService,
     private $jaCalendar: CalendarService, private message: MessageService, private $cache: CacheService) {
     this.settings = {};
@@ -43,6 +50,19 @@ export class GeneralComponent implements OnInit {
     });
     this.$jaFacade.getUserSettings().then(res => {
       this.parseSettings(res);
+
+      this.$jira.getRapidViews().then((views) => {
+        this.rapidViews = views.OrderBy((d) => { return d.name; }).Select((d) => {
+          return { name: d.name, id: d.id };
+        });
+        //if (this.settings.rapidViews && this.settings.rapidViews.length > 0) {
+        //  this.settings.rapidViews = this.rapidViews
+        //}
+      });
+
+      this.$jira.getProjects().then((projects) => {
+        this.projects = projects.Select((d) => { return { name: d.name, id: d.id }; }).OrderBy((d) => { return d.name; });
+      });
 
       this.menus = [];
       this.launchMenus = [];
@@ -70,6 +90,18 @@ export class GeneralComponent implements OnInit {
     });
   }
 
+  searchRapidView($event) {
+    var query = ($event.query || '').toLowerCase();
+    this.filteredRapidViews = this.rapidViews.Where(r => (r.name.toLowerCase().indexOf(query) >= 0 || r.id.toString().startsWith(query))
+      && (!this.settings.rapidViews || !this.settings.rapidViews.Any(v => v.id == r.id)));
+  }
+
+  searchProject($event) {
+    var query = ($event.query || '').toLowerCase();
+    this.filteredProjects = this.projects.Where(r => (r.name.toLowerCase().indexOf(query) >= 0 || r.id.toString().startsWith(query))
+      && (!this.settings.projects || !this.settings.projects.Any(v => v.id == r.id)));
+  }
+
   saveSettings() {
     var setting: any = { action: parseInt(this.settings.menuAction) };
     var launchSetting: any = { action: setting.action };
@@ -93,9 +125,30 @@ export class GeneralComponent implements OnInit {
         }
         break;
     }
-    this.$jaFacade.saveUserSettings(this.settings).then(res => {
-      this.$cache.set("menuAction", launchSetting, false, true);
-      this.parseSettings(res);
+
+    var validateTicket = () => {
+      if (this.settings.meetingTicket) {
+        return this.$jaFacade.getTicketDetails(this.settings.meetingTicket).then(t => {
+          if (!t) {
+            this.message.warning("Invalid default ticket number specified for meetings!");
+            return false;
+          }
+          return true;
+        }, e => {
+          var msgs: string[] = ((e.error || {}).errorMessages || []);
+          if (msgs.Any(m => m.toLowerCase().indexOf("'key' is invalid") > -1)) { this.message.warning("Invalid default ticket number specified for meetings!"); }
+          return false;
+        });
+      }
+      else { return Promise.resolve(true); }
+    };
+
+    validateTicket().then((result) => {
+      if (result === false) { return; }
+      this.$jaFacade.saveUserSettings(this.settings).then(res => {
+        this.$cache.set("menuAction", launchSetting, false, true);
+        this.parseSettings(res);
+      });
     });
   }
 
@@ -115,6 +168,9 @@ export class GeneralComponent implements OnInit {
     cUser.meetingTicket = sett.meetingTicket;
     cUser.hasGoogleCreds = sett.hasGoogleCredentials;
     cUser.pruneInterval = parseInt(sett.pruneInterval || 4);
+
+    cUser.projects = sett.projects;
+    cUser.rapidViews = sett.rapidViews;
 
     if (!sett.launchAction) {
       sett.launchAction = {}; sett.menuAction = '1';

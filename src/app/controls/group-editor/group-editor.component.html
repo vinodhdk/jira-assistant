@@ -1,69 +1,67 @@
-<p-dataView #users [paginator]="false" layout="grid" [value]="selectedGroup.users" emptyMessage="No users available under this group.">
-  <p-header>
-    <div class="ui-helper-clearfix">
-      <div class="ui-g">
-        <div class="ui-md-12">
-          <div class="pull-left r-margin-15">
-            <p-inplace #groupEditor>
-              <span pInplaceDisplay><strong>{{selectedGroup.name}} ({{selectedGroup.users.length}} users)</strong> <i class="fa fa-edit"></i></span>
-              <div class="ui-inputgroup" pInplaceContent>
-                <input type="text" #groupName [value]="selectedGroup.name" maxlength="40" />
-                <button pButton type="button" icon="fa-check" class="ui-button-success" (click)="groupEditor.active=!updateGroupName(groupName.value)"></button>
-                <button pButton type="button" icon="fa-undo" class="ui-button-danger" (click)="groupEditor.active=false"></button>
-              </div>
-            </p-inplace>
-          </div>
-
-          <div class="pull-left ui-g-6 no-padding">
-            <div class="ui-inputgroup">
-              <p-autoComplete #userSuggestion [(ngModel)]="selectedUsers" [suggestions]="userList" field="displayName"
-                              [multiple]="true" minLength="2" [forceSelection]="true" placeholder="Add one or more users"
-                              (completeMethod)="searchUsers($event)"></p-autoComplete>
-              <button pButton type="button" icon="fa-close" class="ui-button-danger" (click)="clearUsers()"></button>
-              <button pButton type="button" icon="fa-user-plus" class="ui-button-success" (click)="addUsers()"></button>
-            </div>
-          </div>
-
-          <div class="ui-inputgroup pull-right">
-            <div class="ui-inputgroup" [hidden]="mode_groupAdd">
-              <p-dropdown [options]="groups" optionLabel="name" [(ngModel)]="selectedGroup"
-                          placeholder="Select a group" [autoWidth]="false" [style]="{'min-width':'15em'}"></p-dropdown>
-              <button pButton type="button" icon="fa-plus" class="ui-button-success" (click)="mode_groupAdd=true"></button>
-              <button pButton type="button" icon="fa-trash" class="ui-button-danger" (click)="deleteGroup()"></button>
-            </div>
-            <div class="ui-inputgroup" [hidden]="!mode_groupAdd">
-              <input type="text" [(ngModel)]="newGroupName" #ctlNewGroupName maxlength="40" placeholder="Name of new group" />
-              <button pButton type="button" icon="fa-check" class="ui-button-success" [disabled]="!newGroupName" (click)="mode_groupAdd=!addNewGroup(newGroupName)"></button>
-              <button pButton type="button" icon="fa-close" class="ui-button-danger" (click)="mode_groupAdd=false;newGroupName=''"></button>
-            </div>
-          </div>
-          <!--<div style="position:relative">
-            <input type="search" pInputText placeholder="Find a user" (keyup)="users.filter($event.target.value)">
-          </div>-->
+<p-table [value]="groups">
+  <ng-template pTemplate="caption"><div>User groups</div></ng-template>
+  <ng-template pTemplate="header">
+    <tr>
+      <th style="min-width:215px;">Group / User Name</th>
+      <th>User Email</th>
+      <th>User Login</th>
+      <th>Timezone</th>
+      <th style="width:150px">Options</th>
+    </tr>
+  </ng-template>
+  <ng-template pTemplate="body" let-group>
+    <tr>
+      <td>
+        <div (click)="group.editMode=true" *ngIf="!group.editMode">
+          <span style="font-weight:600;font-size:17px;">{{group.name}}</span>
+          ({{group.users.length}} users) <i class="fa fa-edit"></i>
+        </div>
+        <div class="ui-inputgroup" *ngIf="group.editMode">
+          <input type="text" #groupName [value]="group.name" maxlength="40" />
+          <button pButton type="button" icon="fa-check" class="ui-button-success" (click)="updateGroupName(group, groupName.value)"></button>
+          <button pButton type="button" icon="fa-undo" class="ui-button-danger" (click)="group.editMode=false"></button>
+        </div>
+      </td>
+      <td colspan="2">
+        <p-autoComplete #userSuggestion [(ngModel)]="group.selectedUsers" [suggestions]="userList" field="displayName"
+                        [multiple]="true" minLength="2" [forceSelection]="true" placeholder="Add one or more users"
+                        (completeMethod)="searchUsers($event)" [style]="{'width':'80%'}" appendTo="body"></p-autoComplete>
+        <button pButton type="button" icon="fa-close" class="ui-button-danger" (click)="group.selectedUsers=[]"></button>
+        <button pButton type="button" icon="fa-user-plus" class="ui-button-success" (click)="addUsersToGroup(group)"></button>
+      </td>
+      <td></td>
+      <td><button pButton type="button" icon="fa-trash" label="Delete group" class="ui-button-danger" (click)="deleteGroup(group)"></button></td>
+    </tr>
+    <tr *ngIf="!group.users || group.users.length==0"><td colspan="5">No users were available under this group</td></tr>
+    <tr *ngFor="let user of group.users">
+      <td>
+        <div class="group-user">
+          <img [src]="user.avatarUrls['32x32'] || user.avatarUrls['48x48']" height="32" width="32" class="pull-left">
+          <a href="{{user.self}}" target="_blank" class="link">{{user.displayName}}</a>
+        </div>
+      </td>
+      <td>{{user.emailAddress}}</td>
+      <td>{{user.name}}</td>
+      <td>{{user.timeZone}}</td>
+      <td><button pButton class="ui-button-danger" type="button" icon="fa-times" (click)="removeUser(group,user)" style="margin-top:0"></button></td>
+    </tr>
+  </ng-template>
+  <ng-template pTemplate="summary">
+    <div style="height:30px;padding-top:4px;">
+      <div class="pull-left">
+        <div class="ui-inputgroup" [hidden]="mode_groupAdd">
+          <button pButton type="button" icon="fa-plus" class="ui-button-success" label="Add group" (click)="mode_groupAdd=true"></button>
+        </div>
+        <div class="ui-inputgroup" [hidden]="!mode_groupAdd">
+          <input type="text" [(ngModel)]="newName" maxlength="40" placeholder="Name of new group" />
+          <button pButton type="button" icon="fa-check" class="ui-button-success" [disabled]="!newName" (click)="addNewGroup(newName)"></button>
+          <button pButton type="button" icon="fa-close" class="ui-button-danger" (click)="mode_groupAdd=false;newName=''"></button>
         </div>
       </div>
-    </div>
-  </p-header>
-  <ng-template let-user pTemplate="gridItem">
-    <div style="padding:.5em" class="ui-g-12 ui-md-3">
-      <p-panel [header]="user.displayName" [style]="{'text-align':'center'}">
-        <img src="{{user.avatarUrls['48x48']}}" width="60">
-        <div class="user-detail">{{user.emailAddress}}</div>
-        <hr class="ui-widget-content" style="border-top:0">
-        <button pButton class="ui-button-danger" type="button" icon="fa-times" (click)="removeUser(user,$event)" style="margin-top:0"></button>
-        <button pButton type="button" icon="fa-search" (click)="selectUser(user,$event)" style="margin-top:0"></button>
-        <button pButton type="button" icon="fa-external-link" style="margin-top:0"></button>
-      </p-panel>
+      <div class="pull-right">
+        <button pButton type="button" *ngIf="!isPlugged" icon="fa-save" label="Save Changes" class="ui-button-success" (click)="saveGroups()"></button>
+        <button pButton type="button" *ngIf="isPlugged" icon="fa-save" label="Done" (click)="done()"></button>
+      </div>
     </div>
   </ng-template>
-  <p-footer>
-    <div class="ui-helper-clearfix">
-      <div class="ui-g pull-right">
-        <div class="ui-g-12 ui-md-12">
-          <button class="btn btn-success" *ngIf="!isPlugged" (click)="saveGroups()">Save Changes</button>
-          <button class="btn btn-default" *ngIf="isPlugged" (click)="done()">Done</button>
-        </div>
-      </div>
-    </div>
-  </p-footer>
-</p-dataView>
+</p-table>

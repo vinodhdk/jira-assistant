@@ -27,11 +27,13 @@ export class DashboardComponent {
   newIcon: any
   savedQueries: any[]
   isQuickView: boolean
+  rapidViews: any[]
   @ViewChildren('myGadget') gadgetsList: QueryList<BaseGadget>;
 
   constructor(private route: ActivatedRoute, private $db: DatabaseService, private $session: SessionService,
     private $jaFacade: FacadeService, private router: Router, private $cache: CacheService) {
     this.dashboardIcons = DASHBOARD_ICONS;
+    this.rapidViews = $session.CurrentUser.rapidViews || [];
   }
 
   ngOnInit() {

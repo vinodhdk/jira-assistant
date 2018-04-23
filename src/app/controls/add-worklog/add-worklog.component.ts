@@ -66,7 +66,9 @@ export class AddWorklogComponent implements OnInit {
           if (this.log.allowOverride) {
             this.log.overrideTimeSpent = obj.timeSpent;
           }
+          else { this.log.overrideTimeSpent = '01:00'; }
         }
+        this.validateData(this.log, this.vald);
       }
     }
   }
@@ -82,14 +84,6 @@ export class AddWorklogComponent implements OnInit {
     var query = ($event.query || "").toLowerCase();
     this.ticketList = this.allTicketList.Where(t => t.value.toLowerCase().indexOf(query) > -1 || t.label.toLowerCase().indexOf(query) > -1);
   }
-
-  //this.$watch("logJson",  (newVal)=> {
-  //  if (!newVal) return;
-  //  var obj = JSON.parse(newVal);
-
-  //  obj.dateStarted = formatDateTime(moment(obj.dateStarted).toDate(), displayDateFormat);
-  //  this.log = obj;
-  //});
 
   fillWorklog(worklogId: number) {
     return this.$jaFacade.getWorklog(worklogId).then((d: any) => {
@@ -108,8 +102,9 @@ export class AddWorklogComponent implements OnInit {
   }
 
   validateData(log: any, vald: any) {
-    if (log.allowOverride)
-      log.overrideTimeSpent = log.overrideTimeSpent || log.timeSpent || "1:00";
+    if (log.allowOverride) {
+      log.overrideTimeSpent = log.overrideTimeSpent || log.timeSpent || "00:00";
+    }
 
     var validation = true;
     var ticketNo = this.getTicketNo(log);

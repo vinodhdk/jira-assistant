@@ -7,7 +7,6 @@ import { TieredMenuModule } from 'primeng/tieredmenu';
 import { SplitButtonModule } from 'primeng/splitbutton';
 import { DropdownModule } from 'primeng/dropdown';
 import { CalendarModule } from 'primeng/calendar';
-import { DataViewModule } from 'primeng/dataview';
 import { AutoCompleteModule } from 'primeng/autocomplete';
 import { InplaceModule } from 'primeng/inplace';
 import { DialogModule } from 'primeng/dialog';
@@ -21,13 +20,16 @@ import { ColorPickerModule } from 'primeng/colorpicker';
 import { TabViewModule } from 'primeng/tabview';
 import { ProgressBarModule } from 'primeng/progressbar';
 import { DataTableModule } from 'primeng/datatable';
+import { TableModule } from 'primeng/table';
 import { ContextMenuModule } from 'primeng/contextmenu';
 import { ListboxModule } from 'primeng/listbox';
+import { AccordionModule } from 'primeng/accordion';
+import { TreeTableModule } from 'primeng/treetable';
 
 export const PRIME_MODULES = [PanelModule, ButtonModule, BlockUIModule, ScrollPanelModule, TieredMenuModule,
-  SplitButtonModule, DropdownModule, CalendarModule, DataViewModule, AutoCompleteModule, InplaceModule, DialogModule,
+  SplitButtonModule, DropdownModule, CalendarModule, AutoCompleteModule, InplaceModule, DialogModule,
   InputMaskModule, CheckboxModule, ChipsModule, GrowlModule, ScheduleModule, OverlayPanelModule, ProgressBarModule,
-  ColorPickerModule, TabViewModule, DataTableModule, ContextMenuModule, ListboxModule]
+  ColorPickerModule, TabViewModule, DataTableModule, TableModule, ContextMenuModule, ListboxModule, AccordionModule, TreeTableModule]
 
 export const JA_DIRECTIVES: any = [];
 
@@ -49,11 +51,11 @@ export const JA_PIPES = [
 import {
   CalendarViewComponent, DashboardComponent, FeedbackViewComponent, // common
   CustomReportComponent, SprintReportComponent, UserDaywiseReportComponent, // reports
-  UserGroupsComponent, GeneralComponent
+  UserGroupsComponent, GeneralComponent, FaqViewComponent
 } from './views'
 
 export const JA_VIEWS = [
   CalendarViewComponent, DashboardComponent, FeedbackViewComponent, // common
   CustomReportComponent, SprintReportComponent, UserDaywiseReportComponent, // reports
-  UserGroupsComponent, GeneralComponent
+  UserGroupsComponent, GeneralComponent, FaqViewComponent
 ]

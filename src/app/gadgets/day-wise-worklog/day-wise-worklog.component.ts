@@ -1,8 +1,7 @@
 import { Component, HostListener, ElementRef } from '@angular/core';
 import * as moment from 'moment';
 import { JiraService } from '../../services/jira.service';
-import { UtilsService, CacheService, SessionService } from '../../services';
-import { FormatTimePipe, ConvertSecsPipe } from '../../pipes';
+import { UtilsService, CacheService, SessionService, MessageService, DataTransformService } from '../../services';
 import { FacadeService } from '../../services/facade.service';
 import { BaseGadget } from '../base-gadget';
 
@@ -32,20 +31,22 @@ export class DayWiseWorklogComponent extends BaseGadget {
   flatData: any[] // Contains data for flat report
 
   constructor(el: ElementRef, private $jaDataSvc: JiraService, private $jaCache: CacheService, private $facade: FacadeService,
-    private $utils: UtilsService, private formatTime: FormatTimePipe, private convertSecs: ConvertSecsPipe, $session: SessionService) {
+    private $utils: UtilsService, private $transform: DataTransformService, private $messages: MessageService, $session: SessionService) {
     super(el, 'Logged Work - [User - Day wise]', 'fa-list-alt');
     this.dateRange = {};
-    $facade.getUserGroups().then(grps => this.groups = grps);
+    //$facade.getUserGroups().then(grps => this.groups = grps);
     this.pageSettings = $session.pageSettings.reports_UserDayWise;
     //this.onResize({ target: window });
   }
 
   dateSelected($event): void {
-    this.generateReport();
+    if (($event.date || {}).fromDate) {
+      this.generateReport();
+    }
   }
 
   generateReport(): void {
-    if (!this.groups) { return; }
+    if (!this.groups || this.groups.length == 0) { debugger; this.$messages.warning("User list need to be added before generating report", "Missing input"); return; }
     this.userList = this.groups.Union(grps => grps.users.ForEach(gu => gu.groupName = grps.name));
     var req = {
       userList: this.userList.Select(u => u.name.toLowerCase()),
@@ -372,7 +373,7 @@ export class DayWiseWorklogComponent extends BaseGadget {
     if (!arr || arr.length === 0) { return ""; }
     var param = { format: this.pageSettings.logFormat == '1' };
     return arr.Select((a) => {
-      return this.formatTime.transform(a.logTime) + "(" + this.convertSecs.transform(a.totalHours, param) + ") - " + a.comment;
+      return this.$transform.formatTime(a.logTime) + "(" + this.$transform.convertSecs(a.totalHours, param) + ") - " + a.comment;
     }).join(';\n');
   }
 

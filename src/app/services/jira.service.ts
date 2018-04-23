@@ -57,7 +57,7 @@ export class JiraService {
         return value;
       }
 
-      return this.$jaHttp.get(ApiUrls.getCustomFields, { customHandle: true })
+      return this.$jaHttp.get(ApiUrls.getCustomFields)
         .then((result) => { this.$jaCache.session.set("customFields", result, 10); return result; });
     });
   }
@@ -68,8 +68,18 @@ export class JiraService {
       return new Promise((resolve, reject) => resolve(value));
     }
 
-    return this.$jaHttp.get(ApiUrls.rapidViews, { customHandle: true })
+    return this.$jaHttp.get(ApiUrls.rapidViews)
       .then((result) => { this.$jaCache.session.set("rapidViews", result.views, 10); return result.views; });
+  }
+
+  getProjects() {
+    var value = this.$jaCache.session.get("projects");
+    if (value) {
+      return new Promise((resolve, reject) => resolve(value));
+    }
+
+    return this.$jaHttp.get(ApiUrls.getAllProjects)
+      .then((projects) => { this.$jaCache.session.set("projects", projects, 10); return projects; });
   }
 
   getRapidSprintList(rapidIds) {

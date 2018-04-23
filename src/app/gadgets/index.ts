@@ -1,4 +1,5 @@
 export * from './calendar/calendar.component';
+export * from './burndown-chart/burndown-chart.component';
 export * from './date-wise-worklog/date-wise-worklog.component';
 export * from './day-wise-worklog/day-wise-worklog.component';
 export * from './dynamic-gadget/dynamic-gadget.component';

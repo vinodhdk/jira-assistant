@@ -3,9 +3,12 @@
     <i class="fa fa-bars"></i>
   </button>
   <a class="navbar-brand" [attr.href]="storeUrl" target="_blank"><span>Jira Assistant</span></a>
-  <button class="navbar-toggler d-md-down-none mr-auto" type="button" appSidebarToggler>
-    <i class="fa fa-bars"></i>
-  </button>
+  <div class="mr-auto d-md-down-none">
+    <button class="navbar-toggler" type="button" appSidebarToggler>
+      <i class="fa fa-bars"></i>
+    </button>
+    <input type="text" class="search-input" [(ngModel)]="searchText" placeholder="search for..." (keydown.enter)="search($event)" />
+  </div>
   <div class="pull-right d-sm-down-none">
     <ul class="right-menus">
       <li><a href="/index.min.html" style="color:white">Switch back to old UI</a></li>

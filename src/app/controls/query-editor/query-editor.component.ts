@@ -94,8 +94,8 @@ export class QueryEditorComponent implements OnInit {
     for (var i = 0; i < fields.length; i++) {
       var field = fields[i];
       var val: string = field.value;
-
-      var clause = field.clauseName;
+      
+      var clause = field.name;
       var val2 = field.value2;
 
       if (val2) { val2 = '"' + val2.trim() + '"'; }

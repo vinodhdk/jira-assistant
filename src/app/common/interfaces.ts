@@ -23,6 +23,8 @@ export interface IUser {
   launchAction?: any
   dataStore?: any
   autoLaunch?: number
+  rapidViews?: any[]
+  projects?: any[]
   notifyBefore?: number
   checkUpdates?: number
   settings?: any
@@ -54,6 +56,8 @@ export interface ISessionUser {
   hasGoogleCreds?: boolean
   pruneInterval?: number
   feedbackUrl: string
+  rapidViews?: any[]
+  projects?: any[]
   groups?: IUserGroup[]
   dashboards: IDashboard[]
 }

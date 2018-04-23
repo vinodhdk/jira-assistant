@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { JiraService, UtilsService } from '../../../services/index';
 import * as $ from 'jquery'
+import { SessionService } from '../../../services/session.service';
 
 @Component({
   selector: 'app-sprint-report',
@@ -22,9 +23,9 @@ export class SprintReportComponent implements OnInit {
   isFullScreen: boolean
   isLoading: boolean
 
-  constructor(private $jaDataSvc: JiraService, private $utils: UtilsService) {
+  constructor(private $jaDataSvc: JiraService, private $utils: UtilsService, $session: SessionService) {
+    this.selectedRapidViews = $session.CurrentUser.rapidViews;
     this.selectedRapidIds = [];
-    this.selectedSprintIds = [];
     this.selectedSprints = [];
   }
 
@@ -35,6 +36,8 @@ export class SprintReportComponent implements OnInit {
       this.rapidViews = views.OrderBy((d) => { return d.name; }).Select((d) => {
         return { name: d.name, id: d.id };
       });
+
+      if (this.selectedRapidViews && this.selectedRapidViews.length > 0) { this.rapidViewChanged(); }
     });
   }
 
@@ -77,7 +80,7 @@ export class SprintReportComponent implements OnInit {
       this.isLoading = false;
       this.sprintDetails = result;
 
-      var getCountWithSP = (issues) => { return issues.Count((issue) => { return issue.currentEstimateStatistic.statFieldValue.value; }) }
+      var getCountWithSP = (issues) => { return issues.Count((issue) => { return ((issue.currentEstimateStatistic || {}).statFieldValue || {}).value; }) }
 
       result.ForEach((sprint) => {
         let added = 0, removed: any = 0, addedWithSP = 0;
@@ -97,8 +100,8 @@ export class SprintReportComponent implements OnInit {
           issue.addedLater = jiraKeysList[issue.key] === true;
           issue.removedLater = jiraKeysList[issue.key] === false;
 
-          issue.currentSP = issue.currentEstimateStatistic.statFieldValue.value || 0;
-          issue.oldSP = issue.estimateStatistic.statFieldValue.value || 0;
+          issue.currentSP = ((issue.currentEstimateStatistic || {}).statFieldValue || {}).value || 0;
+          issue.oldSP = ((issue.estimateStatistic || {}).statFieldValue || {}).value || 0;
 
           if (issue.addedLater) {
             addedSP += issue.currentSP;

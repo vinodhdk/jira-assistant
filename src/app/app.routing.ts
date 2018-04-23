@@ -10,7 +10,7 @@ import {
 import {
   CalendarViewComponent, DashboardComponent, FeedbackViewComponent, // common
   CustomReportComponent, SprintReportComponent, UserDaywiseReportComponent, // reports
-  UserGroupsComponent, GeneralComponent
+  UserGroupsComponent, GeneralComponent, FaqViewComponent
 } from './views'
 
 export const isQuickView = document.location.href.indexOf('?quick=true') > -1;
@@ -66,6 +66,14 @@ export const routes: Routes = [
       {
         path: 'settings/general',
         component: GeneralComponent
+      },
+      {
+        path: 'faq',
+        component: FaqViewComponent
+      },
+      {
+        path: 'faq/:query',
+        component: FaqViewComponent
       },
       {
         path: 'feedback',

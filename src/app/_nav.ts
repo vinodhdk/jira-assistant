@@ -46,7 +46,7 @@ export var navigation: any[] = [
   },
   {
     title: true,
-    name: 'Other'
+    name: 'Activities'
   },
   {
     name: 'Calendar / Worklogs',
@@ -73,6 +73,28 @@ export var navigation: any[] = [
       variant: 'info',
       text: 'NEW'
     },
+  },
+  {
+    title: true,
+    name: 'Other'
+  },
+  {
+    name: 'Help / FAQ',
+    id: 'FAQ',
+    url: '/faq',
+    icon: 'fa fa-question'
+  },
+  //{
+  //  name: 'Contribute us',
+  //  id: 'DON',
+  //  url: '/contribute',
+  //  icon: 'fa fa-bug'
+  //},
+  {
+    name: 'Contact us',
+    id: 'SUP',
+    url: '/feedback',
+    icon: 'fa fa-bug'
   }
 ];
 

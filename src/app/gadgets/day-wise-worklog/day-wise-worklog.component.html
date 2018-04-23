@@ -18,14 +18,38 @@
       <i class="fa fa-refresh fa-spin fa-5x" style="position:absolute;top:25%;left:50%"></i>
     </p-blockUI>
     <p-panel [showHeader]="false" #wldiv>
-      <div *ngIf="!groupedData && !isLoading" style="padding:15px;">
-        Choose a date for which you would like to view the report or click the refresh ( <i class="fa fa-refresh"></i> ) icon to
-        load the report for selected date. You can choose the list of users by clicking the ( <i class="fa fa-users"></i> ) icon.
-
+      <div *ngIf="!groupedData && !isLoading" class="padding-15">
+        <strong>How to use:</strong>
+        <ul>
+          <li>
+            Choose a date for which you would like to view the report or click the refresh
+            ( <i class="fa fa-refresh"></i> ) icon to load the report if date is already selected.
+          </li>
+          <li>You can choose the list of users by clicking the ( <i class="fa fa-users"></i> ) icon.</li>
+          <li>
+            Click on Settings <i class="fa fa-arrow-right"></i> User groups from left hand menu to add users
+            permenantly to a group and use it in future.
+          </li>
+          <li>Click on ( <i class="fa fa-cogs"></i> ) icon to change the settings of the report.</li>
+          <li>
+            You have additional settings affecting this report in Settings <i class="fa fa-arrow-right"></i>
+            General menu in left hand side.
+          </li>
+        </ul>
         <p>
-          <strong>Note:</strong> If you want to repeatedly view the report for set of users, you can add those users under a group.
-          Click on Settings <i class="fa fa-arrow-right"></i> User groups from left hand menu to add it.
+          <strong>Note:</strong> Any changes you make to the group or the users under the group in this page will
+          not get saved and is only for this session.
         </p>
+        <div>
+          <strong>Planned enhancements:</strong> Some of the enhancements in roadmap for this reports are as follows
+          <ul>
+            <li>Viewing report based on sprint as an additional option alternate for date selection</li>
+            <li>Add custom columns to the report</li>
+            <li>User time zone selection option for group and individual users.</li>
+            <li>Add additional filters to restrict certain data to be pulled for report generation</li>
+            <li>Simplification for the way groups / users are added. Suggestions with template / screenshots are welcome.</li>
+          </ul>
+        </div>
       </div>
       <div *ngIf="isLoading" style="padding:15px;">Loading... please wait while the report is being loaded. It may take few seconds / minute based on the range you had selected.</div>
       <p-scrollPanel *ngIf="groupedData && pageSettings.groupMode != '2'" [style]="{width:'100%',height: contentHeight+'px'}" styleClass="cont-div">
@@ -44,13 +68,14 @@
             <tr><td colspan="9">No records exists</td></tr>
           </tbody>
           <tbody *ngFor="let grp of groupedData">
-            <tr class="grouped-row">
-              <td>{{grp.name}}</td>
-              <td *ngFor="let day of dates">{{ grp.total[day.prop] | convertSecs:{format:pageSettings.logFormat=='1'} }}</td>
-              <td>{{ grp.grandTotal | convertSecs:{format:pageSettings.logFormat=='1'} }}</td>
+            <tr class="grouped-row left" [hidden]="grp.hidden">
+              <td [attr.colspan]="dates.length + 2" (click)="grp.hidden=true">
+                <i class="pull-left drill-down fa fa-chevron-circle-down" title="Click to hide user details"></i>
+                {{grp.name}}
+              </td>
             </tr>
             <ng-container *ngFor="let u of grp.users">
-              <tr class="pointer" (click)="u.expanded=!u.expanded">
+              <tr class="pointer" (click)="u.expanded=!u.expanded" [hidden]="grp.hidden">
                 <td class="data-left">
                   <div class="user-info" style="padding-left:0px;">
                     <i class="pull-left drill-down fa" [ngClass]="u.expanded ? 'fa-chevron-circle-down' : 'fa-chevron-circle-right'" title="Click to toggle ticket details"></i>
@@ -63,7 +88,7 @@
                 <td>{{u.grandTotal | convertSecs:{format:pageSettings.logFormat=='1'} }}</td>
               </tr>
               <ng-container *ngFor="let t of u.tickets">
-                <tr [ngClass]="!u.expanded ? 'hide' : ''" [hidden]="!u.expanded">
+                <tr [ngClass]="!u.expanded ? 'hide' : ''" [hidden]="!u.expanded || grp.hidden">
                   <td class="data-left">
                     <a *ngIf="t.parent" [attr.href]="t.parentUrl" class="link" target="_blank">{{t.parent}} - </a>
                     <a [attr.href]="t.url" class="link" target="_blank">{{t.ticketNo}}</a> -
@@ -77,9 +102,22 @@
                 </tr>
               </ng-container>
             </ng-container>
+            <tr class="grouped-row right" (click)="grp.hidden=false">
+              <td>
+                <div [hidden]="!grp.hidden">
+                  <i class="pull-left drill-down fa fa-chevron-circle-right" title="Click to show user details"></i>
+                  <span class="pull-left">{{grp.name}}</span><span class="pull-right">Total <i class="fa fa-arrow-right"></i></span>
+                </div>
+                <div [hidden]="grp.hidden">
+                  {{grp.name}} <i class="fa fa-arrow-right"></i> Total <i class="fa fa-arrow-right"></i>
+                </div>
+              </td>
+              <td *ngFor="let day of dates">{{ grp.total[day.prop] | convertSecs:{format:pageSettings.logFormat=='1'} }}</td>
+              <td>{{ grp.grandTotal | convertSecs:{format:pageSettings.logFormat=='1'} }}</td>
+            </tr>
           </tbody>
           <tbody>
-            <tr class="total-row">
+            <tr class="grouped-row right">
               <td>Grand Total <i class="fa fa-arrow-right"></i></td>
               <td *ngFor="let day of dates">{{ groupedData.total[day.prop] | convertSecs:{format:pageSettings.logFormat=='1'} }}</td>
               <td>{{ groupedData.grandTotal | convertSecs:{format:pageSettings.logFormat=='1'} }}</td>
@@ -119,8 +157,9 @@
     </p-panel>
   </p-panel>
 </div>
+
 <p-dialog header="Add users" [(visible)]="showGroupsPopup" [breakpoint]="2500" appendTo="body" [baseZIndex]="9999" [modal]="true" [dismissableMask]="false" [autoAlign]="true">
-  <app-group-editor [(groups)]="groups" (onDone)="showGroupsPopup=false"></app-group-editor>
+  <app-group-editor [(groups)]="groups" [isPlugged]="true" (onDone)="showGroupsPopup=false"></app-group-editor>
 </p-dialog>
 <p-dialog [(visible)]="showSettings" responsive="false" appendTo="body"
           [baseZIndex]="9999" [modal]="true" [dismissableMask]="false" [autoAlign]="true" (onHide)="saveSettings()">
